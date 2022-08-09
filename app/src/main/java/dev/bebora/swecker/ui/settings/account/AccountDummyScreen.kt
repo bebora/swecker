@@ -85,7 +85,7 @@ fun AccountDummyScreen() {
                 )
                 SettingsItem(
                     title = section.title,
-                    description = section.description,
+                    description = section.description?: "Default description",
                     icon = section.icon,
                     onClick = section.onClick
                 )

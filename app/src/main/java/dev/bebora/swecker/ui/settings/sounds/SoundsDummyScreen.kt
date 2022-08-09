@@ -1,4 +1,4 @@
-package dev.bebora.swecker.ui.settings
+package dev.bebora.swecker.ui.settings.sounds
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -11,40 +11,35 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import dev.bebora.swecker.R
+import dev.bebora.swecker.ui.settings.SettingsItem
+import dev.bebora.swecker.ui.settings.SettingsSection
+import dev.bebora.swecker.ui.settings.SettingsSwitch
 import dev.bebora.swecker.ui.theme.SweckerTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SettingsScreen(
-    viewModel: SettingsViewModel = hiltViewModel()
-) {
+fun SoundsDummyScreen() {
     val sections = listOf(
         SettingsSection(
-            stringResource(R.string.account_section_title),
-            stringResource(R.string.account_section_description),
-            Icons.Outlined.AccountCircle
+            stringResource(R.string.sounds_ringtone),
+            "Breeze",
+            Icons.Outlined.MusicNote
         ),
         SettingsSection(
-            stringResource(R.string.theme_section_title),
-            stringResource(R.string.theme_section_description),
-            Icons.Outlined.Palette
+            stringResource(R.string.sounds_ringtone_duration),
+            "1 minute",
+            Icons.Outlined.Timer
         ),
         SettingsSection(
-            stringResource(R.string.sounds_section_title),
-            stringResource(R.string.sounds_section_description),
-            Icons.Outlined.NotificationsActive
-        ),
-        SettingsSection(
-            stringResource(R.string.about_section_title),
-            stringResource(R.string.about_section_description),
-            Icons.Outlined.Info
+            stringResource(R.string.sounds_volume),
+            "75%",
+            Icons.Outlined.VolumeUp
         )
     )
     Scaffold(topBar = {
         SmallTopAppBar(
-            title = { Text(text = stringResource(R.string.settings_title)) },
+            title = { Text(text = stringResource(id = R.string.sounds_section_title)) },
             navigationIcon = {
                 IconButton(onClick = { /*TODO go back*/ }) {
                     Icon(
@@ -65,10 +60,24 @@ fun SettingsScreen(
                 )
                 SettingsItem(
                     title = section.title,
-                    description = section.description?: "Default description",
+                    description = section.description ?: "Default description",
                     icon = section.icon,
                     onClick = section.onClick
                 )
+
+            }
+            Spacer(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(1.dp)
+                    .background(MaterialTheme.colorScheme.outline)
+            )
+            SettingsSwitch(
+                title = stringResource(R.string.sounds_vibration),
+                icon = Icons.Outlined.Vibration,
+                checked = true
+            ) {
+
             }
         }
     }
@@ -76,8 +85,8 @@ fun SettingsScreen(
 
 @Preview(locale = "en")
 @Composable
-fun SettingsScreenPreview() {
+fun SoundsDummyScreenPreview() {
     SweckerTheme {
-        SettingsScreen()
+        SoundsDummyScreen()
     }
 }

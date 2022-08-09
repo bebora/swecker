@@ -12,4 +12,8 @@
     <string name="account_title">Account</string>
     <string name="account_change_name">Tap to change name</string>
     <string name="account_change_username">Tap to change username</string>
+    <string name="sounds_ringtone">Ringtone</string>
+    <string name="sounds_ringtone_duration">Ringtone duration</string>
+    <string name="sounds_volume">Volume</string>
+    <string name="sounds_vibration">Vibration</string>
 </resources>
