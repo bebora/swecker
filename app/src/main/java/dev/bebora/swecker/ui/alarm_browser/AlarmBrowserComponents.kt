@@ -11,6 +11,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import dev.bebora.swecker.data.Alarm
+import dev.bebora.swecker.data.AlarmRepositoryImpl
 import dev.bebora.swecker.data.AlarmType
 import dev.bebora.swecker.data.alarmTypeToIcon
 import dev.bebora.swecker.ui.theme.SweckerTheme
@@ -101,5 +102,45 @@ fun AlarmPreview() {
                 alarm = alarm.copy(enabled = !alarm.enabled)
             }
         )
+    }
+}
+
+@Composable
+fun SweckerNavBar(
+    modifier: Modifier = Modifier,
+    alarmBrowserUIState: AlarmBrowserUIState,
+    onEvent: (AlarmBrowserEvent) -> Unit
+) {
+    val items = listOf("Home", "Personal", "Groups", "Channels")
+
+    NavigationBar(modifier = modifier) {
+        items.forEach { item ->
+            val isSelected =
+                alarmBrowserUIState.selectedDestination == NavBarDestination.valueOf(item.uppercase())
+            NavigationBarItem(
+                icon = { Icon(getNavbarIcon(item, isSelected), contentDescription = item) },
+                label = { Text(item) },
+                selected = isSelected,
+                onClick = { onEvent(AlarmBrowserEvent.NavBarNavigate(NavBarDestination.valueOf(item.uppercase()))) }
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Preview(showBackground = true)
+@Composable
+fun NavBarPreview() {
+    val testViewModel = AlarmBrowserViewModel(AlarmRepositoryImpl())
+    val uiState by testViewModel.uiState.collectAsState()
+    SweckerTheme() {
+        Scaffold(bottomBar = {
+            SweckerNavBar(
+                alarmBrowserUIState = uiState,
+                onEvent = { ev -> testViewModel.onEvent(ev) })
+        }) {
+            Box(modifier = Modifier.padding(it)){
+            }
+        }
     }
 }
