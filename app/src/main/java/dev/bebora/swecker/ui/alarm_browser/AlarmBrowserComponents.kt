@@ -1,14 +1,11 @@
 package dev.bebora.swecker.ui.alarm_browser
 
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
-import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -17,26 +14,27 @@ import dev.bebora.swecker.data.Alarm
 import dev.bebora.swecker.data.AlarmType
 import dev.bebora.swecker.data.alarmTypeToIcon
 import dev.bebora.swecker.ui.theme.SweckerTheme
-import org.intellij.lang.annotations.JdkConstants.HorizontalAlignment
 
 
-    @OptIn(ExperimentalMaterial3Api::class)
-    @Composable
-    fun AlarmCard(
-        alarm: Alarm,
-        modifier: Modifier = Modifier,
-        onEvent: () -> Unit = {}
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun AlarmCard(
+    alarm: Alarm,
+    modifier: Modifier = Modifier,
+    onEvent: () -> Unit = {}
+) {
+    Card(
+        onClick = onEvent,
+        enabled = alarm.enabled,
+        modifier = modifier
+            .aspectRatio(ratio = 2.85f, matchHeightConstraintsFirst = true)
     ) {
-        Card(
-            onClick = onEvent,
-            enabled = alarm.enabled,
+        Column(
             modifier = Modifier
-                .aspectRatio(ratio = 2.85f, matchHeightConstraintsFirst = true)
-        ) {
-            Column(modifier = Modifier
                 .fillMaxHeight(1.0f)
                 .padding(vertical = 8.dp, horizontal = 16.dp),
-            verticalArrangement = Arrangement.SpaceBetween){
+            verticalArrangement = Arrangement.SpaceBetween
+        ) {
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically,
@@ -79,15 +77,16 @@ import org.intellij.lang.annotations.JdkConstants.HorizontalAlignment
                 )
             }
         }
-        }
     }
+}
 
-    @Composable
-    @Preview(showBackground = true)
-    fun AlarmPreview() {
-        SweckerTheme() {
-            AlarmCard(
-                alarm = Alarm(
+@Composable
+@Preview(showBackground = true)
+fun AlarmPreview() {
+    SweckerTheme {
+        var alarm by remember {
+            mutableStateOf(
+                Alarm(
                     id = "@monesi#1",
                     name = "Alarm test",
                     time = "14:30",
@@ -96,4 +95,11 @@ import org.intellij.lang.annotations.JdkConstants.HorizontalAlignment
                 )
             )
         }
+        AlarmCard(
+            alarm = alarm,
+            onEvent = {
+                alarm = alarm.copy(enabled = !alarm.enabled)
+            }
+        )
     }
+}
