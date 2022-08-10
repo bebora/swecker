@@ -32,6 +32,7 @@ class AlarmBrowserViewModel @Inject constructor(
                         selectedDestination = event.destination
                     )
             }
+            else -> {}
 
         }
     }
