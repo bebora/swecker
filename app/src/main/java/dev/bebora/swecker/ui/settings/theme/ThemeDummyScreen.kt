@@ -1,5 +1,6 @@
 package dev.bebora.swecker.ui.settings.theme
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -15,6 +16,7 @@ import androidx.compose.ui.unit.dp
 import dev.bebora.swecker.R
 import dev.bebora.swecker.data.Alarm
 import dev.bebora.swecker.data.AlarmType
+import dev.bebora.swecker.data.settings.Palette
 import dev.bebora.swecker.data.settings.Settings
 import dev.bebora.swecker.ui.alarm_browser.AlarmCard
 import dev.bebora.swecker.ui.settings.SettingsEvent
@@ -32,12 +34,22 @@ fun ThemeDummyScreen(
     onEvent: (SettingsEvent) -> Unit
 ) {
     //TODO add real themes
-    val themes = listOf(
-        dynamicDarkColorScheme(LocalContext.current),
-        dynamicLightColorScheme(LocalContext.current),
-        DarkColors,
-        LightColors
+    val palettes = listOf(
+        PaletteData(
+            colorScheme = dynamicDarkColorScheme(LocalContext.current),
+            onClick = { onEvent(SettingsEvent.SetPalette(Palette.SYSTEM)) }),
+        PaletteData(
+            colorScheme = DarkColors,
+            onClick = { onEvent(SettingsEvent.SetPalette(Palette.VARIATION1)) }),
+        PaletteData(
+            colorScheme = LightColors,
+            onClick = { onEvent(SettingsEvent.SetPalette(Palette.VARIATION2)) }),
+        PaletteData(
+            colorScheme = DarkColors,
+            onClick = { onEvent(SettingsEvent.SetPalette(Palette.VARIATION3)) })
     )
+
+
     Scaffold(topBar = {
         SmallTopAppBar(
             title = { Text(text = stringResource(R.string.account_title)) },
@@ -76,12 +88,13 @@ fun ThemeDummyScreen(
                     .height(100.dp)
             ) {
                 //TODO remove hardcoded values
-                themes.forEach { palette ->
-                    PaletteSelector(
-                        palette = palette,
+                palettes.forEach { palette ->
+                    PaletteBox(
+                        colorScheme = palette.colorScheme,
                         modifier = Modifier
                             .width(80.dp)
                             .height(80.dp)
+                            .clickable { palette.onClick() }
                     )
                 }
             }

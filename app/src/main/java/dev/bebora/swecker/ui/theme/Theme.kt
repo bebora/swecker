@@ -14,6 +14,8 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.ViewCompat
+import dev.bebora.swecker.data.settings.DarkModeType
+import dev.bebora.swecker.data.settings.Palette
 
 val LightColors = lightColorScheme(
     surfaceTint = md_theme_light_surfaceTint,
@@ -78,10 +80,10 @@ val DarkColors = darkColorScheme(
 
 @Composable
 fun SweckerTheme(
-        darkTheme: Boolean = isSystemInDarkTheme(),
-        // Dynamic color is available on Android 12+
-        dynamicColor: Boolean = true,
-        content: @Composable () -> Unit
+    darkTheme: Boolean = isSystemInDarkTheme(),
+    // Dynamic color is available on Android 12+
+    dynamicColor: Boolean = true,
+    content: @Composable () -> Unit
 ) {
     val colorScheme = when {
         dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
@@ -100,8 +102,39 @@ fun SweckerTheme(
     }
 
     MaterialTheme(
-            colorScheme = colorScheme,
-            typography = Typography,
-            content = content
+        colorScheme = colorScheme,
+        typography = Typography,
+        content = content
+    )
+}
+
+/**
+ * Select the correct theme from user settings
+ */
+@Composable
+fun SettingsAwareTheme(
+    darkModeType: DarkModeType,
+    palette: Palette,
+    content: @Composable () -> Unit
+) {
+    val darkMode = when (darkModeType) {
+        DarkModeType.SYSTEM -> {
+            isSystemInDarkTheme()
+        }
+        DarkModeType.LIGHT -> {
+            false
+        }
+        DarkModeType.DARK -> {
+            true
+        }
+    }
+
+    //TODO handle all possible palettes
+    val dynamicColor = palette == Palette.SYSTEM
+
+    SweckerTheme(
+        darkTheme = darkMode,
+        dynamicColor = dynamicColor,
+        content = content
     )
 }

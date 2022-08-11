@@ -13,7 +13,7 @@ import androidx.compose.ui.unit.dp
 import dev.bebora.swecker.ui.theme.SweckerTheme
 
 @Composable
-fun PaletteSelector(palette: ColorScheme, modifier: Modifier = Modifier) {
+fun PaletteBox(colorScheme: ColorScheme, modifier: Modifier = Modifier) {
     Column(
         modifier = modifier
             .clip(RoundedCornerShape(16.dp))
@@ -22,7 +22,7 @@ fun PaletteSelector(palette: ColorScheme, modifier: Modifier = Modifier) {
             modifier = Modifier
                 .fillMaxWidth()
                 .fillMaxHeight(.5f)
-                .background(palette.primary)
+                .background(colorScheme.primary)
         )
         Row(
             modifier = Modifier
@@ -32,12 +32,12 @@ fun PaletteSelector(palette: ColorScheme, modifier: Modifier = Modifier) {
                 modifier = Modifier
                     .fillMaxWidth(.5f)
                     .fillMaxHeight()
-                    .background(palette.secondary)
+                    .background(colorScheme.secondary)
             )
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(palette.tertiary)
+                    .background(colorScheme.tertiary)
             )
         }
     }
@@ -46,8 +46,8 @@ fun PaletteSelector(palette: ColorScheme, modifier: Modifier = Modifier) {
 
 @Preview(showBackground = false, widthDp = 100, heightDp = 100)
 @Composable
-fun PaletteSelectorPreview() {
+fun PaletteBoxPreview() {
     SweckerTheme {
-        PaletteSelector(palette = MaterialTheme.colorScheme)
+        PaletteBox(colorScheme = MaterialTheme.colorScheme)
     }
 }
