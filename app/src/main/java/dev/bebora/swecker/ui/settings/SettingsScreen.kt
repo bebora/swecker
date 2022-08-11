@@ -1,5 +1,6 @@
 package dev.bebora.swecker.ui.settings
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -26,18 +27,27 @@ fun SettingsScreen(
         palette = settingsState.palette
     ) {
         if (viewModel.uiState.openAccountSettings) {
+            BackHandler {
+                viewModel.onEvent(SettingsEvent.CloseSettingsSubsection)
+            }
             AccountDummyScreen(
                 settings = settingsState,
                 ui = viewModel.uiState,
                 onEvent = viewModel::onEvent
             )
         } else if (viewModel.uiState.openSoundsSettings) {
+            BackHandler {
+                viewModel.onEvent(SettingsEvent.CloseSettingsSubsection)
+            }
             SoundsDummyScreen(
                 settings = settingsState,
                 ui = viewModel.uiState,
                 onEvent = viewModel::onEvent
             )
         } else if (viewModel.uiState.openThemeSettings) {
+            BackHandler {
+                viewModel.onEvent(SettingsEvent.CloseSettingsSubsection)
+            }
             ThemeDummyScreen(
                 settings = settingsState,
                 ui = viewModel.uiState,
