@@ -1,17 +1,29 @@
 package dev.bebora.swecker.ui.settings
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dev.bebora.swecker.data.settings.SettingsRepository
+import dev.bebora.swecker.data.settings.SettingsRepositoryInterface
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
-    private val repository: SettingsRepository
+    private val repository: SettingsRepositoryInterface
 ) : ViewModel() {
     val settings = repository.getSettings()
+
+    var openAccountSettings by mutableStateOf(false)
+        private set
+
+    var openSoundsSettings by mutableStateOf(false)
+        private set
+
+    var openThemeSettings by mutableStateOf(false)
+        private set
 
     fun onEvent(event: SettingsEvent) {
         when (event) {
@@ -54,6 +66,20 @@ class SettingsViewModel @Inject constructor(
                 viewModelScope.launch {
                     repository.toggleVibration()
                 }
+            }
+            SettingsEvent.CloseSettingsSubsection -> {
+                openAccountSettings = false
+                openSoundsSettings = false
+                openThemeSettings = false
+            }
+            SettingsEvent.OpenAccountSettings -> {
+                openAccountSettings = true
+            }
+            SettingsEvent.OpenSoundsSettings -> {
+                openSoundsSettings = true
+            }
+            SettingsEvent.OpenThemeSettings -> {
+                openThemeSettings = true
             }
         }
     }

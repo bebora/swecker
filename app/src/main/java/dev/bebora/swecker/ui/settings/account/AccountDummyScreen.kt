@@ -18,14 +18,19 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import dev.bebora.swecker.R
+import dev.bebora.swecker.ui.settings.SettingsEvent
 import dev.bebora.swecker.ui.settings.SettingsItem
 import dev.bebora.swecker.ui.settings.SettingsSection
+import dev.bebora.swecker.ui.settings.SettingsViewModel
 import dev.bebora.swecker.ui.theme.SweckerTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AccountDummyScreen() {
+fun AccountDummyScreen(
+    viewModel: SettingsViewModel = hiltViewModel()
+) {
     //TODO add real data
     val sections = listOf(
         SettingsSection(
@@ -43,7 +48,7 @@ fun AccountDummyScreen() {
         SmallTopAppBar(
             title = { Text(text = stringResource(R.string.account_title)) },
             navigationIcon = {
-                IconButton(onClick = { /*TODO go back*/ }) {
+                IconButton(onClick = { viewModel.onEvent(SettingsEvent.CloseSettingsSubsection) }) {
                     Icon(
                         Icons.Filled.ArrowBack,
                         contentDescription = "Go back"
@@ -85,7 +90,7 @@ fun AccountDummyScreen() {
                 )
                 SettingsItem(
                     title = section.title,
-                    description = section.description?: "Default description",
+                    description = section.description ?: "Default description",
                     icon = section.icon,
                     onClick = section.onClick
                 )

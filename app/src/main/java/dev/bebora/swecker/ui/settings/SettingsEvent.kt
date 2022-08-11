@@ -17,4 +17,8 @@ sealed class SettingsEvent {
     data class SetRingtoneVolume(val ringtoneVolume: Int) : SettingsEvent()
     data class SetRingtoneDuration(val ringtoneDuration: RingtoneDuration) : SettingsEvent()
     object ToggleVibration : SettingsEvent()
+    object OpenAccountSettings : SettingsEvent()
+    object OpenSoundsSettings : SettingsEvent()
+    object OpenThemeSettings : SettingsEvent()
+    object CloseSettingsSubsection : SettingsEvent()
 }

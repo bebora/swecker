@@ -16,7 +16,7 @@ private val Context.dataStore by preferencesDataStore(name = "settings")
 
 @Singleton
 class DataStoreManager @Inject constructor(@ApplicationContext appContext: Context) :
-    SettingsRepository {
+    SettingsRepositoryInterface {
     private val settingsDataStore = appContext.dataStore
     companion object {
         val NAME = stringPreferencesKey("name")

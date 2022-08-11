@@ -7,7 +7,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import dev.bebora.swecker.data.AlarmRepository
 import dev.bebora.swecker.data.AlarmRepositoryImpl
-import dev.bebora.swecker.data.settings.SettingsRepository
+import dev.bebora.swecker.data.settings.SettingsRepositoryInterface
 import dev.bebora.swecker.data.settings.DataStoreManager
 import javax.inject.Singleton
 
@@ -17,7 +17,7 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideSettingsRepository(app: Application) : SettingsRepository {
+    fun provideSettingsRepository(app: Application) : SettingsRepositoryInterface {
         return DataStoreManager(app)
     }
 
