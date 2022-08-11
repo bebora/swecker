@@ -22,6 +22,7 @@ fun SettingsScreen(
 ) {
     val settingsState by viewModel.settings.collectAsState(initial = Settings())
     //TODO find a way to prevent wrong UI settings from appearing (look at collectAsState with wrong initial value)
+    //TODO all dummy screen here should be LazyColumns
     SettingsAwareTheme(
         darkModeType = settingsState.darkModeType,
         palette = settingsState.palette

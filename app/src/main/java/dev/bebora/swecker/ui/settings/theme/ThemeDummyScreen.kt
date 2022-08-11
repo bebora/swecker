@@ -85,17 +85,19 @@ fun ThemeDummyScreen(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(100.dp)
+                    .height(100.dp),
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                //TODO remove hardcoded values
-                palettes.forEach { palette ->
+                //TODO remove hardcoded values for widht and height
+                palettes.forEachIndexed{ idx, palette ->
                     PaletteBox(
                         colorScheme = palette.colorScheme,
                         modifier = Modifier
                             .width(80.dp)
                             .height(80.dp)
-                            .clickable { palette.onClick() }
-                    )
+                            .clickable { },
+                        selected = settings.palette.ordinal == idx //TODO this logic may break if the Enum order is not mantained
+                    ) { palette.onClick() }
                 }
             }
             Spacer(modifier = Modifier.height(16.dp))
