@@ -12,15 +12,14 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import dev.bebora.swecker.R
 import dev.bebora.swecker.data.Alarm
 import dev.bebora.swecker.data.AlarmType
-import dev.bebora.swecker.data.settings.SettingsRepositoryPreview
+import dev.bebora.swecker.data.settings.Settings
 import dev.bebora.swecker.ui.alarm_browser.AlarmCard
 import dev.bebora.swecker.ui.settings.SettingsEvent
 import dev.bebora.swecker.ui.settings.SettingsItem
-import dev.bebora.swecker.ui.settings.SettingsViewModel
+import dev.bebora.swecker.ui.settings.SettingsUI
 import dev.bebora.swecker.ui.theme.DarkColors
 import dev.bebora.swecker.ui.theme.LightColors
 import dev.bebora.swecker.ui.theme.SweckerTheme
@@ -28,7 +27,9 @@ import dev.bebora.swecker.ui.theme.SweckerTheme
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ThemeDummyScreen(
-    viewModel: SettingsViewModel = hiltViewModel()
+    settings: Settings,
+    ui: SettingsUI,
+    onEvent: (SettingsEvent) -> Unit
 ) {
     //TODO add real themes
     val themes = listOf(
@@ -41,7 +42,7 @@ fun ThemeDummyScreen(
         SmallTopAppBar(
             title = { Text(text = stringResource(R.string.account_title)) },
             navigationIcon = {
-                IconButton(onClick = { viewModel.onEvent(SettingsEvent.CloseSettingsSubsection) }) {
+                IconButton(onClick = { onEvent(SettingsEvent.CloseSettingsSubsection) }) {
                     Icon(
                         Icons.Filled.ArrowBack,
                         contentDescription = "Go back"
@@ -59,12 +60,13 @@ fun ThemeDummyScreen(
             AlarmCard(
                 alarm = Alarm(
                     id = "fakeid",
-                    enabled = true,
+                    enabled = ui.exampleAlarmActive,
                     name = "Example alarm",
                     alarmType = AlarmType.PERSONAL,
                     date = "9th August",
                     time = "12:14"
-                )
+                ),
+                onEvent = { onEvent(SettingsEvent.ToggleExampleAlarmActive) }
             )
             Spacer(modifier = Modifier.height(16.dp))
             Text(text = "Palette", style = MaterialTheme.typography.headlineSmall)
@@ -86,7 +88,7 @@ fun ThemeDummyScreen(
             Spacer(modifier = Modifier.height(16.dp))
             SettingsItem(
                 title = "Dark mode",
-                description = "Use system settings",
+                description = settings.darkModeType.toString(),
                 icon = Icons.Outlined.DarkMode
             ) {
 
@@ -101,7 +103,9 @@ fun ThemeDummyScreen(
 fun ThemeDummyScreenPreview() {
     SweckerTheme {
         ThemeDummyScreen(
-            viewModel = SettingsViewModel(SettingsRepositoryPreview())
+            settings = Settings(),
+            ui = SettingsUI(),
+            onEvent = {}
         )
     }
 }

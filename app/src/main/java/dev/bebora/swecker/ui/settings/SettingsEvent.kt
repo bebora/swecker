@@ -21,4 +21,5 @@ sealed class SettingsEvent {
     object OpenSoundsSettings : SettingsEvent()
     object OpenThemeSettings : SettingsEvent()
     object CloseSettingsSubsection : SettingsEvent()
+    object ToggleExampleAlarmActive: SettingsEvent()
 }

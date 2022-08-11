@@ -18,28 +18,27 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import dev.bebora.swecker.R
-import dev.bebora.swecker.ui.settings.SettingsEvent
-import dev.bebora.swecker.ui.settings.SettingsItem
-import dev.bebora.swecker.ui.settings.SettingsSection
-import dev.bebora.swecker.ui.settings.SettingsViewModel
+import dev.bebora.swecker.data.settings.Settings
+import dev.bebora.swecker.ui.settings.*
 import dev.bebora.swecker.ui.theme.SweckerTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AccountDummyScreen(
-    viewModel: SettingsViewModel = hiltViewModel()
+    settings: Settings,
+    ui: SettingsUI,
+    onEvent: (SettingsEvent) -> Unit
 ) {
-    //TODO add real data
+    //TODO let the user change data
     val sections = listOf(
         SettingsSection(
-            "Luke",
+            title = settings.name,
             stringResource(R.string.account_change_name),
             Icons.Outlined.Person
         ),
         SettingsSection(
-            "@lucr",
+            settings.username,
             stringResource(R.string.account_change_username),
             Icons.Outlined.AlternateEmail
         )
@@ -48,7 +47,7 @@ fun AccountDummyScreen(
         SmallTopAppBar(
             title = { Text(text = stringResource(R.string.account_title)) },
             navigationIcon = {
-                IconButton(onClick = { viewModel.onEvent(SettingsEvent.CloseSettingsSubsection) }) {
+                IconButton(onClick = { onEvent(SettingsEvent.CloseSettingsSubsection) }) {
                     Icon(
                         Icons.Filled.ArrowBack,
                         contentDescription = "Go back"
@@ -103,6 +102,10 @@ fun AccountDummyScreen(
 @Composable
 fun AccountDummyScreenPreview() {
     SweckerTheme {
-        AccountDummyScreen()
+        AccountDummyScreen(
+            settings = Settings(),
+            ui = SettingsUI(),
+            onEvent = {}
+        )
     }
 }

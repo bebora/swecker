@@ -13,10 +13,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import dev.bebora.swecker.R
-import dev.bebora.swecker.ui.settings.SettingsEvent
-import dev.bebora.swecker.ui.settings.SettingsItem
-import dev.bebora.swecker.ui.settings.SettingsSection
-import dev.bebora.swecker.ui.settings.SettingsViewModel
+import dev.bebora.swecker.data.settings.Settings
+import dev.bebora.swecker.ui.settings.*
 import dev.bebora.swecker.ui.theme.SweckerTheme
 
 /**
@@ -25,24 +23,26 @@ import dev.bebora.swecker.ui.theme.SweckerTheme
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsDummyScreen(
-    viewModel: SettingsViewModel = hiltViewModel()
+    settings: Settings,
+    ui: SettingsUI,
+    onEvent: (SettingsEvent) -> Unit
 ) {
     val sections = listOf(
         SettingsSection(
             stringResource(R.string.account_section_title),
             stringResource(R.string.account_section_description),
             Icons.Outlined.AccountCircle
-        ) { viewModel.onEvent(SettingsEvent.OpenAccountSettings) },
+        ) { onEvent(SettingsEvent.OpenAccountSettings) },
         SettingsSection(
             stringResource(R.string.theme_section_title),
             stringResource(R.string.theme_section_description),
             Icons.Outlined.Palette
-        ) { viewModel.onEvent(SettingsEvent.OpenThemeSettings) },
+        ) { onEvent(SettingsEvent.OpenThemeSettings) },
         SettingsSection(
             stringResource(R.string.sounds_section_title),
             stringResource(R.string.sounds_section_description),
             Icons.Outlined.NotificationsActive
-        ) { viewModel.onEvent(SettingsEvent.OpenSoundsSettings) },
+        ) { onEvent(SettingsEvent.OpenSoundsSettings) },
         SettingsSection(
             stringResource(R.string.about_section_title),
             stringResource(R.string.about_section_description),
@@ -85,6 +85,10 @@ fun SettingsDummyScreen(
 @Composable
 fun SettingsDummyScreenPreview() {
     SweckerTheme {
-        SettingsDummyScreen()
+        SettingsDummyScreen(
+            ui = SettingsUI(),
+            settings = Settings(),
+            onEvent = {}
+        )
     }
 }

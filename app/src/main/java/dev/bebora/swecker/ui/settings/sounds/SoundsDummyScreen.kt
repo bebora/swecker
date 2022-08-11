@@ -7,40 +7,36 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import dev.bebora.swecker.R
 import dev.bebora.swecker.data.settings.Settings
-import dev.bebora.swecker.data.settings.SettingsRepositoryPreview
 import dev.bebora.swecker.ui.settings.*
 import dev.bebora.swecker.ui.theme.SweckerTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SoundsDummyScreen(
-    viewModel: SettingsViewModel = hiltViewModel()
+    settings: Settings,
+    ui: SettingsUI,
+    onEvent: (SettingsEvent) -> Unit
 ) {
-    
-    val settingsState by viewModel.settings.collectAsState(initial = Settings())
     val sections = listOf(
         SettingsSection(
             stringResource(R.string.sounds_ringtone),
-            "Breeze",
+            settings.ringtone.toString(),
             Icons.Outlined.MusicNote
         ),
         SettingsSection(
             stringResource(R.string.sounds_ringtone_duration),
-            "1 minute",
+            settings.ringtoneDuration.toString(),
             Icons.Outlined.Timer
         ),
         SettingsSection(
             stringResource(R.string.sounds_volume),
-            "75%",
+            "${settings.ringtoneVolume}%",
             Icons.Outlined.VolumeUp
         )
     )
@@ -48,7 +44,7 @@ fun SoundsDummyScreen(
         SmallTopAppBar(
             title = { Text(text = stringResource(id = R.string.sounds_section_title)) },
             navigationIcon = {
-                IconButton(onClick = { viewModel.onEvent(SettingsEvent.CloseSettingsSubsection) }) {
+                IconButton(onClick = { onEvent(SettingsEvent.CloseSettingsSubsection) }) {
                     Icon(
                         Icons.Filled.ArrowBack,
                         contentDescription = "Go back"
@@ -82,9 +78,9 @@ fun SoundsDummyScreen(
             SettingsSwitch(
                 title = stringResource(R.string.sounds_vibration),
                 icon = Icons.Outlined.Vibration,
-                checked = settingsState.vibration
+                checked = settings.vibration
             ) {
-                viewModel.onEvent(SettingsEvent.ToggleVibration)
+                onEvent(SettingsEvent.ToggleVibration)
             }
         }
     }
@@ -95,7 +91,9 @@ fun SoundsDummyScreen(
 fun SoundsDummyScreenPreview() {
     SweckerTheme {
         SoundsDummyScreen(
-            viewModel = SettingsViewModel(SettingsRepositoryPreview())
+            settings = Settings(),
+            ui = SettingsUI(),
+            onEvent = {}
         )
     }
 }

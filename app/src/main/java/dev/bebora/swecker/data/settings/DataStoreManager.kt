@@ -79,8 +79,8 @@ class DataStoreManager @Inject constructor(@ApplicationContext appContext: Conte
 
     override fun getSettings(): Flow<Settings> = settingsDataStore.data.map {
         Settings(
-            name = it[NAME]?:"",
-            username = it[USERNAME]?:"",
+            name = it[NAME]?:"Default name",
+            username = it[USERNAME]?:"@defaultusername",
             palette = Palette.values()[it[PALETTE]?:0],
             darkModeType = DarkModeType.values()[it[DARK_MODE_TYPE]?:0],
             ringtone = Ringtone.values()[it[RINGTONE]?:0],

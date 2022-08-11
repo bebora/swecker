@@ -16,13 +16,7 @@ class SettingsViewModel @Inject constructor(
 ) : ViewModel() {
     val settings = repository.getSettings()
 
-    var openAccountSettings by mutableStateOf(false)
-        private set
-
-    var openSoundsSettings by mutableStateOf(false)
-        private set
-
-    var openThemeSettings by mutableStateOf(false)
+    var uiState by mutableStateOf(SettingsUI())
         private set
 
     fun onEvent(event: SettingsEvent) {
@@ -68,18 +62,31 @@ class SettingsViewModel @Inject constructor(
                 }
             }
             SettingsEvent.CloseSettingsSubsection -> {
-                openAccountSettings = false
-                openSoundsSettings = false
-                openThemeSettings = false
+                uiState = uiState.copy(
+                    openAccountSettings = false,
+                    openSoundsSettings = false,
+                    openThemeSettings = false
+                )
             }
             SettingsEvent.OpenAccountSettings -> {
-                openAccountSettings = true
+                uiState = uiState.copy(
+                    openAccountSettings = true,
+                )
             }
             SettingsEvent.OpenSoundsSettings -> {
-                openSoundsSettings = true
+                uiState = uiState.copy(
+                    openSoundsSettings = true,
+                )
             }
             SettingsEvent.OpenThemeSettings -> {
-                openThemeSettings = true
+                uiState = uiState.copy(
+                    openThemeSettings = true
+                )
+            }
+            SettingsEvent.ToggleExampleAlarmActive -> {
+                uiState = uiState.copy(
+                    exampleAlarmActive = !uiState.exampleAlarmActive
+                )
             }
         }
     }
