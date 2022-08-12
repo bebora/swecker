@@ -19,8 +19,11 @@ sealed class SettingsEvent {
     data class SetTempUsername(val username: String) : SettingsEvent()
     data class SetUsername(val username: String) : SettingsEvent()
 
-    data class SetPalette(val palette: Palette) : SettingsEvent()
+    object OpenEditDarkModeType: SettingsEvent()
+    object DismissEditDarkModeType: SettingsEvent()
     data class SetDarkModeType(val darkModeType: DarkModeType) : SettingsEvent()
+
+    data class SetPalette(val palette: Palette) : SettingsEvent()
     data class SetRingtone(val ringtone: Ringtone) : SettingsEvent()
     data class SetRingtoneVolume(val ringtoneVolume: Int) : SettingsEvent()
     data class SetRingtoneDuration(val ringtoneDuration: RingtoneDuration) : SettingsEvent()

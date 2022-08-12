@@ -80,12 +80,31 @@ class SettingsViewModel @Inject constructor(
                 )
             }
 
-            //TODO setters should update the ui state
+            SettingsEvent.OpenEditDarkModeType -> {
+                uiState = uiState.copy(
+                    showEditDarkModeTypePopup = true
+                )
+                viewModelScope.launch {
+                    uiState = uiState.copy(
+                        currentDarkModeType = settings.first().darkModeType
+                    )
+                }
+            }
+            SettingsEvent.DismissEditDarkModeType -> {
+                uiState = uiState.copy(
+                    showEditDarkModeTypePopup = false
+                )
+            }
             is SettingsEvent.SetDarkModeType -> {
                 viewModelScope.launch {
                     repository.setDarkModeType(event.darkModeType)
                 }
+                uiState = uiState.copy(
+                    showEditDarkModeTypePopup = false
+                )
             }
+
+            //TODO setters should update the ui state
             is SettingsEvent.SetPalette -> {
                 viewModelScope.launch {
                     repository.setPalette(event.palette)

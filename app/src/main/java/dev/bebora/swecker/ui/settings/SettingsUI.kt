@@ -1,5 +1,7 @@
 package dev.bebora.swecker.ui.settings
 
+import dev.bebora.swecker.data.settings.DarkModeType
+
 data class SettingsUI(
     val openAccountSettings: Boolean = false,
     val openSoundsSettings: Boolean = false,
@@ -8,5 +10,7 @@ data class SettingsUI(
     val showEditNamePopup: Boolean = false,
     val currentName: String = "",
     val showEditUsernamePopup: Boolean = false,
-    val currentUsername: String = ""
+    val currentUsername: String = "",
+    val showEditDarkModeTypePopup: Boolean = false,
+    val currentDarkModeType: DarkModeType = DarkModeType.SYSTEM
 )
