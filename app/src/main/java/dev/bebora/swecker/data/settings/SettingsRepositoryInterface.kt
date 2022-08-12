@@ -47,7 +47,7 @@ interface SettingsRepositoryInterface {
     suspend fun setRingtone(ringtone: Ringtone)
     suspend fun setRingtoneVolume(ringtoneVolume: Int)
     suspend fun setRingtoneDuration(ringtoneDuration: RingtoneDuration)
-    suspend fun toggleVibration()
+    suspend fun setVibration(enabled: Boolean)
 
     fun getSettings(): Flow<Settings>
 }

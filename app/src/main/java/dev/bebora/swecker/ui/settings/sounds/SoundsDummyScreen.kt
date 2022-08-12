@@ -91,7 +91,7 @@ fun SoundsDummyScreen(
                 icon = Icons.Outlined.Vibration,
                 checked = settings.vibration
             ) {
-                onEvent(SettingsEvent.ToggleVibration)
+                onEvent(SettingsEvent.SetVibration(!settings.vibration))
             }
         }
     }

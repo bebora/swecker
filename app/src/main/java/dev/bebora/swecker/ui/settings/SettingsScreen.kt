@@ -1,5 +1,6 @@
 package dev.bebora.swecker.ui.settings
 
+import android.app.Application
 import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -72,7 +73,8 @@ fun SettingsScreenPreview() {
             viewModel = SettingsViewModel(
                 repository = DataStoreManager(
                     LocalContext.current
-                )
+                ),
+                application = Application()
             )
         )
     }

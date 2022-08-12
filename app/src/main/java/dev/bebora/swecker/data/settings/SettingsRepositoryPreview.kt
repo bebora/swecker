@@ -25,7 +25,7 @@ class SettingsRepositoryPreview : SettingsRepositoryInterface {
     override suspend fun setRingtoneDuration(ringtoneDuration: RingtoneDuration) {
     }
 
-    override suspend fun toggleVibration() {
+    override suspend fun setVibration(enabled: Boolean) {
     }
 
     override fun getSettings(): Flow<Settings> {

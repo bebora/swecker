@@ -1,6 +1,7 @@
 package dev.bebora.swecker.ui.settings
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Vibration
@@ -30,6 +31,7 @@ fun SettingsSwitch(
             .background(MaterialTheme.colorScheme.surface)
             .height(88.dp)
             .fillMaxWidth()
+            .clickable { onToggle() }
             .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {

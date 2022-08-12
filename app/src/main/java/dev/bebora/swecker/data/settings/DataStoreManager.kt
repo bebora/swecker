@@ -18,6 +18,7 @@ private val Context.dataStore by preferencesDataStore(name = "settings")
 class DataStoreManager @Inject constructor(@ApplicationContext appContext: Context) :
     SettingsRepositoryInterface {
     private val settingsDataStore = appContext.dataStore
+
     companion object {
         val NAME = stringPreferencesKey("name")
         val USERNAME = stringPreferencesKey("username")
@@ -71,22 +72,22 @@ class DataStoreManager @Inject constructor(@ApplicationContext appContext: Conte
         }
     }
 
-    override suspend fun toggleVibration() {
+    override suspend fun setVibration(enabled: Boolean) {
         settingsDataStore.edit {
-            it[VIBRATION] = !(it[VIBRATION] ?: true)
+            it[VIBRATION] = enabled
         }
     }
 
     override fun getSettings(): Flow<Settings> = settingsDataStore.data.map {
         Settings(
-            name = it[NAME]?:"Default name",
-            username = it[USERNAME]?:"@defaultusername",
-            palette = Palette.values()[it[PALETTE]?:0],
-            darkModeType = DarkModeType.values()[it[DARK_MODE_TYPE]?:0],
-            ringtone = Ringtone.values()[it[RINGTONE]?:0],
-            ringtoneDuration = RingtoneDuration.values()[it[RINGTONE_DURATION]?:0],
-            ringtoneVolume = it[RINGTONE_VOLUME]?:75,
-            vibration = it[VIBRATION]?:true,
+            name = it[NAME] ?: "Default name",
+            username = it[USERNAME] ?: "@defaultusername",
+            palette = Palette.values()[it[PALETTE] ?: 0],
+            darkModeType = DarkModeType.values()[it[DARK_MODE_TYPE] ?: 0],
+            ringtone = Ringtone.values()[it[RINGTONE] ?: 0],
+            ringtoneDuration = RingtoneDuration.values()[it[RINGTONE_DURATION] ?: 0],
+            ringtoneVolume = it[RINGTONE_VOLUME] ?: 75,
+            vibration = it[VIBRATION] ?: true,
         )
     }
 }

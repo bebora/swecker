@@ -1,20 +1,23 @@
 package dev.bebora.swecker.ui.settings
 
+import android.app.Application
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.bebora.swecker.data.settings.SettingsRepositoryInterface
+import dev.bebora.swecker.ui.utils.feedbackVibrationEnabled
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+//FIXME Using AndroidViewModel to get the context to make the phone vibrate may be ugly
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
-    private val repository: SettingsRepositoryInterface
-) : ViewModel() {
+    private val repository: SettingsRepositoryInterface, application: Application
+) : AndroidViewModel(application) {
     val settings = repository.getSettings()
 
     var uiState by mutableStateOf(SettingsUI())
@@ -183,9 +186,14 @@ class SettingsViewModel @Inject constructor(
                 }
             }
 
-            SettingsEvent.ToggleVibration -> {
+            is SettingsEvent.SetVibration -> {
                 viewModelScope.launch {
-                    repository.toggleVibration()
+                    repository.setVibration(event.enabled)
+                }
+                if (event.enabled) {
+                    feedbackVibrationEnabled(
+                        getApplication<Application>().applicationContext
+                    )
                 }
             }
             SettingsEvent.CloseSettingsSubsection -> {
