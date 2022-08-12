@@ -27,10 +27,10 @@ import dev.bebora.swecker.ui.theme.SweckerTheme
 fun AlarmCard(
     alarm: Alarm,
     modifier: Modifier = Modifier,
-    onEvent: () -> Unit = {}
+    onEvent: (AlarmBrowserEvent) -> Unit = {}
 ) {
     Card(
-        onClick = onEvent,
+        onClick = { onEvent(AlarmBrowserEvent.AlarmSelected(alarm)) },
         enabled = alarm.enabled,
         modifier = modifier
             .aspectRatio(ratio = 2.85f, matchHeightConstraintsFirst = true)
@@ -52,7 +52,16 @@ fun AlarmCard(
                 )
                 Switch(
                     checked = alarm.enabled,
-                    onCheckedChange = { _ -> onEvent() },
+                    onCheckedChange = {
+                        onEvent(
+                            AlarmBrowserEvent.AlarmUpdated(
+                                alarm = alarm.copy(
+                                    enabled = !alarm.enabled
+                                ),
+                                success = true
+                            )
+                        )
+                    },
                 )
             }
             Row(
@@ -114,12 +123,13 @@ fun AlarmPreview() {
 fun GroupItem(
     modifier: Modifier = Modifier,
     group: Group,
+    firstAlarm: Alarm,
     onEvent: (AlarmBrowserEvent) -> Unit
 ) {
     Row(modifier = modifier
         .fillMaxWidth(1f)
         .background(MaterialTheme.colorScheme.surfaceVariant)
-        .clickable { onEvent(AlarmBrowserEvent.GroupClicked(group.id)) }
+        .clickable { onEvent(AlarmBrowserEvent.GroupSelected(group.id)) }
         .padding(all = 8.dp),
         verticalAlignment = Alignment.CenterVertically) {
         Image(
@@ -150,13 +160,13 @@ fun GroupItem(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = group.alarms.first().name,
+                    text = firstAlarm.name,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.padding(all = 4.dp),
                     style = MaterialTheme.typography.titleMedium
                 )
                 Text(
-                    text = group.alarms.first().date,
+                    text = firstAlarm.date,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     textAlign = TextAlign.Center,
                     modifier = Modifier
@@ -181,6 +191,12 @@ fun GroupItemPreview() {
             alarms = LocalAlarmDataProvider.allAlarms,
             members = null,
             owner = "@me"
+        ), firstAlarm = Alarm(
+            id = "@monesi#1",
+            name = "Alarm test",
+            time = "14:30",
+            date = "mon 7 December",
+            alarmType = AlarmType.PERSONAL
         ),
             onEvent = {})
     }

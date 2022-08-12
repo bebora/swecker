@@ -1,6 +1,8 @@
 package dev.bebora.swecker.ui.alarm_browser
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
@@ -17,14 +19,14 @@ import dev.bebora.swecker.ui.theme.SweckerTheme
 fun AlarmList(
     alarms: List<Alarm>,
     modifier: Modifier = Modifier,
-    onEvent: () -> Unit,
+    onEvent: (AlarmBrowserEvent) -> Unit,
 ) {
     LazyColumn(
         contentPadding = PaddingValues(horizontal = 8.dp, vertical = 8.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
         modifier = Modifier.fillMaxSize()
     ) {
-        items(alarms) { al ->
+        items(items = alarms, key = { al -> al.id }) { al ->
             AlarmCard(alarm = al, modifier = modifier, onEvent = onEvent)
         }
     }
@@ -49,6 +51,7 @@ fun GroupList(
             GroupItem(
                 modifier = modifier,
                 group = group,
+                firstAlarm = group.alarms.first(),
                 onEvent = onEvent
             )
         }

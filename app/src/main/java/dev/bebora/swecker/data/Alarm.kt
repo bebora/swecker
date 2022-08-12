@@ -20,7 +20,8 @@ data class Alarm(
     val time: String,
     val date: String,
     val enableRepetition: Boolean = false,
-    val repetitionDays: List<Day>? = null,
+    val enableChat: Boolean = true,
+    val enabledDays: List<Boolean>? = listOf(false,false,false,false,false,false,false),
     val alarmType: AlarmType
 )
 
@@ -36,8 +37,4 @@ enum class AlarmType{
     PERSONAL,
     GROUP,
     CHANNEL
-}
-
-enum class Day{
-    MON, TUE, WED, THU, FRI, SAT, SUN
 }

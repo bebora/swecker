@@ -9,5 +9,9 @@ interface AlarmRepository {
 
     suspend fun getAlarmById(id: String): Alarm?
 
+    suspend fun getAlarmsByType(alarmType: AlarmType): Flow<List<Alarm>>
+
+    suspend fun updateAlarm(alarm: Alarm)
+
     fun getAllAlarms(): Flow<List<Alarm>>
 }

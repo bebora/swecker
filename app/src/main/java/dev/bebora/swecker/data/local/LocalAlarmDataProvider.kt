@@ -51,7 +51,7 @@ object LocalAlarmDataProvider {
 
     )
 
-    fun getAlarmById(id: String): Alarm {
-        return allAlarms.first { al -> al.id == id }
+    fun getAlarmById(id: String): Alarm? {
+        return allAlarms.firstOrNull { al -> al.id == id }
     }
 }
