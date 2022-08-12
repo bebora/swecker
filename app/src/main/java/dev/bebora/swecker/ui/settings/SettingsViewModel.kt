@@ -151,6 +151,11 @@ class SettingsViewModel @Inject constructor(
                 uiState = uiState.copy(
                     showEditRingtoneVolumePopup = true
                 )
+                viewModelScope.launch {
+                    uiState = uiState.copy(
+                        currentRingtoneVolume = settings.first().ringtoneVolume
+                    )
+                }
             }
             SettingsEvent.DismissEditRingtoneVolume -> {
                 uiState = uiState.copy(
