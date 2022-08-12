@@ -86,7 +86,7 @@ class DataStoreManager @Inject constructor(@ApplicationContext appContext: Conte
             darkModeType = DarkModeType.values()[it[DARK_MODE_TYPE] ?: 0],
             ringtone = Ringtone.values()[it[RINGTONE] ?: 0],
             ringtoneDuration = RingtoneDuration.values()[it[RINGTONE_DURATION] ?: 0],
-            ringtoneVolume = it[RINGTONE_VOLUME] ?: 75,
+            ringtoneVolume = it[RINGTONE_VOLUME] ?: 70,
             vibration = it[VIBRATION] ?: true,
         )
     }

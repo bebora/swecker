@@ -23,6 +23,7 @@ import dev.bebora.swecker.ui.settings.*
 import dev.bebora.swecker.ui.theme.SweckerTheme
 import dev.bebora.swecker.ui.utils.ringtoneDurationToString
 import dev.bebora.swecker.ui.utils.ringtoneToString
+import kotlin.math.roundToInt
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -202,7 +203,7 @@ fun SoundsDummyScreen(
                         onValueChange = {
                             onEvent(
                                 SettingsEvent.SetTempRingtoneVolume(
-                                    (100F * it).toInt()
+                                    (100F * it).roundToInt()
                                 )
                             )
                         },
