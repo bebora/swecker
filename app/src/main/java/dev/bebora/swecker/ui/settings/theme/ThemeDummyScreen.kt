@@ -144,7 +144,7 @@ fun ThemeDummyScreen(
                                 })
                         {
                             RadioButton(
-                                selected = type == ui.currentDarkModeType,
+                                selected = type == settings.darkModeType,
                                 onClick = {})
                             Text(
                                 text = darkModeTypeToString(type = type),

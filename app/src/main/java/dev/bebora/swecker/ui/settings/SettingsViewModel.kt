@@ -84,11 +84,6 @@ class SettingsViewModel @Inject constructor(
                 uiState = uiState.copy(
                     showEditDarkModeTypePopup = true
                 )
-                viewModelScope.launch {
-                    uiState = uiState.copy(
-                        currentDarkModeType = settings.first().darkModeType
-                    )
-                }
             }
             SettingsEvent.DismissEditDarkModeType -> {
                 uiState = uiState.copy(
@@ -104,27 +99,85 @@ class SettingsViewModel @Inject constructor(
                 )
             }
 
+            SettingsEvent.OpenEditRingtone -> {
+                uiState = uiState.copy(
+                    showEditRingtonePopup = true
+                )
+                viewModelScope.launch {
+                    uiState = uiState.copy(
+                        currentRingtone = settings.first().ringtone
+                    )
+                }
+            }
+            SettingsEvent.DismissEditRingtone -> {
+                uiState = uiState.copy(
+                    showEditRingtonePopup = false
+                )
+            }
+            is SettingsEvent.SetTempRingtone -> {
+                uiState = uiState.copy(
+                    currentRingtone = event.ringtone
+                )
+            }
+            is SettingsEvent.SetRingtone -> {
+                viewModelScope.launch {
+                    repository.setRingtone(event.ringtone)
+                }
+                uiState = uiState.copy(
+                    showEditRingtonePopup = false
+                )
+            }
+
+            SettingsEvent.OpenEditRingtoneDuration -> {
+                uiState = uiState.copy(
+                    showEditRingtoneDurationPopup = true
+                )
+            }
+            SettingsEvent.DismissEditRingtoneDuration -> {
+                uiState = uiState.copy(
+                    showEditRingtoneDurationPopup = false
+                )
+            }
+            is SettingsEvent.SetRingtoneDuration -> {
+                viewModelScope.launch {
+                    repository.setRingtoneDuration(event.ringtoneDuration)
+                }
+                uiState = uiState.copy(
+                    showEditRingtoneDurationPopup = false
+                )
+            }
+
+            SettingsEvent.OpenEditRingtoneVolume -> {
+                uiState = uiState.copy(
+                    showEditRingtoneVolumePopup = true
+                )
+            }
+            SettingsEvent.DismissEditRingtoneVolume -> {
+                uiState = uiState.copy(
+                    showEditRingtoneVolumePopup = false
+                )
+            }
+            is SettingsEvent.SetTempRingtoneVolume -> {
+                uiState = uiState.copy(
+                    currentRingtoneVolume = event.ringtoneVolume
+                )
+            }
+            is SettingsEvent.SetRingtoneVolume -> {
+                viewModelScope.launch {
+                    repository.setRingtoneVolume(event.ringtoneVolume)
+                }
+                uiState = uiState.copy(
+                    showEditRingtoneVolumePopup = false
+                )
+            }
+
             //TODO setters should update the ui state
             is SettingsEvent.SetPalette -> {
                 viewModelScope.launch {
                     repository.setPalette(event.palette)
                 }
             }
-            is SettingsEvent.SetRingtone -> {
-                viewModelScope.launch {
-                    repository.setRingtone(event.ringtone)
-                }
-            }
-            is SettingsEvent.SetRingtoneDuration -> {
-                viewModelScope.launch {
-                    repository.setRingtoneDuration(event.ringtoneDuration)
-                }
-            }
-            is SettingsEvent.SetRingtoneVolume -> {
-                viewModelScope.launch {
-                    repository.setRingtoneVolume(event.ringtoneVolume)
-                }
-            }
+
             SettingsEvent.ToggleVibration -> {
                 viewModelScope.launch {
                     repository.toggleVibration()

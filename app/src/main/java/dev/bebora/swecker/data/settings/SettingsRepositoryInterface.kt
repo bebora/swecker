@@ -34,7 +34,7 @@ data class Settings(
     val palette: Palette = Palette.SYSTEM,
     val darkModeType: DarkModeType = DarkModeType.SYSTEM,
     val ringtone: Ringtone = Ringtone.DEFAULT,
-    val ringtoneVolume: Int = 50,
+    val ringtoneVolume: Int = 70,
     val ringtoneDuration: RingtoneDuration = RingtoneDuration.SECONDS_5,
     val vibration: Boolean = true
 )

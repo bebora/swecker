@@ -24,9 +24,21 @@ sealed class SettingsEvent {
     data class SetDarkModeType(val darkModeType: DarkModeType) : SettingsEvent()
 
     data class SetPalette(val palette: Palette) : SettingsEvent()
+
+    object OpenEditRingtone: SettingsEvent()
+    object DismissEditRingtone: SettingsEvent()
+    data class SetTempRingtone(val ringtone: Ringtone) : SettingsEvent()
     data class SetRingtone(val ringtone: Ringtone) : SettingsEvent()
+
+    object OpenEditRingtoneVolume: SettingsEvent()
+    object DismissEditRingtoneVolume: SettingsEvent()
+    data class SetTempRingtoneVolume(val ringtoneVolume: Int) : SettingsEvent()
     data class SetRingtoneVolume(val ringtoneVolume: Int) : SettingsEvent()
+
+    object OpenEditRingtoneDuration: SettingsEvent()
+    object DismissEditRingtoneDuration: SettingsEvent()
     data class SetRingtoneDuration(val ringtoneDuration: RingtoneDuration) : SettingsEvent()
+
     object ToggleVibration : SettingsEvent()
     object OpenAccountSettings : SettingsEvent()
     object OpenSoundsSettings : SettingsEvent()

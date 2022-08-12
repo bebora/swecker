@@ -21,4 +21,13 @@
     <string name="dark_mode_enabled">Enabled</string>
     <string name="dark_mode_dialog_title">Dark mode type</string>
     <string name="dismiss_dialog">Dismiss</string>
+    <string name="ringtone_default">Default</string>
+    <string name="ringtone_variation_1">Variation 1</string>
+    <string name="ringtone_variation_2">Variation 2</string>
+    <string name="confirm_dialog">Confirm</string>
+    <string name="duration_seconds_5">5 seconds</string>
+    <string name="duration_seconds_30">30 seconds</string>
+    <string name="duration_minute_1">1 minute</string>
+    <string name="duration_minutes_5">5 minutes</string>
+    <string name="sounds_ringtone_volume">Volume</string>
 </resources>
