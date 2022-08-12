@@ -30,70 +30,132 @@ fun AccountDummyScreen(
     ui: SettingsUI,
     onEvent: (SettingsEvent) -> Unit
 ) {
-    //TODO let the user change data
+    //TODO manage profile picture
     val sections = listOf(
         SettingsSection(
             title = settings.name,
             stringResource(R.string.account_change_name),
-            Icons.Outlined.Person
+            Icons.Outlined.Person,
+            onClick = { onEvent(SettingsEvent.OpenEditName)}
         ),
         SettingsSection(
             settings.username,
             stringResource(R.string.account_change_username),
-            Icons.Outlined.AlternateEmail
+            Icons.Outlined.AlternateEmail,
+            onClick = { onEvent(SettingsEvent.OpenEditUsername)}
         )
     )
-    Scaffold(topBar = {
-        SmallTopAppBar(
-            title = { Text(text = stringResource(R.string.account_title)) },
-            navigationIcon = {
-                IconButton(onClick = { onEvent(SettingsEvent.CloseSettingsSubsection) }) {
-                    Icon(
-                        Icons.Filled.ArrowBack,
-                        contentDescription = "Go back"
+    Box {
+        Scaffold(topBar = {
+            SmallTopAppBar(
+                title = { Text(text = stringResource(R.string.account_title)) },
+                navigationIcon = {
+                    IconButton(onClick = { onEvent(SettingsEvent.CloseSettingsSubsection) }) {
+                        Icon(
+                            Icons.Filled.ArrowBack,
+                            contentDescription = "Go back"
+                        )
+                    }
+                }
+            )
+        }) {
+            Column(
+                Modifier.padding(it),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Box(
+                    modifier = Modifier
+                        .requiredSize(160.dp)
+                        .clip(CircleShape)
+                        .background(
+                            brush = Brush.verticalGradient(
+                                colors = listOf(
+                                    MaterialTheme.colorScheme.primary,
+                                    MaterialTheme.colorScheme.secondary,
+                                    MaterialTheme.colorScheme.error
+                                )
+                            )
+                        )
+                        .border(
+                            width = 1.dp,
+                            color = MaterialTheme.colorScheme.outline,
+                            shape = RoundedCornerShape(80.dp)
+                        )
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                sections.forEach { section ->
+                    Spacer(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(1.dp)
+                            .background(MaterialTheme.colorScheme.outline)
+                    )
+                    SettingsItem(
+                        title = section.title,
+                        description = section.description ?: "Default description",
+                        icon = section.icon,
+                        onClick = section.onClick
                     )
                 }
             }
-        )
-    }) {
-        Column(
-            Modifier.padding(it),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Box(
-                modifier = Modifier
-                    .requiredSize(160.dp)
-                    .clip(CircleShape)
-                    .background(
-                        brush = Brush.verticalGradient(
-                            colors = listOf(
-                                MaterialTheme.colorScheme.primary,
-                                MaterialTheme.colorScheme.secondary,
-                                MaterialTheme.colorScheme.error
-                            )
-                        )
-                    )
-                    .border(
-                        width = 1.dp,
-                        color = MaterialTheme.colorScheme.outline,
-                        shape = RoundedCornerShape(80.dp)
-                    )
+        }
+        if (ui.showEditNamePopup) {
+            AlertDialog(
+                title = {
+                        Text(text = "Edit name")
+                },
+                onDismissRequest = { onEvent(SettingsEvent.DismissEditName) },
+                confirmButton = {
+                    TextButton(
+                        onClick = {
+                            onEvent(SettingsEvent.SetName(ui.currentName))
+                        }) {
+                        Text(text = "Confirm")
+                    }
+                },
+                dismissButton = {
+                    TextButton(
+                        onClick = {
+                            onEvent(SettingsEvent.DismissEditName)
+                        }) {
+                        Text(text = "Dismiss")
+                    }
+                },
+                text = {
+                    OutlinedTextField(
+                        value = ui.currentName,
+                        onValueChange = { onEvent(SettingsEvent.SetTempName(it)) })
+                }
             )
-            Spacer(modifier = Modifier.height(16.dp))
-            sections.forEach { section ->
-                Spacer(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(1.dp)
-                        .background(MaterialTheme.colorScheme.outline)
-                )
-                SettingsItem(
-                    title = section.title,
-                    description = section.description ?: "Default description",
-                    icon = section.icon,
-                    onClick = section.onClick
-                )
-            }
+        }
+        if (ui.showEditUsernamePopup) {
+            AlertDialog(
+                title = {
+                    Text(text = "Edit username")
+                },
+                onDismissRequest = { onEvent(SettingsEvent.DismissEditUsername) },
+                confirmButton = {
+                    TextButton(
+                        onClick = {
+                            onEvent(SettingsEvent.SetUsername(ui.currentUsername))
+                        }) {
+                        Text(text = "Confirm")
+                    }
+                },
+                dismissButton = {
+                    TextButton(
+                        onClick = {
+                            onEvent(SettingsEvent.DismissEditUsername)
+                        }) {
+                        Text(text = "Dismiss")
+                    }
+                },
+                text = {
+                    OutlinedTextField(
+                        value = ui.currentUsername,
+                        onValueChange = { onEvent(SettingsEvent.SetTempUsername(it)) })
+                }
+            )
         }
     }
 }

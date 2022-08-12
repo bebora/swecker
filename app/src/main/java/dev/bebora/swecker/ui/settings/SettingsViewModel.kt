@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.bebora.swecker.data.settings.SettingsRepositoryInterface
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -21,16 +22,65 @@ class SettingsViewModel @Inject constructor(
 
     fun onEvent(event: SettingsEvent) {
         when (event) {
+            SettingsEvent.OpenEditName -> {
+                uiState = uiState.copy(
+                    showEditNamePopup = true
+                )
+                viewModelScope.launch {
+                    uiState = uiState.copy(
+                        currentName = settings.first().name
+                    )
+                }
+            }
+            SettingsEvent.DismissEditName -> {
+                uiState = uiState.copy(
+                    showEditNamePopup = false
+                )
+            }
+            is SettingsEvent.SetTempName -> {
+                uiState = uiState.copy(
+                    currentName = event.name
+                )
+            }
             is SettingsEvent.SetName -> {
                 viewModelScope.launch {
                     repository.setName(event.name)
                 }
+                uiState = uiState.copy(
+                    showEditNamePopup = false
+                )
+            }
+
+            SettingsEvent.OpenEditUsername -> {
+                uiState = uiState.copy(
+                    showEditUsernamePopup = true
+                )
+                viewModelScope.launch {
+                    uiState = uiState.copy(
+                        currentUsername = settings.first().username
+                    )
+                }
+            }
+            SettingsEvent.DismissEditUsername -> {
+                uiState = uiState.copy(
+                    showEditUsernamePopup = false
+                )
+            }
+            is SettingsEvent.SetTempUsername -> {
+                uiState = uiState.copy(
+                    currentUsername = event.username
+                )
             }
             is SettingsEvent.SetUsername -> {
                 viewModelScope.launch {
                     repository.setUsername(event.username)
                 }
+                uiState = uiState.copy(
+                    showEditUsernamePopup = false
+                )
             }
+
+            //TODO setters should update the ui state
             is SettingsEvent.SetDarkModeType -> {
                 viewModelScope.launch {
                     repository.setDarkModeType(event.darkModeType)

@@ -9,8 +9,16 @@ import dev.bebora.swecker.data.settings.RingtoneDuration
  * Events sent from the View that should update the Settings Model
  */
 sealed class SettingsEvent {
+    object OpenEditName: SettingsEvent()
+    object DismissEditName: SettingsEvent()
+    data class SetTempName(val name: String) : SettingsEvent()
     data class SetName(val name: String) : SettingsEvent()
+
+    object OpenEditUsername: SettingsEvent()
+    object DismissEditUsername: SettingsEvent()
+    data class SetTempUsername(val username: String) : SettingsEvent()
     data class SetUsername(val username: String) : SettingsEvent()
+
     data class SetPalette(val palette: Palette) : SettingsEvent()
     data class SetDarkModeType(val darkModeType: DarkModeType) : SettingsEvent()
     data class SetRingtone(val ringtone: Ringtone) : SettingsEvent()
