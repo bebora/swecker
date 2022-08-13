@@ -205,15 +205,21 @@ class SettingsViewModel @Inject constructor(
             SettingsEvent.OpenAccountSettings -> {
                 uiState = uiState.copy(
                     openAccountSettings = true,
+                    openSoundsSettings = false,
+                    openThemeSettings = false
                 )
             }
             SettingsEvent.OpenSoundsSettings -> {
                 uiState = uiState.copy(
+                    openAccountSettings = false,
                     openSoundsSettings = true,
+                    openThemeSettings = false
                 )
             }
             SettingsEvent.OpenThemeSettings -> {
                 uiState = uiState.copy(
+                    openAccountSettings = false,
+                    openSoundsSettings = false,
                     openThemeSettings = true
                 )
             }

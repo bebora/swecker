@@ -48,7 +48,7 @@ fun AccountDummyScreen(
     Box {
         Scaffold(topBar = {
             SmallTopAppBar(
-                title = { Text(text = stringResource(R.string.account_title)) },
+                title = { Text(text = stringResource(R.string.account_section_title)) },
                 navigationIcon = {
                     IconButton(onClick = { onEvent(SettingsEvent.CloseSettingsSubsection) }) {
                         Icon(

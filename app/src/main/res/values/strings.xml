@@ -9,7 +9,6 @@
     <string name="sounds_section_description">Manage alarm sounds</string>
     <string name="about_section_title">About</string>
     <string name="about_section_description">App information</string>
-    <string name="account_title">Account</string>
     <string name="account_change_name">Tap to change name</string>
     <string name="account_change_username">Tap to change username</string>
     <string name="sounds_ringtone">Ringtone</string>

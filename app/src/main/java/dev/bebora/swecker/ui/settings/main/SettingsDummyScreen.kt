@@ -11,7 +11,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import dev.bebora.swecker.R
 import dev.bebora.swecker.data.settings.Settings
 import dev.bebora.swecker.ui.settings.*
@@ -25,6 +24,7 @@ import dev.bebora.swecker.ui.theme.SweckerTheme
 fun SettingsDummyScreen(
     settings: Settings,
     ui: SettingsUI,
+    modifier: Modifier = Modifier,
     onEvent: (SettingsEvent) -> Unit
 ) {
     val sections = listOf(
@@ -49,19 +49,22 @@ fun SettingsDummyScreen(
             Icons.Outlined.Info
         )
     )
-    Scaffold(topBar = {
-        SmallTopAppBar(
-            title = { Text(text = stringResource(R.string.settings_title)) },
-            navigationIcon = {
-                IconButton(onClick = { /*TODO go back*/ }) {
-                    Icon(
-                        Icons.Filled.ArrowBack,
-                        contentDescription = "Go back"
-                    )
+    Scaffold(
+        topBar = {
+            SmallTopAppBar(
+                title = { Text(text = stringResource(R.string.settings_title)) },
+                navigationIcon = {
+                    IconButton(onClick = { /*TODO go back*/ }) {
+                        Icon(
+                            Icons.Filled.ArrowBack,
+                            contentDescription = "Go back"
+                        )
+                    }
                 }
-            }
-        )
-    }) {
+            )
+        },
+        modifier = modifier
+    ) {
         Column(Modifier.padding(it)) {
             sections.forEach { section ->
                 Spacer(
@@ -72,7 +75,7 @@ fun SettingsDummyScreen(
                 )
                 SettingsItem(
                     title = section.title,
-                    description = section.description?: "Default description",
+                    description = section.description ?: "Default description",
                     icon = section.icon,
                     onClick = section.onClick
                 )
