@@ -22,7 +22,7 @@ class AlarmRepositoryImpl: AlarmRepository {
     }
 
     override suspend fun updateAlarm(alarm: Alarm){
-        TODO("Not yet implemented")
+       LocalAlarmDataProvider.updateAlarm(alarm = alarm)
     }
     override fun getAllAlarms(): Flow<List<Alarm>> = flow {
         emit(LocalAlarmDataProvider.allAlarms)
