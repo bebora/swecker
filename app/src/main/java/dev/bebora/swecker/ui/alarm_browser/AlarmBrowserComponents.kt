@@ -7,6 +7,10 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.AddAlarm
+import androidx.compose.material.icons.outlined.AddAlert
+import androidx.compose.material.icons.outlined.GroupAdd
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -88,7 +92,11 @@ fun AlarmCard(
                     modifier = Modifier.requiredSize(30.dp),
                     imageVector = alarmTypeToIcon(alarm.alarmType, alarm.enabled),
                     contentDescription = alarm.alarmType.toString(),
-                    tint = MaterialTheme.colorScheme.secondary
+                    tint = if (alarm.enabled) {
+                        MaterialTheme.colorScheme.secondary
+                    } else {
+                        MaterialTheme.colorScheme.outlineVariant
+                    }
                 )
             }
         }
@@ -128,8 +136,8 @@ fun GroupItem(
 ) {
     Row(modifier = modifier
         .fillMaxWidth(1f)
-        .background(MaterialTheme.colorScheme.surfaceVariant)
-        .clickable { onEvent(AlarmBrowserEvent.GroupSelected(group.id)) }
+        .background(MaterialTheme.colorScheme.surface)
+        .clickable { onEvent(AlarmBrowserEvent.GroupSelected(group)) }
         .padding(all = 8.dp),
         verticalAlignment = Alignment.CenterVertically) {
         Image(
@@ -203,41 +211,25 @@ fun GroupItemPreview() {
 }
 
 @Composable
-fun SweckerNavBar(
+fun SweckerFab(
     modifier: Modifier = Modifier,
-    alarmBrowserUIState: AlarmBrowserUIState,
-    onEvent: (AlarmBrowserEvent) -> Unit
+    destination: NavBarDestination,
+    onClick: () -> Unit
 ) {
-    val items = listOf("Home", "Personal", "Groups", "Channels")
-
-    NavigationBar(modifier = modifier) {
-        items.forEach { item ->
-            val isSelected =
-                alarmBrowserUIState.selectedDestination == NavBarDestination.valueOf(item.uppercase())
-            NavigationBarItem(
-                icon = { Icon(getNavbarIcon(item, isSelected), contentDescription = item) },
-                label = { Text(item) },
-                selected = isSelected,
-                onClick = { onEvent(AlarmBrowserEvent.NavBarNavigate(NavBarDestination.valueOf(item.uppercase()))) }
+    FloatingActionButton(modifier = modifier, onClick = { onClick() }) {
+        when (destination) {
+            NavBarDestination.HOME, NavBarDestination.PERSONAL -> Icon(
+                imageVector = Icons.Outlined.AddAlarm,
+                contentDescription = null
             )
-        }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Preview(showBackground = true)
-@Composable
-fun NavBarPreview() {
-    val testViewModel = AlarmBrowserViewModel(AlarmRepositoryImpl())
-    val uiState by testViewModel.uiState.collectAsState()
-    SweckerTheme() {
-        Scaffold(bottomBar = {
-            SweckerNavBar(
-                alarmBrowserUIState = uiState,
-                onEvent = { ev -> testViewModel.onEvent(ev) })
-        }) {
-            Box(modifier = Modifier.padding(it)) {
-            }
+            NavBarDestination.GROUPS -> Icon(
+                imageVector = Icons.Outlined.GroupAdd,
+                contentDescription = null
+            )
+            NavBarDestination.CHANNELS -> Icon(
+                imageVector = Icons.Outlined.AddAlert,
+                contentDescription = null
+            )
         }
     }
 }

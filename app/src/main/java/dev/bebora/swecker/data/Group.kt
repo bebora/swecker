@@ -4,7 +4,7 @@ package dev.bebora.swecker.data
 data class Group(
     val id: Long,
     val name: String,
-    val alarms: List<Alarm>,
-    val members: List<Contact>?,
+    val alarms: List<Alarm> = emptyList(),
+    val members: List<Contact>? = emptyList(),
     val owner: String,
 )
