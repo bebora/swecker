@@ -32,7 +32,7 @@ class SettingsRepositoryPreview : SettingsRepositoryInterface {
         val previewSettings = Settings(
             name = "Example",
             username = "@me",
-            palette = Palette.SYSTEM,
+            palette = Palette.VIOLET,
             darkModeType = DarkModeType.SYSTEM,
             ringtone = Ringtone.DEFAULT,
             ringtoneDuration = RingtoneDuration.SECONDS_5,

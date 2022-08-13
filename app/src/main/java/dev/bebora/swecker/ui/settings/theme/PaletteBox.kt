@@ -6,6 +6,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.AutoAwesome
 import androidx.compose.material.icons.outlined.Done
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.Icon
@@ -23,6 +24,7 @@ fun PaletteBox(
     colorScheme: ColorScheme,
     selected: Boolean,
     modifier: Modifier = Modifier,
+    showMagicIcon: Boolean = false,
     onEvent: () -> Unit
 ) {
     Box(contentAlignment = Alignment.Center,
@@ -39,8 +41,18 @@ fun PaletteBox(
                 modifier = Modifier
                     .fillMaxWidth()
                     .fillMaxHeight(.5f)
-                    .background(colorScheme.primary)
-            )
+                    .background(colorScheme.primary),
+                contentAlignment = Alignment.TopEnd
+            ) {
+                if (showMagicIcon) {
+                    Icon(
+                        imageVector = Icons.Outlined.AutoAwesome,
+                        contentDescription = "Magic dynamic theme",
+                        modifier = Modifier.padding(8.dp),
+                        tint = colorScheme.onPrimary
+                    )
+                }
+            }
             Row(
                 modifier = Modifier
                     .fillMaxSize()
@@ -77,11 +89,23 @@ fun PaletteBox(
 
 @Preview(showBackground = false, widthDp = 100, heightDp = 100)
 @Composable
-fun PaletteBoxPreview() {
+fun RegularPaletteBoxPreview() {
     SweckerTheme {
         PaletteBox(
             colorScheme = MaterialTheme.colorScheme,
             selected = true
+        ) {}
+    }
+}
+
+@Preview(showBackground = false, widthDp = 100, heightDp = 100)
+@Composable
+fun MagicPaletteBoxPreview() {
+    SweckerTheme {
+        PaletteBox(
+            colorScheme = MaterialTheme.colorScheme,
+            selected = true,
+            showMagicIcon = true
         ) {}
     }
 }

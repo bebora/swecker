@@ -179,7 +179,6 @@ class SettingsViewModel @Inject constructor(
                 )
             }
 
-            //TODO setters should update the ui state
             is SettingsEvent.SetPalette -> {
                 viewModelScope.launch {
                     repository.setPalette(event.palette)

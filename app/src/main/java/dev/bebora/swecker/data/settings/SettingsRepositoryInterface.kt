@@ -16,9 +16,9 @@ enum class Ringtone {
 
 enum class Palette {
     SYSTEM,
-    VARIATION1,
-    VARIATION2,
-    VARIATION3
+    VIOLET,
+    GREEN,
+    YELLOW
 }
 
 enum class RingtoneDuration {
@@ -31,7 +31,7 @@ enum class RingtoneDuration {
 data class Settings(
     val name: String = "Example",
     val username: String = "@me",
-    val palette: Palette = Palette.SYSTEM,
+    val palette: Palette = Palette.VIOLET,
     val darkModeType: DarkModeType = DarkModeType.SYSTEM,
     val ringtone: Ringtone = Ringtone.DEFAULT,
     val ringtoneVolume: Int = 70,

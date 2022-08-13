@@ -16,10 +16,10 @@
     <string name="sounds_ringtone_duration">Ringtone duration</string>
     <string name="sounds_volume">Volume</string>
     <string name="sounds_vibration">Vibration</string>
-    <string name="dark_mode_system">Follow system</string>
+    <string name="dark_mode_system">Use system settings</string>
     <string name="dark_mode_disabled">Disabled</string>
     <string name="dark_mode_enabled">Enabled</string>
-    <string name="dark_mode_dialog_title">Dark mode type</string>
+    <string name="dark_mode_dialog_title">Dark mode</string>
     <string name="dismiss_dialog">Dismiss</string>
     <string name="ringtone_default">Default</string>
     <string name="ringtone_variation_1">Variation 1</string>

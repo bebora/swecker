@@ -1,5 +1,6 @@
 package dev.bebora.swecker.ui.settings.theme
 
+import android.os.Build
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -12,7 +13,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -26,10 +26,10 @@ import dev.bebora.swecker.ui.alarm_browser.AlarmCard
 import dev.bebora.swecker.ui.settings.SettingsEvent
 import dev.bebora.swecker.ui.settings.SettingsItem
 import dev.bebora.swecker.ui.settings.SettingsUI
-import dev.bebora.swecker.ui.theme.DarkColors
-import dev.bebora.swecker.ui.theme.LightColors
-import dev.bebora.swecker.ui.theme.SweckerTheme
+import dev.bebora.swecker.ui.theme.*
 import dev.bebora.swecker.ui.utils.darkModeTypeToString
+import dev.bebora.swecker.ui.utils.paletteToColorSchemes
+import dev.bebora.swecker.ui.utils.useDarkPalette
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -38,21 +38,16 @@ fun ThemeDummyScreen(
     ui: SettingsUI,
     onEvent: (SettingsEvent) -> Unit
 ) {
-    //TODO add real themes
-    val palettes = listOf(
-        PaletteData(
-            colorScheme = dynamicDarkColorScheme(LocalContext.current),
-            onClick = { onEvent(SettingsEvent.SetPalette(Palette.SYSTEM)) }),
-        PaletteData(
-            colorScheme = DarkColors,
-            onClick = { onEvent(SettingsEvent.SetPalette(Palette.VARIATION1)) }),
-        PaletteData(
-            colorScheme = LightColors,
-            onClick = { onEvent(SettingsEvent.SetPalette(Palette.VARIATION2)) }),
-        PaletteData(
-            colorScheme = DarkColors,
-            onClick = { onEvent(SettingsEvent.SetPalette(Palette.VARIATION3)) })
+    val darkModeEnabled = useDarkPalette(type = settings.darkModeType)
+    val palettes = mutableListOf(
+        Palette.VIOLET,
+        Palette.GREEN,
+        Palette.YELLOW
     )
+    // Dynamic theme may crash the app on older versions
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        palettes.add(Palette.SYSTEM)
+    }
 
     Box {
         Scaffold(topBar = {
@@ -70,8 +65,7 @@ fun ThemeDummyScreen(
         }) {
             Column(
                 Modifier
-                    .padding(it)
-                    .padding(horizontal = 16.dp),
+                    .padding(it),
                 horizontalAlignment = Alignment.Start
             ) {
                 AlarmCard(
@@ -83,29 +77,35 @@ fun ThemeDummyScreen(
                         date = "9th August",
                         time = "12:14"
                     ),
+                    modifier = Modifier.padding(horizontal = 16.dp),
                     onEvent = { onEvent(SettingsEvent.ToggleExampleAlarmActive) }
                 )
                 Spacer(modifier = Modifier.height(16.dp))
-                Text(text = "Palette", style = MaterialTheme.typography.headlineSmall)
+                Text(
+                    text = "Palette",
+                    style = MaterialTheme.typography.headlineSmall,
+                    modifier = Modifier.padding(horizontal = 16.dp)
+                )
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(100.dp),
+                        .padding(vertical = 16.dp),
                     horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
                     //TODO remove hardcoded values for width and height
-                    palettes.forEachIndexed { idx, palette ->
+                    palettes.forEach { palette ->
+                        val schemesWrapper = paletteToColorSchemes(palette = palette)
                         PaletteBox(
-                            colorScheme = palette.colorScheme,
+                            colorScheme = if (darkModeEnabled) schemesWrapper.darkColorScheme else schemesWrapper.lightColorScheme,
                             modifier = Modifier
                                 .width(80.dp)
                                 .height(80.dp)
                                 .clickable { },
-                            selected = settings.palette.ordinal == idx //TODO this logic may break if the Enum order is not mantained
-                        ) { palette.onClick() }
+                            selected = settings.palette == palette,
+                            showMagicIcon = palette == Palette.SYSTEM
+                        ) { onEvent(SettingsEvent.SetPalette(palette = palette)) }
                     }
                 }
-                Spacer(modifier = Modifier.height(16.dp))
                 SettingsItem(
                     title = stringResource(R.string.dark_mode_dialog_title),
                     description = darkModeTypeToString(type = settings.darkModeType),
