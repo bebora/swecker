@@ -21,7 +21,7 @@ data class Alarm(
     val date: String,
     val enableRepetition: Boolean = false,
     val enableChat: Boolean = true,
-    val enabledDays: List<Boolean>? = listOf(false,false,false,false,false,false,false),
+    val enabledDays: List<Boolean> = listOf(false,false,false,false,false,false,false),
     val alarmType: AlarmType
 )
 
