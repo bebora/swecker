@@ -5,6 +5,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.outlined.DarkMode
@@ -13,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -36,6 +39,7 @@ import dev.bebora.swecker.ui.utils.useDarkPalette
 fun ThemeDummyScreen(
     settings: Settings,
     ui: SettingsUI,
+    modifier: Modifier = Modifier,
     onEvent: (SettingsEvent) -> Unit
 ) {
     val darkModeEnabled = useDarkPalette(type = settings.darkModeType)
@@ -49,8 +53,11 @@ fun ThemeDummyScreen(
         palettes.add(Palette.SYSTEM)
     }
 
-    Box {
-        Scaffold(topBar = {
+    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
+
+    Scaffold(
+        modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        topBar = {
             SmallTopAppBar(
                 title = { Text(text = stringResource(R.string.theme_section_title)) },
                 navigationIcon = {
@@ -60,61 +67,63 @@ fun ThemeDummyScreen(
                             contentDescription = "Go back"
                         )
                     }
-                }
+                },
+                scrollBehavior = scrollBehavior
             )
-        }) {
-            Column(
-                Modifier
-                    .padding(it),
-                horizontalAlignment = Alignment.Start
+        },
+    ) {
+        Column(
+            modifier = Modifier
+                .padding(it)
+                .verticalScroll(state = rememberScrollState()),
+            horizontalAlignment = Alignment.Start
+        ) {
+            AlarmCard(
+                alarm = Alarm(
+                    id = "fakeid",
+                    enabled = ui.exampleAlarmActive,
+                    name = "Example alarm",
+                    alarmType = AlarmType.PERSONAL,
+                    date = "9th August",
+                    time = "12:14"
+                ),
+                modifier = Modifier.padding(horizontal = 16.dp),
+                onEvent = { onEvent(SettingsEvent.ToggleExampleAlarmActive) }
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            Text(
+                text = "Palette",
+                style = MaterialTheme.typography.headlineSmall,
+                modifier = Modifier.padding(horizontal = 16.dp)
+            )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 16.dp),
+                horizontalArrangement = Arrangement.SpaceEvenly
             ) {
-                AlarmCard(
-                    alarm = Alarm(
-                        id = "fakeid",
-                        enabled = ui.exampleAlarmActive,
-                        name = "Example alarm",
-                        alarmType = AlarmType.PERSONAL,
-                        date = "9th August",
-                        time = "12:14"
-                    ),
-                    modifier = Modifier.padding(horizontal = 16.dp),
-                    onEvent = { onEvent(SettingsEvent.ToggleExampleAlarmActive) }
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-                Text(
-                    text = "Palette",
-                    style = MaterialTheme.typography.headlineSmall,
-                    modifier = Modifier.padding(horizontal = 16.dp)
-                )
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 16.dp),
-                    horizontalArrangement = Arrangement.SpaceEvenly
-                ) {
-                    //TODO remove hardcoded values for width and height
-                    palettes.forEach { palette ->
-                        val schemesWrapper = paletteToColorSchemes(palette = palette)
-                        PaletteBox(
-                            colorScheme = if (darkModeEnabled) schemesWrapper.darkColorScheme else schemesWrapper.lightColorScheme,
-                            modifier = Modifier
-                                .width(80.dp)
-                                .height(80.dp)
-                                .clickable { },
-                            selected = settings.palette == palette,
-                            showMagicIcon = palette == Palette.SYSTEM
-                        ) { onEvent(SettingsEvent.SetPalette(palette = palette)) }
-                    }
+                //TODO remove hardcoded values for width and height
+                palettes.forEach { palette ->
+                    val schemesWrapper = paletteToColorSchemes(palette = palette)
+                    PaletteBox(
+                        colorScheme = if (darkModeEnabled) schemesWrapper.darkColorScheme else schemesWrapper.lightColorScheme,
+                        modifier = Modifier
+                            .width(80.dp)
+                            .height(80.dp)
+                            .clickable { },
+                        selected = settings.palette == palette,
+                        showMagicIcon = palette == Palette.SYSTEM
+                    ) { onEvent(SettingsEvent.SetPalette(palette = palette)) }
                 }
-                SettingsItem(
-                    title = stringResource(R.string.dark_mode_dialog_title),
-                    description = darkModeTypeToString(type = settings.darkModeType),
-                    icon = Icons.Outlined.DarkMode
-                ) {
-                    onEvent(SettingsEvent.OpenEditDarkModeType)
-                }
-
             }
+            SettingsItem(
+                title = stringResource(R.string.dark_mode_dialog_title),
+                description = darkModeTypeToString(type = settings.darkModeType),
+                icon = Icons.Outlined.DarkMode
+            ) {
+                onEvent(SettingsEvent.OpenEditDarkModeType)
+            }
+
         }
     }
 

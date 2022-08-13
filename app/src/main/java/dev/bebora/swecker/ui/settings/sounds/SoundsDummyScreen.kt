@@ -5,6 +5,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.outlined.*
@@ -12,6 +14,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -30,6 +33,7 @@ import kotlin.math.roundToInt
 fun SoundsDummyScreen(
     settings: Settings,
     ui: SettingsUI,
+    modifier: Modifier = Modifier,
     onEvent: (SettingsEvent) -> Unit
 ) {
     val sections = listOf(
@@ -52,20 +56,31 @@ fun SoundsDummyScreen(
             onClick = { onEvent(SettingsEvent.OpenEditRingtoneVolume) }
         )
     )
-    Scaffold(topBar = {
-        SmallTopAppBar(
-            title = { Text(text = stringResource(id = R.string.sounds_section_title)) },
-            navigationIcon = {
-                IconButton(onClick = { onEvent(SettingsEvent.CloseSettingsSubsection) }) {
-                    Icon(
-                        Icons.Filled.ArrowBack,
-                        contentDescription = "Go back"
-                    )
-                }
-            }
-        )
-    }) {
-        Column(Modifier.padding(it)) {
+
+    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
+
+    Scaffold(
+        modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        topBar = {
+            SmallTopAppBar(
+                title = { Text(text = stringResource(id = R.string.sounds_section_title)) },
+                navigationIcon = {
+                    IconButton(onClick = { onEvent(SettingsEvent.CloseSettingsSubsection) }) {
+                        Icon(
+                            Icons.Filled.ArrowBack,
+                            contentDescription = "Go back"
+                        )
+                    }
+                },
+                scrollBehavior = scrollBehavior
+            )
+        },
+    ) {
+        Column(
+            modifier = Modifier
+                .padding(it)
+                .verticalScroll(state = rememberScrollState()),
+        ) {
             sections.forEach { section ->
                 Spacer(
                     modifier = Modifier
