@@ -216,10 +216,10 @@ fun SweckerTopAppBar(
             actions = {
             })
     } else {
-        if (uiState.selectedGroup != null) {
+        if (uiState.isGroupOpen) {
             SweckerGroupTopAppBar(
                 colors = colors,
-                group = uiState.selectedGroup,
+                group = uiState.selectedGroup!!,
                 onEvent = onEvent
             ) {}
         } else {
