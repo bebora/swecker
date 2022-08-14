@@ -7,6 +7,8 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import dev.bebora.swecker.data.AlarmRepository
 import dev.bebora.swecker.data.AlarmRepositoryImpl
+import dev.bebora.swecker.data.service.AccountService
+import dev.bebora.swecker.data.service.impl.AccountServiceImpl
 import dev.bebora.swecker.data.settings.SettingsRepositoryInterface
 import dev.bebora.swecker.data.settings.DataStoreManager
 import javax.inject.Singleton
@@ -25,5 +27,11 @@ object AppModule {
     @Singleton
     fun provideAlarmRepository() : AlarmRepository {
         return AlarmRepositoryImpl()
+    }
+
+    @Provides
+    @Singleton
+    fun provideAccountService(): AccountService {
+        return AccountServiceImpl()
     }
 }
