@@ -29,6 +29,34 @@ object LocalAlarmDataProvider {
             name = "Test!",
             time = "4:40",
             date = "mon 31 December",
+            group = Group(
+                1,
+                "Wanda the group",
+                members = listOf(
+                    Contact(
+                        name = "Paul",
+                        tag = "@theRealPaul",
+                    )
+                ),
+                owner = "@nemosai"
+            ),
+            alarmType = AlarmType.GROUP
+        ),Alarm(
+            id = "@nemosai#10",
+            name = "Group alarms!",
+            time = "4:40",
+            date = "mon 31 December",
+            group = Group(
+                1,
+                "Wanda the group",
+                members = listOf(
+                    Contact(
+                        name = "Paul",
+                        tag = "@theRealPaul",
+                    )
+                ),
+                owner = "@nemosai"
+            ),
             alarmType = AlarmType.GROUP
         ), Alarm(
             id = "@nemosi#4",
@@ -64,21 +92,21 @@ object LocalAlarmDataProvider {
                     tag = "@theRealPaul",
                 )
             ),
-            alarms = allAlarms.filter { al -> al.alarmType == AlarmType.GROUP},
+            alarms = allAlarms.filter { al -> al.alarmType == AlarmType.GROUP },
             owner = "@me"
         ),
         Group(
             2,
             "Another group",
             members = null,
-            alarms = allAlarms.filter { al -> al.alarmType == AlarmType.GROUP},
+            alarms = allAlarms.filter { al -> al.alarmType == AlarmType.GROUP },
             owner = "@you"
         ),
         Group(
             3,
             "A third group! Very long title",
             members = null,
-            alarms = allAlarms.filter { al -> al.alarmType == AlarmType.GROUP},
+            alarms = allAlarms.filter { al -> al.alarmType == AlarmType.GROUP },
             owner = "@you"
         ),
     )
@@ -87,7 +115,7 @@ object LocalAlarmDataProvider {
         return allAlarms.firstOrNull { al -> al.id == id }
     }
 
-    fun updateAlarm(alarm: Alarm){
-        allAlarms.replaceAll { al -> if(al.id == alarm.id) alarm else al }
+    fun updateAlarm(alarm: Alarm) {
+        allAlarms.replaceAll { al -> if (al.id == alarm.id) alarm else al }
     }
 }

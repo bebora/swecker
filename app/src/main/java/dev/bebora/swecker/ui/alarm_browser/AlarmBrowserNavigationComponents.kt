@@ -194,7 +194,7 @@ fun SweckerGroupTopAppBar(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SweckerTopAppBar(
+fun SweckerDetailsAppBar(
     modifier: Modifier = Modifier,
     uiState: AlarmBrowserUIState,
     colors: TopAppBarColors,
@@ -215,21 +215,31 @@ fun SweckerTopAppBar(
             },
             actions = {
             })
-    } else {
-        if (uiState.isGroupOpen) {
-            SweckerGroupTopAppBar(
-                colors = colors,
-                group = uiState.selectedGroup!!,
-                onEvent = onEvent
-            ) {}
-        } else {
-            SweckerHomeTopAppBar(
-                navigationAction = { /*TODO*/ },
-                colors = colors,
-                searchAction = { /*TODO*/ },
-                title = uiState.selectedDestination.toString().lowercase()
-                    .replaceFirstChar { it.uppercase() }
-            )
-        }
+    } else if (uiState.isGroupOpen) {
+        SweckerGroupTopAppBar(
+            colors = colors,
+            group = uiState.selectedGroup!!,
+            onEvent = onEvent
+        ) {}
+    }
+}
+
+
+@Composable
+fun SweckerTopAppBar(
+    modifier: Modifier = Modifier,
+    uiState: AlarmBrowserUIState,
+    colors: TopAppBarColors,
+    onEvent: (AlarmBrowserEvent) -> Unit,
+) {
+    SweckerDetailsAppBar(modifier = modifier, uiState = uiState, colors = colors, onEvent = onEvent)
+    if (!uiState.isGroupOpen && !uiState.isDetailsOpen) {
+        SweckerHomeTopAppBar(
+            navigationAction = { /*TODO*/ },
+            colors = colors,
+            searchAction = { /*TODO*/ },
+            title = uiState.selectedDestination.toString().lowercase()
+                .replaceFirstChar { it.uppercase() }
+        )
     }
 }

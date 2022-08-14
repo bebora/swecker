@@ -40,22 +40,25 @@ class AlarmBrowserViewModel @Inject constructor(
                     _uiState.value = AlarmBrowserUIState(error = ex.message)
                 }
                 .collect { alarms ->
+                    val curState = _uiState.value
                     _uiState.value = _uiState
                         .value.copy(
-                            alarms = alarms
+                            alarms = alarms,
+                            filteredAlarms = filterAlarms(
+                                alarms = alarms,
+                                selectedDestination = curState.selectedDestination,
+                                selectedGroup = curState.selectedGroup,
+                                searchKey = curState.searchKey
+                            )
                         )
                 }
         }
     }
 
+    //TODO move selection logic to repository
     fun onEvent(event: AlarmBrowserEvent) {
         when (event) {
             is AlarmBrowserEvent.NavBarNavigate -> {
-                var filteredAlarm: List<Alarm>? = null
-                if (event.destination == NavBarDestination.PERSONAL) {
-                    filteredAlarm =
-                        _uiState.value.alarms.filter { al -> al.alarmType == AlarmType.PERSONAL }
-                }
                 _uiState.value = _uiState
                     .value.copy(
                         selectedDestination = event.destination,
@@ -63,15 +66,28 @@ class AlarmBrowserViewModel @Inject constructor(
                         isGroupOpen = false,
                         selectedAlarm = null,
                         selectedGroup = null,
-                        filteredAlarms = filteredAlarm
+                        filteredAlarms = filterAlarms(
+                            alarms = _uiState.value.alarms,
+                            selectedGroup = null,
+                            selectedDestination = event.destination,
+                            searchKey = ""
+                        ),
+                        searchKey = ""
                     )
             }
 
             is AlarmBrowserEvent.AlarmUpdated -> {
+                val selectedAlarm = _uiState.value.selectedAlarm
+                var isDetailsOpen = _uiState.value.isDetailsOpen
+
+                if (selectedAlarm?.id.equals(event.alarm.id)) {
+                    isDetailsOpen = false
+                }
+
                 _uiState.value = _uiState
                     .value.copy(
-                        selectedAlarm = null,
-                        isDetailsOpen = false
+                        selectedAlarm = selectedAlarm,
+                        isDetailsOpen = isDetailsOpen
                     )
                 if (event.success) {
                     viewModelScope.launch {
@@ -91,7 +107,7 @@ class AlarmBrowserViewModel @Inject constructor(
                 _uiState.value = _uiState
                     .value.copy(
                         selectedAlarm = event.alarm,
-                        isDetailsOpen = true
+                        isDetailsOpen = event.alarm.alarmType == AlarmType.PERSONAL
                     )
             }
 
@@ -101,7 +117,12 @@ class AlarmBrowserViewModel @Inject constructor(
                     .value.copy(
                         selectedGroup = event.group,
                         selectedAlarm = null,
-                        filteredAlarms = event.group.alarms,
+                        filteredAlarms = filterAlarms(
+                            _uiState.value.alarms,
+                            NavBarDestination.GROUPS,
+                            "",
+                            event.group
+                        ),
                         isDetailsOpen = false,
                         isGroupOpen = true
                     )
@@ -117,14 +138,55 @@ class AlarmBrowserViewModel @Inject constructor(
                     _uiState.value = _uiState
                         .value.copy(
                             isGroupOpen = false,
-                            filteredAlarms = emptyList()
+                            filteredAlarms = null
                         )
                 }
+            }
+
+            //TODO add group search
+            is AlarmBrowserEvent.Search -> {
+                val curState = _uiState.value
+                _uiState.value = _uiState
+                    .value.copy(
+                        searchKey = event.key,
+                        filteredAlarms = filterAlarms(
+                            alarms = curState.alarms,
+                            selectedDestination = curState.selectedDestination,
+                            searchKey = event.key,
+                            selectedGroup = curState.selectedGroup
+                        )
+                    )
             }
 
             else -> {}
 
         }
+    }
+
+    private fun filterAlarms(
+        alarms: List<Alarm>,
+        selectedDestination: NavBarDestination,
+        searchKey: String = "",
+        selectedGroup: Group?
+    ): List<Alarm>? {
+        var res: List<Alarm>? = null
+
+        when (selectedDestination) {
+            NavBarDestination.PERSONAL -> res =
+                alarms.filter { al -> al.alarmType == AlarmType.PERSONAL }
+            NavBarDestination.HOME -> res = alarms
+            else -> {}
+        }
+
+        if (selectedGroup != null) {
+            res = alarms.filter { al -> al.group?.id == selectedGroup.id }
+        }
+
+        if (searchKey.isNotEmpty()) {
+            res = res?.filter { al -> al.name.contains(searchKey) }
+        }
+
+        return res
     }
 }
 
@@ -137,6 +199,8 @@ data class AlarmBrowserUIState(
     val selectedGroup: Group? = null,
     val isDetailsOpen: Boolean = false,
     val isGroupOpen: Boolean = false,
+    val isSearchActive: Boolean = false,
+    val searchKey: String = String(),
     val error: String? = "",
     val selectedDestination: NavBarDestination = NavBarDestination.HOME,
 )
