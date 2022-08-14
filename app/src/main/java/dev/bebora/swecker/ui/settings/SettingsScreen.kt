@@ -25,7 +25,8 @@ import dev.bebora.swecker.ui.theme.SweckerTheme
 
 @Composable
 fun SettingsScreen(
-    viewModel: SettingsViewModel = hiltViewModel()
+    viewModel: SettingsViewModel = hiltViewModel(),
+    onNavigate: (String) -> Unit = {}
 ) {
     val settingsState by viewModel.settings.collectAsState(initial = Settings())
     //TODO find a way to prevent wrong UI settings from appearing (look at collectAsState with wrong initial value)
@@ -67,7 +68,8 @@ fun SettingsScreen(
                     SettingsDummyScreen(
                         settings = settingsState,
                         ui = viewModel.uiState,
-                        onEvent = viewModel::onEvent
+                        onEvent = viewModel::onEvent,
+                        onNavigate = onNavigate
                     )
                 }
             } else {
@@ -76,7 +78,8 @@ fun SettingsScreen(
                         settings = settingsState,
                         ui = viewModel.uiState,
                         onEvent = viewModel::onEvent,
-                        modifier = Modifier.weight(1f)
+                        modifier = Modifier.weight(1f),
+                        onNavigate = onNavigate
                     )
                     Box(modifier = Modifier.weight(1f)) {
                         if (viewModel.uiState.openAccountSettings) {

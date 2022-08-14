@@ -1,0 +1,40 @@
+package dev.bebora.swecker.ui
+
+import androidx.compose.material3.Surface
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import dev.bebora.swecker.SETTINGS
+import dev.bebora.swecker.data.settings.Settings
+import dev.bebora.swecker.ui.login.LoginScreen
+import dev.bebora.swecker.ui.settings.SettingsScreen
+import dev.bebora.swecker.ui.settings.SettingsViewModel
+import dev.bebora.swecker.ui.theme.SettingsAwareTheme
+
+@Composable
+fun SweckerNavigation(
+    settingsViewModel: SettingsViewModel = hiltViewModel()
+) {
+    val settingsState by settingsViewModel.settings.collectAsState(initial = Settings())
+    SettingsAwareTheme(
+        darkModeType = settingsState.darkModeType,
+        palette = settingsState.palette
+    ) {
+        // Surface is used as a hack to prevent the screen from blinking during navigation https://stackoverflow.com/a/71889434
+        Surface {
+            val navController = rememberNavController()
+            NavHost(navController, startDestination = SETTINGS) {
+                composable("settings") { backStackEntry ->
+                    SettingsScreen(onNavigate = { navController.navigate(it) })
+                }
+                composable("login") { backStackEntry ->
+                    LoginScreen(onNavigate = { navController.navigate(it) })
+                }
+            }
+        }
+    }
+}

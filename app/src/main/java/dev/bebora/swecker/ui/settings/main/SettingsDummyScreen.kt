@@ -14,6 +14,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import dev.bebora.swecker.LOGIN
 import dev.bebora.swecker.R
 import dev.bebora.swecker.data.settings.Settings
 import dev.bebora.swecker.ui.settings.*
@@ -28,7 +29,8 @@ fun SettingsDummyScreen(
     settings: Settings,
     ui: SettingsUI,
     modifier: Modifier = Modifier,
-    onEvent: (SettingsEvent) -> Unit
+    onEvent: (SettingsEvent) -> Unit,
+    onNavigate: (String) -> Unit
 ) {
     val sections = listOf(
         SettingsSection(
@@ -50,7 +52,9 @@ fun SettingsDummyScreen(
             stringResource(R.string.about_section_title),
             stringResource(R.string.about_section_description),
             Icons.Outlined.Info
-        )
+        ) {
+            onNavigate(LOGIN)
+        }
     )
 
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
@@ -102,7 +106,8 @@ fun SettingsDummyScreenPreview() {
         SettingsDummyScreen(
             ui = SettingsUI(),
             settings = Settings(),
-            onEvent = {}
+            onEvent = {},
+            onNavigate = {}
         )
     }
 }

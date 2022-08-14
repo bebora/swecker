@@ -29,11 +29,13 @@ class LoginViewModel @Inject constructor(
                 uiState = uiState.copy(password = event.password)
             }
             is LoginEvent.SignInClick -> {
-                accountService.authenticate(uiState.email, uiState.password) { error ->
-                    if (error == null) {
-                        linkWithEmail()
-                        uiState = uiState.copy(loggedIn = true)
-                    } else onError(error = error)
+                if (uiState.email != "" && uiState.password != "") {
+                    accountService.authenticate(uiState.email, uiState.password) { error ->
+                        if (error == null) {
+                            linkWithEmail()
+                            uiState = uiState.copy(loggedIn = true)
+                        } else onError(error = error)
+                    }
                 }
             }
         }
