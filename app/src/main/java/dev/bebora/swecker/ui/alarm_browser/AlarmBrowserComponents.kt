@@ -11,6 +11,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AddAlarm
 import androidx.compose.material.icons.outlined.AddAlert
 import androidx.compose.material.icons.outlined.GroupAdd
+import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -31,13 +32,17 @@ import dev.bebora.swecker.ui.theme.SweckerTheme
 fun AlarmCard(
     alarm: Alarm,
     modifier: Modifier = Modifier,
+    selected: Boolean = false,
     onEvent: (AlarmBrowserEvent) -> Unit = {}
 ) {
     Card(
         onClick = { onEvent(AlarmBrowserEvent.AlarmSelected(alarm)) },
         enabled = alarm.enabled,
         modifier = modifier
-            .aspectRatio(ratio = 2.85f, matchHeightConstraintsFirst = true)
+            .heightIn(80.dp, 130.dp),
+        elevation = if (selected) CardDefaults.cardElevation(
+            defaultElevation = 16.dp
+        ) else CardDefaults.cardElevation()
     ) {
         Column(
             modifier = Modifier
@@ -208,6 +213,28 @@ fun GroupItemPreview() {
         ),
             onEvent = {})
     }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun AlarmBrowserSearchBar(
+    modifier: Modifier = Modifier,
+    searchKey: String,
+    placeHolderString: String = "",
+    onEvent: (AlarmBrowserEvent) -> Unit
+) {
+    OutlinedTextField(
+        modifier = modifier
+            .wrapContentHeight()
+            .fillMaxWidth(1f),
+        value = searchKey,
+        onValueChange = { searchValue -> onEvent(AlarmBrowserEvent.Search(searchValue)) },
+        placeholder = { Text(placeHolderString) },
+        leadingIcon = { Icon(imageVector = Icons.Outlined.Search, contentDescription = null) },
+        shape = ShapeDefaults.ExtraLarge,
+        singleLine = true,
+        maxLines = 1
+    )
 }
 
 @Composable
