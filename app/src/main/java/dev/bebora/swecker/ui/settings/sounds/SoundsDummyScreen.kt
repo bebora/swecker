@@ -32,7 +32,7 @@ import kotlin.math.roundToInt
 @Composable
 fun SoundsDummyScreen(
     settings: Settings,
-    ui: SettingsUI,
+    ui: SettingsUiState,
     modifier: Modifier = Modifier,
     onEvent: (SettingsEvent) -> Unit
 ) {
@@ -237,7 +237,7 @@ fun SoundsDummyScreenPreview() {
     SweckerTheme {
         SoundsDummyScreen(
             settings = Settings(),
-            ui = SettingsUI(),
+            ui = SettingsUiState(),
             onEvent = {}
         )
     }

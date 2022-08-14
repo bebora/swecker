@@ -28,7 +28,7 @@ import dev.bebora.swecker.data.settings.Settings
 import dev.bebora.swecker.ui.alarm_browser.AlarmCard
 import dev.bebora.swecker.ui.settings.SettingsEvent
 import dev.bebora.swecker.ui.settings.SettingsItem
-import dev.bebora.swecker.ui.settings.SettingsUI
+import dev.bebora.swecker.ui.settings.SettingsUiState
 import dev.bebora.swecker.ui.theme.*
 import dev.bebora.swecker.ui.utils.darkModeTypeToString
 import dev.bebora.swecker.ui.utils.paletteToColorSchemes
@@ -38,7 +38,7 @@ import dev.bebora.swecker.ui.utils.useDarkPalette
 @Composable
 fun ThemeDummyScreen(
     settings: Settings,
-    ui: SettingsUI,
+    ui: SettingsUiState,
     modifier: Modifier = Modifier,
     onEvent: (SettingsEvent) -> Unit
 ) {
@@ -175,7 +175,7 @@ fun ThemeDummyScreenPreview() {
     SweckerTheme {
         ThemeDummyScreen(
             settings = Settings(),
-            ui = SettingsUI(),
+            ui = SettingsUiState(),
             onEvent = {}
         )
     }

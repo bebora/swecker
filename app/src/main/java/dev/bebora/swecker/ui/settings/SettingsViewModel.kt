@@ -7,6 +7,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dev.bebora.swecker.data.service.AccountService
 import dev.bebora.swecker.data.settings.SettingsRepositoryInterface
 import dev.bebora.swecker.ui.utils.feedbackVibrationEnabled
 import kotlinx.coroutines.flow.first
@@ -16,11 +17,12 @@ import javax.inject.Inject
 //FIXME Using AndroidViewModel to get the context to make the phone vibrate may be ugly
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
-    private val repository: SettingsRepositoryInterface, application: Application
+    private val repository: SettingsRepositoryInterface, application: Application,
+    private val accountService: AccountService
 ) : AndroidViewModel(application) {
     val settings = repository.getSettings()
 
-    var uiState by mutableStateOf(SettingsUI())
+    var uiState by mutableStateOf(SettingsUiState())
         private set
 
     fun onEvent(event: SettingsEvent) {
@@ -206,7 +208,10 @@ class SettingsViewModel @Inject constructor(
                 uiState = uiState.copy(
                     openAccountSettings = true,
                     openSoundsSettings = false,
-                    openThemeSettings = false
+                    openThemeSettings = false,
+                    hasUser = accountService.hasUser(),
+                    userId = accountService.getUserId(),
+                    isAnonymous = accountService.isAnonymousUser()
                 )
             }
             SettingsEvent.OpenSoundsSettings -> {

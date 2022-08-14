@@ -21,6 +21,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import dev.bebora.swecker.LOGIN
 import dev.bebora.swecker.R
 import dev.bebora.swecker.data.settings.Settings
 import dev.bebora.swecker.ui.settings.*
@@ -30,9 +31,10 @@ import dev.bebora.swecker.ui.theme.SweckerTheme
 @Composable
 fun AccountDummyScreen(
     settings: Settings,
-    ui: SettingsUI,
+    ui: SettingsUiState,
     modifier: Modifier = Modifier,
-    onEvent: (SettingsEvent) -> Unit
+    onEvent: (SettingsEvent) -> Unit,
+    onNavigate: (String) -> Unit = {}
 ) {
     //TODO manage profile picture
     val sections = listOf(
@@ -95,6 +97,11 @@ fun AccountDummyScreen(
                     )
             )
             Spacer(modifier = Modifier.height(16.dp))
+            Text(text = "Registered to Firebase: " + ui.hasUser.toString(), color = MaterialTheme.colorScheme.error)
+            Spacer(modifier = Modifier.height(16.dp))
+            Text(text = "Is anonymous user: " + ui.isAnonymous.toString(), color = MaterialTheme.colorScheme.error)
+            Spacer(modifier = Modifier.height(16.dp))
+            Text(text = ui.userId, color = MaterialTheme.colorScheme.error)
             sections.forEach { section ->
                 Spacer(
                     modifier = Modifier
@@ -108,6 +115,9 @@ fun AccountDummyScreen(
                     icon = section.icon,
                     onClick = section.onClick
                 )
+            }
+            Button(onClick = { onNavigate(LOGIN) }) {
+                Text(text = stringResource(id = R.string.log_in_button))
             }
         }
     }
@@ -177,7 +187,7 @@ fun AccountDummyScreenPreview() {
     SweckerTheme {
         AccountDummyScreen(
             settings = Settings(),
-            ui = SettingsUI(),
+            ui = SettingsUiState(),
             onEvent = {}
         )
     }

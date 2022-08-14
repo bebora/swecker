@@ -27,7 +27,7 @@ import dev.bebora.swecker.ui.theme.SweckerTheme
 @Composable
 fun SettingsDummyScreen(
     settings: Settings,
-    ui: SettingsUI,
+    ui: SettingsUiState,
     modifier: Modifier = Modifier,
     onEvent: (SettingsEvent) -> Unit,
     onNavigate: (String) -> Unit
@@ -53,7 +53,6 @@ fun SettingsDummyScreen(
             stringResource(R.string.about_section_description),
             Icons.Outlined.Info
         ) {
-            onNavigate(LOGIN)
         }
     )
 
@@ -104,7 +103,7 @@ fun SettingsDummyScreen(
 fun SettingsDummyScreenPreview() {
     SweckerTheme {
         SettingsDummyScreen(
-            ui = SettingsUI(),
+            ui = SettingsUiState(),
             settings = Settings(),
             onEvent = {},
             onNavigate = {}

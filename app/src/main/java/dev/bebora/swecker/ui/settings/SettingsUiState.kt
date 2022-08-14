@@ -3,7 +3,7 @@ package dev.bebora.swecker.ui.settings
 import dev.bebora.swecker.data.settings.Ringtone
 import dev.bebora.swecker.data.settings.RingtoneDuration
 
-data class SettingsUI(
+data class SettingsUiState(
     val openAccountSettings: Boolean = false,
     val openSoundsSettings: Boolean = false,
     val openThemeSettings: Boolean = false,
@@ -24,5 +24,9 @@ data class SettingsUI(
     val currentRingtoneDuration: RingtoneDuration = RingtoneDuration.SECONDS_5,
 
     val showEditRingtoneVolumePopup: Boolean = false,
-    val currentRingtoneVolume: Int = 0
+    val currentRingtoneVolume: Int = 0,
+
+    val hasUser: Boolean = false,
+    val userId: String = "",
+    val isAnonymous: Boolean = true //TODO this shouldn't be updated only when opening account settings
 )

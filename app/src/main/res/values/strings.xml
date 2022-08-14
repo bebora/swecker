@@ -29,4 +29,8 @@
     <string name="duration_minute_1">1 minute</string>
     <string name="duration_minutes_5">5 minutes</string>
     <string name="sounds_ringtone_volume">Volume</string>
+    <string name="password_placeholder">Password</string>
+    <string name="repeat_password_placeholder">Repeat password</string>
+    <string name="sign_up_button">Sign up</string>
+    <string name="log_in_button">Log in</string>
 </resources>

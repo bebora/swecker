@@ -23,6 +23,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import dev.bebora.swecker.SETTINGS
+import dev.bebora.swecker.SIGNUP
 import dev.bebora.swecker.data.service.impl.AccountServiceImpl
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -73,6 +74,11 @@ fun LoginScreen(
             onClick = { onNavigate(SETTINGS) },
         ) {
             Text(text = "Go to settings", style = MaterialTheme.typography.labelSmall)
+        }
+        Button(
+            onClick = { onNavigate(SIGNUP) },
+        ) {
+            Text(text = "Signup", style = MaterialTheme.typography.labelSmall)
         }
     }
 }

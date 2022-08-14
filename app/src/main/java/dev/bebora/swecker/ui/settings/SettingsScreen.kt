@@ -14,6 +14,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import dev.bebora.swecker.data.service.impl.AccountServiceImpl
 import dev.bebora.swecker.data.settings.DataStoreManager
 import dev.bebora.swecker.data.settings.Settings
 import dev.bebora.swecker.ui.settings.account.AccountDummyScreen
@@ -30,7 +31,6 @@ fun SettingsScreen(
 ) {
     val settingsState by viewModel.settings.collectAsState(initial = Settings())
     //TODO find a way to prevent wrong UI settings from appearing (look at collectAsState with wrong initial value)
-    //TODO all dummy screen here should be LazyColumns
     SettingsAwareTheme(
         darkModeType = settingsState.darkModeType,
         palette = settingsState.palette
@@ -44,7 +44,8 @@ fun SettingsScreen(
                     AccountDummyScreen(
                         settings = settingsState,
                         ui = viewModel.uiState,
-                        onEvent = viewModel::onEvent
+                        onEvent = viewModel::onEvent,
+                        onNavigate = { onNavigate(it) }
                     )
                 } else if (viewModel.uiState.openSoundsSettings) {
                     BackHandler {
@@ -89,7 +90,8 @@ fun SettingsScreen(
                             AccountDummyScreen(
                                 settings = settingsState,
                                 ui = viewModel.uiState,
-                                onEvent = viewModel::onEvent
+                                onEvent = viewModel::onEvent,
+                                onNavigate = { onNavigate(it) }
                             )
                         } else if (viewModel.uiState.openSoundsSettings) {
                             BackHandler {
@@ -126,7 +128,8 @@ fun SettingsScreenPreview() {
                 repository = DataStoreManager(
                     LocalContext.current
                 ),
-                application = Application()
+                application = Application(),
+                accountService = AccountServiceImpl()
             )
         )
     }

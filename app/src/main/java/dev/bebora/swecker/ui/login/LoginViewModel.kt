@@ -1,6 +1,5 @@
 package dev.bebora.swecker.ui.login
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -8,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.bebora.swecker.data.service.AccountService
+import dev.bebora.swecker.ui.utils.onError
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -34,24 +34,25 @@ class LoginViewModel @Inject constructor(
                         if (error == null) {
                             linkWithEmail()
                             uiState = uiState.copy(loggedIn = true)
-                        } else onError(error = error)
+                        } else {
+                            onError(error = error)
+                            uiState = uiState.copy(errorMessage = error.localizedMessage?:error.toString())
+                        }
                     }
                 }
             }
         }
     }
 
+    /*
     private val showErrorExceptionHandler = CoroutineExceptionHandler { _, throwable ->
         onError(throwable)
     }
+    */
 
-    private fun onError(error: Throwable) {
-        Log.e("SWECKER-ERR", error.localizedMessage?:error.toString())
-        uiState = uiState.copy(errorMessage = error.localizedMessage?:error.toString())
-    }
 
     private fun linkWithEmail() {
-        viewModelScope.launch(showErrorExceptionHandler) {
+        viewModelScope.launch {
             accountService.linkAccount(uiState.email, uiState.password) { error ->
                 if (error != null) onError(error)
             }
