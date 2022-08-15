@@ -137,11 +137,18 @@ fun GroupItem(
     modifier: Modifier = Modifier,
     group: Group,
     firstAlarm: Alarm,
+    selected: Boolean = false,
     onEvent: (AlarmBrowserEvent) -> Unit
 ) {
     Row(modifier = modifier
         .fillMaxWidth(1f)
-        .background(MaterialTheme.colorScheme.surface)
+        .background(
+            if (!selected) {
+                MaterialTheme.colorScheme.surface
+            } else {
+                MaterialTheme.colorScheme.surfaceVariant
+            }
+        )
         .clickable { onEvent(AlarmBrowserEvent.GroupSelected(group)) }
         .padding(all = 8.dp),
         verticalAlignment = Alignment.CenterVertically) {

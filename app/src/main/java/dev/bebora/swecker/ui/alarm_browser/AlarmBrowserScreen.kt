@@ -57,6 +57,7 @@ fun AlarmListPreview() {
 fun GroupList(
     modifier: Modifier = Modifier,
     groups: List<Group>,
+    selectedGroupId: Long? = null,
     onEvent: (AlarmBrowserEvent) -> Unit,
 ) {
     LazyColumn() {
@@ -64,6 +65,7 @@ fun GroupList(
             GroupItem(
                 modifier = modifier,
                 group = group,
+                selected = selectedGroupId == group.id,
                 firstAlarm = group.alarms.first(),
                 onEvent = onEvent
             )
@@ -71,57 +73,64 @@ fun GroupList(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Preview(showBackground = true)
 @Composable
 fun GroupListPreview() {
     SweckerTheme() {
-        GroupList(groups = listOf(
-            Group(
-                1,
-                "Wanda the group",
-                members = null,
-                alarms = listOf(
-                    Alarm(
-                        id = "@monesi#1",
-                        name = "Alarm test",
-                        time = "14:30",
-                        date = "mon 7 December",
-                        alarmType = AlarmType.PERSONAL
-                    )
+        Scaffold() {
+            GroupList(
+                modifier = Modifier.padding(it),
+                groups = listOf(
+                    Group(
+                        1,
+                        "Wanda the group",
+                        members = null,
+                        alarms = listOf(
+                            Alarm(
+                                id = "@monesi#1",
+                                name = "Alarm test",
+                                time = "14:30",
+                                date = "mon 7 December",
+                                alarmType = AlarmType.PERSONAL
+                            )
+                        ),
+                        owner = "@me"
+                    ),
+                    Group(
+                        2,
+                        "Another group",
+                        members = null,
+                        alarms = listOf(
+                            Alarm(
+                                id = "@monesi#1",
+                                name = "Alarm test",
+                                time = "14:30",
+                                date = "mon 7 December",
+                                alarmType = AlarmType.PERSONAL
+                            )
+                        ),
+                        owner = "@you"
+                    ),
+                    Group(
+                        3,
+                        "A third group! Very long title",
+                        members = null,
+                        alarms = listOf(
+                            Alarm(
+                                id = "@monesi#1",
+                                name = "Alarm test",
+                                time = "14:30",
+                                date = "mon 7 December",
+                                alarmType = AlarmType.PERSONAL
+                            )
+                        ),
+                        owner = "@you"
+                    ),
                 ),
-                owner = "@me"
-            ),
-            Group(
-                2,
-                "Another group",
-                members = null,
-                alarms = listOf(
-                    Alarm(
-                        id = "@monesi#1",
-                        name = "Alarm test",
-                        time = "14:30",
-                        date = "mon 7 December",
-                        alarmType = AlarmType.PERSONAL
-                    )
-                ),
-                owner = "@you"
-            ),
-            Group(
-                3,
-                "A third group! Very long title",
-                members = null,
-                alarms = listOf(
-                    Alarm(
-                        id = "@monesi#1",
-                        name = "Alarm test",
-                        time = "14:30",
-                        date = "mon 7 December",
-                        alarmType = AlarmType.PERSONAL
-                    )
-                ),
-                owner = "@you"
-            ),
-        ), onEvent = {})
+                selectedGroupId = 3,
+                onEvent = {})
+        }
     }
 }
 
@@ -269,7 +278,11 @@ fun GroupSinglePaneContent(
     } else if (uiState.isGroupOpen) {
         AlarmList(alarms = uiState.filteredAlarms!!, modifier = modifier, onEvent = onEvent)
     } else {
-        GroupList(groups = uiState.groups, onEvent = onEvent)
+        GroupList(
+            groups = uiState.groups,
+            onEvent = onEvent,
+            selectedGroupId = uiState.selectedGroup?.id
+        )
     }
 }
 
