@@ -1,12 +1,15 @@
 package dev.bebora.swecker.ui.alarm_browser.chat
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -162,6 +165,93 @@ fun MessageItemPreview() {
                     isLastMessage = true,
                     showContactName = false,
                     isOwnMessage = true
+                )
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun MessageInputBar(
+    modifier: Modifier = Modifier,
+    messageBody: String,
+    onSendMessage: (String) -> Unit = {}
+) {
+    var msg by remember { mutableStateOf(messageBody) }
+
+    Surface(
+        modifier = modifier
+            .defaultMinSize(55.dp)
+            .fillMaxWidth(1f),
+        shape = ShapeDefaults.ExtraLarge,
+        color = MaterialTheme.colorScheme.surfaceVariant,
+        contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+        border = BorderStroke(2.dp, MaterialTheme.colorScheme.outlineVariant)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth(1f)
+                .padding(horizontal = 8.dp),
+            verticalAlignment = Alignment.Bottom
+        ) {
+            TextField(
+                modifier = Modifier.weight(1f),
+                value = msg,
+                onValueChange = { msg = it },
+                placeholder = { Text("Message") },
+                readOnly = false,
+                maxLines = 10,
+            )
+            if (msg.isNotEmpty()) {
+                IconButton(modifier = Modifier
+                    .padding(vertical = 4.dp),
+                    onClick = {
+                        onSendMessage(msg)
+                        msg = ""
+                    }) {
+                    Icon(
+                        imageVector = Icons.Filled.Send,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+
+                        )
+                }
+
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Preview(showBackground = true)
+@Composable
+fun MessageInputBarPreview() {
+    SweckerTheme() {
+        Scaffold() {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize(1f)
+                    .padding(it),
+                verticalArrangement = Arrangement.Bottom
+            ) {
+                Spacer(modifier = Modifier.height(4.dp))
+                MessageInputBar(
+                    modifier = Modifier, messageBody = "Hi, this is a super damn " +
+                            "incredibly long multilined message!" +
+                            "Incredible! Let's see how stuff behaves with very long messages" +
+                            " such as this incredibly long message" +
+                            "incredibly long multilined message!" +
+                            "Incredible! Let's see how stuff behaves with very long messages" +
+                            " such as this incredibly long message"
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                MessageInputBar(
+                    modifier = Modifier, messageBody = "Short stuff"
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                MessageInputBar(
+                    modifier = Modifier, messageBody = ""
                 )
             }
         }
