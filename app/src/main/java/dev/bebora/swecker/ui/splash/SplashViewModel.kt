@@ -15,8 +15,11 @@ class SplashViewModel @Inject constructor(
     private val accountService: AccountService,
 ) : ViewModel() {
     fun onAppStart(openAndPopUp: (String, String) -> Unit) {
+        /*
         if (accountService.hasUser()) openAndPopUp(SETTINGS, SPLASH)
         else createAnonymousAccount(openAndPopUp)
+         */
+        openAndPopUp(SETTINGS, SPLASH)
     }
 
     private fun createAnonymousAccount(openAndPopUp: (String, String) -> Unit) {
