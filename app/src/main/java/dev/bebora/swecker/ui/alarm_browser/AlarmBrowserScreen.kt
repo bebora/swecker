@@ -19,6 +19,7 @@ import dev.bebora.swecker.data.AlarmType
 import dev.bebora.swecker.data.Group
 import dev.bebora.swecker.data.local.LocalAlarmDataProvider
 import dev.bebora.swecker.ui.alarm_browser.alarm_details.AlarmDetails
+import dev.bebora.swecker.ui.alarm_browser.chat.ChatScreenPreview
 import dev.bebora.swecker.ui.theme.SweckerTheme
 
 
@@ -209,21 +210,33 @@ fun DualPaneContentDetails(
         modifier = modifier.fillMaxWidth(1f),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        if (uiState.isDetailsOpen) {
-            AlarmDetails(alarm = uiState.selectedAlarm!!, isReadOnly = false, onEvent = onEvent)
-        } else if (uiState.isGroupOpen) {
-            AlarmList(
-                alarms = uiState.filteredAlarms!!,
-                onEvent = onEvent,
-                selectedAlarm = uiState.selectedAlarm
-            )
-        } else {
-            Box(modifier = Modifier.fillMaxSize(1f), contentAlignment = Alignment.Center) {
-                Text(
-                    text = "Select something",
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.displayMedium
+        when (uiState.openContent) {
+            DetailsScreenContent.ALARM_DETAILS -> {
+                AlarmDetails(
+                    alarm = uiState.selectedAlarm!!,
+                    isReadOnly = false,
+                    onEvent = onEvent
                 )
+            }
+            DetailsScreenContent.GROUP_ALARM_LIST -> {
+                AlarmList(
+                    alarms = uiState.filteredAlarms!!,
+                    onEvent = onEvent,
+                    selectedAlarm = uiState.selectedAlarm
+                )
+            }
+            DetailsScreenContent.CHAT -> {
+                ChatScreenPreview()
+            }
+            DetailsScreenContent.NONE -> {
+
+                Box(modifier = Modifier.fillMaxSize(1f), contentAlignment = Alignment.Center) {
+                    Text(
+                        text = "Select something",
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = MaterialTheme.typography.displayMedium
+                    )
+                }
             }
         }
     }
@@ -243,17 +256,24 @@ fun AlarmBrowserSinglePaneContent(
     ) {
         when (uiState.selectedDestination) {
             NavBarDestination.HOME, NavBarDestination.PERSONAL -> {
-                if (uiState.isDetailsOpen) {
-                    AlarmDetails(
-                        alarm = uiState.selectedAlarm!!,
-                        isReadOnly = false, onEvent = onEvent
-                    )
-                } else {
-                    AlarmList(
-                        alarms = uiState.filteredAlarms ?: uiState.alarms,
-                        onEvent = onEvent,
-                        selectedAlarm = uiState.selectedAlarm
-                    )
+                when (uiState.openContent) {
+                    DetailsScreenContent.ALARM_DETAILS -> {
+                        AlarmDetails(
+                            alarm = uiState.selectedAlarm!!,
+                            isReadOnly = false, onEvent = onEvent
+                        )
+                    }
+                    DetailsScreenContent.CHAT -> {
+                        ChatScreenPreview()
+                    }
+                    DetailsScreenContent.NONE -> {
+                        AlarmList(
+                            alarms = uiState.filteredAlarms ?: uiState.alarms,
+                            onEvent = onEvent,
+                            selectedAlarm = uiState.selectedAlarm
+                        )
+                    }
+                    else -> {}
                 }
             }
             NavBarDestination.GROUPS -> {
@@ -273,16 +293,23 @@ fun GroupSinglePaneContent(
     onEvent: (AlarmBrowserEvent) -> Unit,
     uiState: AlarmBrowserUIState
 ) {
-    if (uiState.isDetailsOpen) {
-        AlarmDetails(alarm = uiState.selectedAlarm!!, isReadOnly = false, onEvent = onEvent)
-    } else if (uiState.isGroupOpen) {
-        AlarmList(alarms = uiState.filteredAlarms!!, modifier = modifier, onEvent = onEvent)
-    } else {
-        GroupList(
-            groups = uiState.groups,
-            onEvent = onEvent,
-            selectedGroupId = uiState.selectedGroup?.id
-        )
+    when (uiState.openContent) {
+        DetailsScreenContent.ALARM_DETAILS -> {
+            AlarmDetails(alarm = uiState.selectedAlarm!!, isReadOnly = false, onEvent = onEvent)
+        }
+        DetailsScreenContent.GROUP_ALARM_LIST -> {
+            AlarmList(alarms = uiState.filteredAlarms!!, modifier = modifier, onEvent = onEvent)
+        }
+        DetailsScreenContent.CHAT -> {
+            ChatScreenPreview()
+        }
+        DetailsScreenContent.NONE -> {
+            GroupList(
+                groups = uiState.groups,
+                onEvent = onEvent,
+                selectedGroupId = uiState.selectedGroup?.id
+            )
+        }
     }
 }
 
