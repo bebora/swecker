@@ -2,12 +2,14 @@ package dev.bebora.swecker.ui.alarm_browser.chat
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Send
+import androidx.compose.material.icons.outlined.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -19,6 +21,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import dev.bebora.swecker.ui.alarm_browser.AlarmBrowserEvent
 import dev.bebora.swecker.ui.theme.SweckerTheme
 
 @Composable
@@ -256,4 +259,40 @@ fun MessageInputBarPreview() {
             }
         }
     }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ChatTopAppBar(
+    modifier: Modifier,
+    colors: TopAppBarColors,
+    title: String,
+    date: String,
+    onEvent: (AlarmBrowserEvent) -> Unit
+) {
+    SmallTopAppBar(
+        colors = colors,
+        modifier = modifier.clickable {
+            onEvent(AlarmBrowserEvent.ChatTopBarPressed)
+        },
+        title = {
+            Column() {
+                Text(text = title, textAlign = TextAlign.Center)
+                Text(
+                    text = date,
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.labelSmall,
+                )
+            }
+        },
+        navigationIcon = {
+            IconButton(onClick = { onEvent(AlarmBrowserEvent.BackButtonPressed) }) {
+                Icon(
+                    imageVector = Icons.Outlined.ArrowBack,
+                    contentDescription = "Go back"
+                )
+            }
+        },
+        actions = {
+        })
 }
