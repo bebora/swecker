@@ -25,14 +25,12 @@ import androidx.compose.ui.unit.dp
 import dev.bebora.swecker.LOGIN
 import dev.bebora.swecker.R
 import dev.bebora.swecker.data.User
-import dev.bebora.swecker.data.settings.Settings
 import dev.bebora.swecker.ui.settings.*
 import dev.bebora.swecker.ui.theme.SweckerTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AccountDummyScreen(
-    settings: Settings,
     ui: SettingsUiState,
     modifier: Modifier = Modifier,
     onEvent: (SettingsEvent) -> Unit,
@@ -285,7 +283,6 @@ fun SuggestLogin(
 fun AccountNotLoggedDummyScreenPreview() {
     SweckerTheme {
         AccountDummyScreen(
-            settings = Settings(),
             ui = SettingsUiState(),
             onEvent = {}
         )
@@ -297,7 +294,6 @@ fun AccountNotLoggedDummyScreenPreview() {
 fun AccountLoggedDummyScreenPreview() {
     SweckerTheme {
         AccountDummyScreen(
-            settings = Settings(),
             ui = SettingsUiState(
                 hasUser = true,
                 userId = "fakeuser",

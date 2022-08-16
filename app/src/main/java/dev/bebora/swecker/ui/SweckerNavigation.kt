@@ -50,12 +50,12 @@ fun SweckerNavigation(
                 }
                 composable(SIGNUP) {
                     SignUpScreen(
-                        openAndPopUp = { route, popUp ->
-                            navController.navigate(route) {
-                                launchSingleTop = true
-                                popUpTo(popUp) { inclusive = true }
-                            }
-                        })
+                        onGoToLogin = { navController.navigate(LOGIN) {
+                            launchSingleTop = true
+                            popUpTo(SIGNUP) { inclusive = true }
+                        } },
+                        onGoBack = { navController.popBackStack() },
+                        onSignUpSuccess = { navController.popBackStack(LOGIN, inclusive = true) })
                 }
                 composable(ALARM_BROWSER) {
                     AlarmBrowserScreen()

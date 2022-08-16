@@ -48,7 +48,6 @@ fun SettingsScreen(
                         viewModel.onEvent(SettingsEvent.CloseSettingsSubsection)
                     }
                     AccountDummyScreen(
-                        settings = settingsState,
                         ui = viewModel.uiState,
                         onEvent = viewModel::onEvent,
                         onNavigate = { onNavigate(it) }
@@ -94,7 +93,6 @@ fun SettingsScreen(
                                 viewModel.onEvent(SettingsEvent.CloseSettingsSubsection)
                             }
                             AccountDummyScreen(
-                                settings = settingsState,
                                 ui = viewModel.uiState,
                                 onEvent = viewModel::onEvent,
                                 onNavigate = { onNavigate(it) }

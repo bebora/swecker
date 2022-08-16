@@ -29,6 +29,8 @@ class SettingsViewModel @Inject constructor(
     var uiState by mutableStateOf(SettingsUiState())
         private set
 
+    private var userInfoChanges = accountService.getUserInfoChanges()
+
     fun initialize() {
         viewModelScope.launch {
             storageService.getUser(accountService.getUserId(), ::onError) {
@@ -37,6 +39,12 @@ class SettingsViewModel @Inject constructor(
                     savedUsername = it.username
                 )
                 Log.d("SWECKER-GET", "Preso user da storage, ed è $it")
+            }
+            userInfoChanges.collect {
+                uiState = uiState.copy(
+                    hasUser = accountService.hasUser(),
+                    userId = accountService.getUserId()
+                )
             }
         }
     }

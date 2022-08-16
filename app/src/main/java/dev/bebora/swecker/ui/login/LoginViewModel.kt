@@ -6,9 +6,10 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dev.bebora.swecker.common.isValidEmail
+import dev.bebora.swecker.common.isValidPassword
 import dev.bebora.swecker.data.service.AccountService
 import dev.bebora.swecker.ui.utils.onError
-import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -29,31 +30,34 @@ class LoginViewModel @Inject constructor(
                 uiState = uiState.copy(password = event.password)
             }
             is LoginEvent.SignInClick -> {
-                if (uiState.email != "" && uiState.password != "") {
+                if (!uiState.email.isValidEmail()) {
+                    // SnackbarManager.showMessage(AppText.email_error)
+                    uiState = uiState.copy(
+                        isValidEmail = false
+                    )
+                    return
+                }
+
+                if (!uiState.password.isValidPassword()) {
+                    // SnackbarManager.showMessage(AppText.password_error)
+                    uiState = uiState.copy(
+                        isValidPassword = false
+                    )
+                    return
+                }
+
+                viewModelScope.launch {
                     accountService.authenticate(uiState.email, uiState.password) { error ->
                         if (error == null) {
-                            uiState = uiState.copy(loggedIn = true)
+                            event.onNavigate()
                         } else {
                             onError(error = error)
-                            uiState = uiState.copy(errorMessage = error.localizedMessage?:error.toString())
+                            uiState = uiState.copy(
+                                errorMessage = error.localizedMessage ?: error.toString()
+                            )
                         }
                     }
                 }
-            }
-        }
-    }
-
-    /*
-    private val showErrorExceptionHandler = CoroutineExceptionHandler { _, throwable ->
-        onError(throwable)
-    }
-    */
-
-
-    private fun linkWithEmail() {
-        viewModelScope.launch {
-            accountService.linkAccount(uiState.email, uiState.password) { error ->
-                if (error != null) onError(error)
             }
         }
     }

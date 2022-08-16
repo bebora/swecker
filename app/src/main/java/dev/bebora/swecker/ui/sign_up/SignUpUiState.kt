@@ -4,8 +4,7 @@ package dev.bebora.swecker.ui.sign_up
 data class SignUpUiState(
     val email: String = "",
     val password: String = "",
-    val repeatPassword: String = "",
     val isValidEmail: Boolean = true,
     val isValidPassword: Boolean = true,
-    val isValidRepeat: Boolean = true
+    val errorMessage: String = ""
 )

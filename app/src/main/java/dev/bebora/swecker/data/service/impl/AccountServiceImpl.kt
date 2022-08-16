@@ -1,9 +1,13 @@
 package dev.bebora.swecker.data.service.impl
 
 import com.google.firebase.auth.EmailAuthProvider
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import dev.bebora.swecker.data.service.AccountService
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 import javax.inject.Inject
 
 class AccountServiceImpl @Inject constructor() : AccountService {
@@ -53,5 +57,19 @@ class AccountServiceImpl @Inject constructor() : AccountService {
 
     override fun signOut() {
         Firebase.auth.signOut()
+    }
+
+    override fun getUserInfoChanges(): Flow<Int> {
+        var counter = 0
+        return callbackFlow {
+            val authStateListener = FirebaseAuth.AuthStateListener {
+                counter += 1
+                trySend(counter)
+            }
+            Firebase.auth.addAuthStateListener(authStateListener)
+            awaitClose {
+                Firebase.auth.removeAuthStateListener(authStateListener)
+            }
+        }
     }
 }

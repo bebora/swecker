@@ -1,5 +1,7 @@
 package dev.bebora.swecker.data.service
 
+import kotlinx.coroutines.flow.Flow
+
 interface AccountService {
     fun hasUser(): Boolean
     fun isAnonymousUser(): Boolean
@@ -11,4 +13,5 @@ interface AccountService {
     fun linkAccount(email: String, password: String, onResult: (Throwable?) -> Unit)
     fun deleteAccount(onResult: (Throwable?) -> Unit)
     fun signOut()
+    fun getUserInfoChanges(): Flow<Int>
 }

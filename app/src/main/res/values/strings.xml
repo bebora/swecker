@@ -38,4 +38,5 @@
     <string name="feature_groups">Create alarms for you and your friends</string>
     <string name="feature_channels">Subscribe to alarm channels</string>
     <string name="feature_chat">Chat with other people subscribed to the same alarms</string>
+    <string name="ask_existing_account">Already have an account?</string>
 </resources>

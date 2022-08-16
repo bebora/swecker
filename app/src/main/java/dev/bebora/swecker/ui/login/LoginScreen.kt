@@ -12,13 +12,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import dev.bebora.swecker.R
+import dev.bebora.swecker.common.composable.PasswordField
 import dev.bebora.swecker.data.service.impl.AccountServiceImpl
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -90,8 +88,7 @@ fun LoginScreen(
 
                 PasswordField(
                     value = uiState.password,
-                    placeholder = "Password",
-                    onValueChange = { newValue ->
+                    onNewValue = { newValue ->
                         viewModel.onEvent(LoginEvent.SetTempPassword(newValue))
                     },
                     modifier = Modifier
@@ -126,38 +123,6 @@ fun LoginScreen(
             }
         }
     }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun PasswordField(
-    value: String,
-    placeholder: String,
-    onValueChange: (String) -> Unit,
-    modifier: Modifier = Modifier
-) {
-    var isVisible by remember { mutableStateOf(false) }
-
-    val icon = if (isVisible) Icons.Default.Visibility
-    else Icons.Default.VisibilityOff
-
-    val visualTransformation = if (isVisible) VisualTransformation.None
-    else PasswordVisualTransformation()
-
-    OutlinedTextField(
-        modifier = modifier,
-        value = value,
-        onValueChange = { onValueChange(it) },
-        placeholder = { Text(text = placeholder) },
-        leadingIcon = { Icon(imageVector = Icons.Default.Lock, contentDescription = "Lock") },
-        trailingIcon = {
-            IconButton(onClick = { isVisible = !isVisible }) {
-                Icon(imageVector = icon, contentDescription = "Visibility")
-            }
-        },
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-        visualTransformation = visualTransformation
-    )
 }
 
 @Preview
