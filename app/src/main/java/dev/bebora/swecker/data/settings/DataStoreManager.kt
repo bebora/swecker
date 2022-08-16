@@ -68,10 +68,11 @@ class DataStoreManager @Inject constructor(@ApplicationContext appContext: Conte
 
     override fun getSettings(): Flow<Settings> = settingsDataStore.data.map {
         Settings(
-            palette = Palette.values()[it[PALETTE] ?: 0],
-            darkModeType = DarkModeType.values()[it[DARK_MODE_TYPE] ?: 0],
-            ringtone = Ringtone.values()[it[RINGTONE] ?: 0],
-            ringtoneDuration = RingtoneDuration.values()[it[RINGTONE_DURATION] ?: 0],
+            palette = Palette.values()[it[PALETTE] ?: Palette.VIOLET.ordinal],
+            darkModeType = DarkModeType.values()[it[DARK_MODE_TYPE] ?: DarkModeType.SYSTEM.ordinal],
+            ringtone = Ringtone.values()[it[RINGTONE] ?: Ringtone.DEFAULT.ordinal],
+            ringtoneDuration = RingtoneDuration.values()[it[RINGTONE_DURATION]
+                ?: RingtoneDuration.SECONDS_30.ordinal],
             ringtoneVolume = it[RINGTONE_VOLUME] ?: 70,
             vibration = it[VIBRATION] ?: true,
         )
