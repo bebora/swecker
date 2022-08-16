@@ -35,7 +35,10 @@ fun SweckerNavigation(
                     SettingsScreen(onNavigate = { navController.navigate(it) })
                 }
                 composable(LOGIN) { backStackEntry ->
-                    LoginScreen(onNavigate = { navController.navigate(it) })
+                    LoginScreen(
+                        onGoToSignup = { navController.navigate(SIGNUP) },
+                        onGoBack = { navController.popBackStack() },
+                        onLoginSuccess = { navController.popBackStack() })
                 }
                 composable(SPLASH) {
                     SplashScreen(openAndPopUp = { route, popUp ->
