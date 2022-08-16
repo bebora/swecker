@@ -1,5 +1,6 @@
 package dev.bebora.swecker.ui.settings
 
+import dev.bebora.swecker.data.User
 import dev.bebora.swecker.data.settings.DarkModeType
 import dev.bebora.swecker.data.settings.Palette
 import dev.bebora.swecker.data.settings.Ringtone
@@ -46,4 +47,7 @@ sealed class SettingsEvent {
     object OpenThemeSettings : SettingsEvent()
     object CloseSettingsSubsection : SettingsEvent()
     object ToggleExampleAlarmActive: SettingsEvent()
+
+    // StorageService
+    data class SaveUser(val user: User) : SettingsEvent()
 }

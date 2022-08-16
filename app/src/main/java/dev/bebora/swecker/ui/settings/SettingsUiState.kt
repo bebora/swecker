@@ -28,5 +28,7 @@ data class SettingsUiState(
 
     val hasUser: Boolean = false,
     val userId: String = "",
-    val isAnonymous: Boolean = true //TODO this shouldn't be updated only when opening account settings
+
+    val savedName: String = "",
+    val savedUsername: String = ""
 )

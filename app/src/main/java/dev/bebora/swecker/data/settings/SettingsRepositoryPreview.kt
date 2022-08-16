@@ -4,12 +4,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
 class SettingsRepositoryPreview : SettingsRepositoryInterface {
-    override suspend fun setName(name: String) {
-    }
-
-    override suspend fun setUsername(username: String) {
-    }
-
     override suspend fun setPalette(palette: Palette) {
     }
 
@@ -30,8 +24,6 @@ class SettingsRepositoryPreview : SettingsRepositoryInterface {
 
     override fun getSettings(): Flow<Settings> {
         val previewSettings = Settings(
-            name = "Example",
-            username = "@me",
             palette = Palette.VIOLET,
             darkModeType = DarkModeType.SYSTEM,
             ringtone = Ringtone.DEFAULT,

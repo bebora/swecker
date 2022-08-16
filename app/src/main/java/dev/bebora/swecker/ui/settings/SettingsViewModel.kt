@@ -1,6 +1,7 @@
 package dev.bebora.swecker.ui.settings
 
 import android.app.Application
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -8,8 +9,10 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.bebora.swecker.data.service.AccountService
+import dev.bebora.swecker.data.service.StorageService
 import dev.bebora.swecker.data.settings.SettingsRepositoryInterface
 import dev.bebora.swecker.ui.utils.feedbackVibrationEnabled
+import dev.bebora.swecker.ui.utils.onError
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -18,24 +21,40 @@ import javax.inject.Inject
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
     private val repository: SettingsRepositoryInterface, application: Application,
-    private val accountService: AccountService
+    private val accountService: AccountService,
+    private val storageService: StorageService
 ) : AndroidViewModel(application) {
     val settings = repository.getSettings()
 
     var uiState by mutableStateOf(SettingsUiState())
         private set
 
+    fun initialize() {
+        viewModelScope.launch {
+            storageService.getUser(accountService.getUserId(), ::onError) {
+                uiState = uiState.copy(
+                    savedName = it.name,
+                    savedUsername = it.username
+                )
+                Log.d("SWECKER-GET", "Preso user da storage, ed è $it")
+            }
+        }
+    }
+
     fun onEvent(event: SettingsEvent) {
         when (event) {
             SettingsEvent.OpenEditName -> {
                 uiState = uiState.copy(
-                    showEditNamePopup = true
+                    showEditNamePopup = true,
+                    currentName = uiState.savedName
                 )
+                /*
                 viewModelScope.launch {
                     uiState = uiState.copy(
                         currentName = settings.first().name
                     )
                 }
+                 */
             }
             SettingsEvent.DismissEditName -> {
                 uiState = uiState.copy(
@@ -48,9 +67,9 @@ class SettingsViewModel @Inject constructor(
                 )
             }
             is SettingsEvent.SetName -> {
-                viewModelScope.launch {
+                /*viewModelScope.launch {
                     repository.setName(event.name)
-                }
+                }*/
                 uiState = uiState.copy(
                     showEditNamePopup = false
                 )
@@ -58,13 +77,14 @@ class SettingsViewModel @Inject constructor(
 
             SettingsEvent.OpenEditUsername -> {
                 uiState = uiState.copy(
-                    showEditUsernamePopup = true
+                    showEditUsernamePopup = true,
+                    currentUsername = uiState.savedUsername
                 )
-                viewModelScope.launch {
+                /*viewModelScope.launch {
                     uiState = uiState.copy(
                         currentUsername = settings.first().username
                     )
-                }
+                }*/
             }
             SettingsEvent.DismissEditUsername -> {
                 uiState = uiState.copy(
@@ -77,9 +97,9 @@ class SettingsViewModel @Inject constructor(
                 )
             }
             is SettingsEvent.SetUsername -> {
-                viewModelScope.launch {
+                /*viewModelScope.launch {
                     repository.setUsername(event.username)
-                }
+                }*/
                 uiState = uiState.copy(
                     showEditUsernamePopup = false
                 )
@@ -211,7 +231,6 @@ class SettingsViewModel @Inject constructor(
                     openThemeSettings = false,
                     hasUser = accountService.hasUser(),
                     userId = accountService.getUserId(),
-                    isAnonymous = accountService.isAnonymousUser()
                 )
             }
             SettingsEvent.OpenSoundsSettings -> {
@@ -232,6 +251,22 @@ class SettingsViewModel @Inject constructor(
                 uiState = uiState.copy(
                     exampleAlarmActive = !uiState.exampleAlarmActive
                 )
+            }
+
+            is SettingsEvent.SaveUser -> {
+                uiState = uiState.copy(
+                    showEditNamePopup = false,
+                    showEditUsernamePopup = false,
+                    // TODO display loading icon?
+                )
+                storageService.saveUser(event.user) { error ->
+                    if (error == null) {
+                        uiState = uiState.copy(
+                            savedName = event.user.name,
+                            savedUsername = event.user.username
+                        )
+                    }
+                }
             }
         }
     }

@@ -30,18 +30,6 @@ class DataStoreManager @Inject constructor(@ApplicationContext appContext: Conte
         val VIBRATION = booleanPreferencesKey("vibration")
     }
 
-    override suspend fun setName(name: String) {
-        settingsDataStore.edit {
-            it[NAME] = name
-        }
-    }
-
-    override suspend fun setUsername(username: String) {
-        settingsDataStore.edit {
-            it[USERNAME] = username
-        }
-    }
-
     override suspend fun setPalette(palette: Palette) {
         settingsDataStore.edit {
             it[PALETTE] = palette.ordinal
@@ -80,8 +68,6 @@ class DataStoreManager @Inject constructor(@ApplicationContext appContext: Conte
 
     override fun getSettings(): Flow<Settings> = settingsDataStore.data.map {
         Settings(
-            name = it[NAME] ?: "Default name",
-            username = it[USERNAME] ?: "@defaultusername",
             palette = Palette.values()[it[PALETTE] ?: 0],
             darkModeType = DarkModeType.values()[it[DARK_MODE_TYPE] ?: 0],
             ringtone = Ringtone.values()[it[RINGTONE] ?: 0],

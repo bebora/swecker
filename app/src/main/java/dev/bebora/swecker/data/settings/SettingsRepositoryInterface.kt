@@ -29,8 +29,6 @@ enum class RingtoneDuration {
 }
 
 data class Settings(
-    val name: String = "Example",
-    val username: String = "@me",
     val palette: Palette = Palette.VIOLET,
     val darkModeType: DarkModeType = DarkModeType.SYSTEM,
     val ringtone: Ringtone = Ringtone.DEFAULT,
@@ -40,8 +38,6 @@ data class Settings(
 )
 
 interface SettingsRepositoryInterface {
-    suspend fun setName(name: String)
-    suspend fun setUsername(username: String)
     suspend fun setPalette(palette: Palette)
     suspend fun setDarkModeType(darkModeType: DarkModeType)
     suspend fun setRingtone(ringtone: Ringtone)

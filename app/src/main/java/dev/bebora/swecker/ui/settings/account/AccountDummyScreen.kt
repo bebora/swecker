@@ -23,6 +23,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import dev.bebora.swecker.LOGIN
 import dev.bebora.swecker.R
+import dev.bebora.swecker.data.User
 import dev.bebora.swecker.data.settings.Settings
 import dev.bebora.swecker.ui.settings.*
 import dev.bebora.swecker.ui.theme.SweckerTheme
@@ -39,13 +40,13 @@ fun AccountDummyScreen(
     //TODO manage profile picture
     val sections = listOf(
         SettingsSection(
-            title = settings.name,
+            title = ui.savedName,
             stringResource(R.string.account_change_name),
             Icons.Outlined.Person,
             onClick = { onEvent(SettingsEvent.OpenEditName) }
         ),
         SettingsSection(
-            settings.username,
+            ui.savedUsername,
             stringResource(R.string.account_change_username),
             Icons.Outlined.AlternateEmail,
             onClick = { onEvent(SettingsEvent.OpenEditUsername) }
@@ -99,9 +100,11 @@ fun AccountDummyScreen(
             Spacer(modifier = Modifier.height(16.dp))
             Text(text = "Registered to Firebase: " + ui.hasUser.toString(), color = MaterialTheme.colorScheme.error)
             Spacer(modifier = Modifier.height(16.dp))
-            Text(text = "Is anonymous user: " + ui.isAnonymous.toString(), color = MaterialTheme.colorScheme.error)
-            Spacer(modifier = Modifier.height(16.dp))
             Text(text = ui.userId, color = MaterialTheme.colorScheme.error)
+            Spacer(modifier = Modifier.height(16.dp))
+            Text(text = "current name: ${ui.currentName}", color = MaterialTheme.colorScheme.error)
+            Spacer(modifier = Modifier.height(16.dp))
+            Text(text = "current username: ${ui.currentUsername}", color = MaterialTheme.colorScheme.error)
             sections.forEach { section ->
                 Spacer(
                     modifier = Modifier
@@ -130,7 +133,12 @@ fun AccountDummyScreen(
             confirmButton = {
                 TextButton(
                     onClick = {
-                        onEvent(SettingsEvent.SetName(ui.currentName))
+                        onEvent(SettingsEvent.SaveUser(
+                            User(
+                                id = ui.userId,
+                                name = ui.currentName,
+                                username = ui.savedUsername
+                            )))
                     }) {
                     Text(text = "Confirm")
                 }
@@ -159,7 +167,12 @@ fun AccountDummyScreen(
             confirmButton = {
                 TextButton(
                     onClick = {
-                        onEvent(SettingsEvent.SetUsername(ui.currentUsername))
+                        onEvent(SettingsEvent.SaveUser(
+                            User(
+                                id = ui.userId,
+                                name = ui.savedName,
+                                username = ui.currentUsername
+                            )))
                     }) {
                     Text(text = "Confirm")
                 }
