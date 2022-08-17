@@ -8,7 +8,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import dev.bebora.swecker.*
 import dev.bebora.swecker.data.settings.Settings
 import dev.bebora.swecker.ui.alarm_browser.AlarmBrowserScreen
 import dev.bebora.swecker.ui.login.LoginScreen
@@ -17,6 +16,7 @@ import dev.bebora.swecker.ui.settings.SettingsViewModel
 import dev.bebora.swecker.ui.sign_up.SignUpScreen
 import dev.bebora.swecker.ui.splash.SplashScreen
 import dev.bebora.swecker.ui.theme.SettingsAwareTheme
+import dev.bebora.swecker.util.*
 
 @Composable
 fun SweckerNavigation(

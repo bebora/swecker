@@ -14,7 +14,6 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import dev.bebora.swecker.LOGIN
 import dev.bebora.swecker.R
 import dev.bebora.swecker.data.settings.Settings
 import dev.bebora.swecker.ui.settings.*

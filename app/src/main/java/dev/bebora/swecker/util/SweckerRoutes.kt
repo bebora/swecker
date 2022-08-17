@@ -1,4 +1,4 @@
-package dev.bebora.swecker
+package dev.bebora.swecker.util
 
 const val SETTINGS = "settings"
 const val LOGIN = "login"

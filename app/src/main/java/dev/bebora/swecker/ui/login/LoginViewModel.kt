@@ -5,11 +5,18 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
+import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dev.bebora.swecker.R
 import dev.bebora.swecker.common.isValidEmail
 import dev.bebora.swecker.common.isValidPassword
 import dev.bebora.swecker.data.service.AccountService
+import dev.bebora.swecker.ui.utils.UiText
 import dev.bebora.swecker.ui.utils.onError
+import dev.bebora.swecker.util.UiEvent
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -21,28 +28,41 @@ class LoginViewModel @Inject constructor(
     var uiState by mutableStateOf(LoginUiState())
         private set
 
+    private val _uiEvent = Channel<UiEvent>()
+    val uiEvent = _uiEvent.receiveAsFlow()
+
     fun onEvent(event: LoginEvent) {
         when (event) {
             is LoginEvent.SetTempEmail -> {
-                uiState = uiState.copy(email = event.email)
+                uiState = uiState.copy(email = event.email.trim())
             }
             is LoginEvent.SetTempPassword -> {
-                uiState = uiState.copy(password = event.password)
+                uiState = uiState.copy(password = event.password.trim())
             }
             is LoginEvent.SignInClick -> {
                 if (!uiState.email.isValidEmail()) {
-                    // SnackbarManager.showMessage(AppText.email_error)
-                    uiState = uiState.copy(
-                        isValidEmail = false
-                    )
+                    viewModelScope.launch {
+                        _uiEvent.send(
+                            UiEvent.ShowSnackbar(
+                                uiText = UiText.StringResource(
+                                    resId = R.string.invalid_email
+                                )
+                            )
+                        )
+                    }
                     return
                 }
 
                 if (!uiState.password.isValidPassword()) {
-                    // SnackbarManager.showMessage(AppText.password_error)
-                    uiState = uiState.copy(
-                        isValidPassword = false
-                    )
+                    viewModelScope.launch {
+                        _uiEvent.send(
+                            UiEvent.ShowSnackbar(
+                                uiText = UiText.StringResource(
+                                    resId = R.string.invalid_password
+                                )
+                            )
+                        )
+                    }
                     return
                 }
 
@@ -52,9 +72,18 @@ class LoginViewModel @Inject constructor(
                             event.onNavigate()
                         } else {
                             onError(error = error)
-                            uiState = uiState.copy(
-                                errorMessage = error.localizedMessage ?: error.toString()
-                            )
+                            val stringRes = when (error) {
+                                is FirebaseAuthInvalidUserException -> R.string.invalid_user
+                                is FirebaseAuthInvalidCredentialsException -> R.string.wrong_password
+                                else -> R.string.unknown_error
+                            }
+                            viewModelScope.launch {
+                                _uiEvent.send(
+                                    UiEvent.ShowSnackbar(
+                                        uiText = UiText.StringResource(resId = stringRes)
+                                    )
+                                )
+                            }
                         }
                     }
                 }

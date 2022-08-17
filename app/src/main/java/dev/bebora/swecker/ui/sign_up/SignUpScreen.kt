@@ -1,15 +1,23 @@
 package dev.bebora.swecker.ui.sign_up
 
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -17,9 +25,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import dev.bebora.swecker.R
 import dev.bebora.swecker.common.composable.PasswordField
 import dev.bebora.swecker.data.service.impl.AccountServiceImpl
+import dev.bebora.swecker.util.UiEvent
 
 @Composable
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 fun SignUpScreen(
     modifier: Modifier = Modifier,
     viewModel: SignUpViewModel = hiltViewModel(),
@@ -30,8 +39,26 @@ fun SignUpScreen(
     val uiState = viewModel.uiState
 
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
+    val snackbarHostState = remember { SnackbarHostState() }
+    val context = LocalContext.current
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val focusManager = LocalFocusManager.current
+
+    LaunchedEffect(key1 = true) {
+        viewModel.uiEvent.collect { event ->
+            when (event) {
+                is UiEvent.ShowSnackbar -> {
+                    snackbarHostState.showSnackbar(
+                        message = event.uiText.asString(context = context),
+                    )
+                }
+                else -> Unit
+            }
+        }
+    }
 
     Scaffold(
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             SmallTopAppBar(
@@ -52,7 +79,13 @@ fun SignUpScreen(
         Row(
             modifier = Modifier
                 .padding(it)
-                .fillMaxSize(),
+                .fillMaxSize()
+                .clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = null
+                ) {
+                    keyboardController?.hide()
+                },
             verticalAlignment = Alignment.Top,
             horizontalArrangement = Arrangement.Center
         ) {
@@ -63,7 +96,6 @@ fun SignUpScreen(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(text = uiState.errorMessage, color = MaterialTheme.colorScheme.onSurface)
                 OutlinedTextField(
                     singleLine = true,
                     value = uiState.email,
@@ -82,7 +114,12 @@ fun SignUpScreen(
                             horizontal = 32.dp,
                             vertical = 8.dp
                         )
-                        .fillMaxWidth()
+                        .fillMaxWidth(),
+                    keyboardActions = KeyboardActions(onDone = {
+                        focusManager.moveFocus(
+                            FocusDirection.Next
+                        )
+                    }),
                 )
 
                 PasswordField(
@@ -104,7 +141,10 @@ fun SignUpScreen(
                             vertical = 8.dp
                         )
                         .fillMaxWidth(),
-                    onClick = { viewModel.onEvent(SignUpEvent.SignInClick(onSignUpSuccess)) },
+                    onClick = {
+                        keyboardController?.hide()
+                        viewModel.onEvent(SignUpEvent.SignInClick(onSignUpSuccess))
+                    },
                 ) {
                     Text(
                         text = stringResource(id = R.string.sign_up_button),

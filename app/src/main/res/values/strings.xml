@@ -50,4 +50,10 @@
     <string name="signup_appbar_title">Signup</string>
     <string name="visibility">Visibility</string>
     <string name="password_lock">Lock</string>
+    <string name="invalid_email">The entered email is not valid</string>
+    <string name="invalid_password">Your password should have at least six letters and include one digit, one lower case letter and one upper case letter.</string>
+    <string name="unknown_error">Unknown error</string>
+    <string name="invalid_user">The user does not exist or has been disabled</string>
+    <string name="wrong_password">The entered password does not match</string>
+    <string name="email_already_exists">An account is already registered with the entered email</string>
 </resources>
