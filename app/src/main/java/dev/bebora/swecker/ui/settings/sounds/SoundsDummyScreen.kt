@@ -82,12 +82,7 @@ fun SoundsDummyScreen(
                 .verticalScroll(state = rememberScrollState()),
         ) {
             sections.forEach { section ->
-                Spacer(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(1.dp)
-                        .background(MaterialTheme.colorScheme.outline)
-                )
+                Divider()
                 SettingsItem(
                     title = section.title,
                     description = section.description ?: "Default description",
@@ -96,12 +91,7 @@ fun SoundsDummyScreen(
                 )
 
             }
-            Spacer(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(1.dp)
-                    .background(MaterialTheme.colorScheme.outline)
-            )
+            Divider()
             SettingsSwitch(
                 title = stringResource(R.string.sounds_vibration),
                 icon = Icons.Outlined.Vibration,

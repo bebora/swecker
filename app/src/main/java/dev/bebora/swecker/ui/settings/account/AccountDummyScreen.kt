@@ -118,12 +118,7 @@ fun AccountDummyScreen(
                     color = MaterialTheme.colorScheme.error
                 )
                 sections.forEach { section ->
-                    Spacer(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(1.dp)
-                            .background(MaterialTheme.colorScheme.outline)
-                    )
+                    Divider()
                     SettingsItem(
                         title = section.title,
                         description = section.description ?: "Default description",
