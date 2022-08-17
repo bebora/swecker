@@ -146,6 +146,7 @@ fun AlarmBrowserDualPaneContent(
         modifier = modifier
             .fillMaxWidth(1f)
             .background(MaterialTheme.colorScheme.surface)
+            .padding(horizontal = 8.dp)
     ) {
         SweckerNavRail(alarmBrowserUIState = uiState, onEvent = onEvent)
         DualPaneContentList(onEvent = onEvent, uiState = uiState)
@@ -154,7 +155,8 @@ fun AlarmBrowserDualPaneContent(
                 SweckerDetailsAppBar(
                     uiState = uiState,
                     colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
-                    onEvent = onEvent
+                    onEvent = onEvent,
+                    roundTopCorners = true
                 )
             }
 

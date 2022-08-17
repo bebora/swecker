@@ -5,6 +5,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ArrowBack
 import androidx.compose.material.icons.outlined.Menu
@@ -16,6 +17,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -33,16 +35,26 @@ fun SweckerNavBar(
 ) {
     val items = listOf("Home", "Personal", "Groups", "Channels")
 
-    NavigationBar(modifier = modifier) {
-        items.forEach { item ->
-            val isSelected =
-                alarmBrowserUIState.selectedDestination == NavBarDestination.valueOf(item.uppercase())
-            NavigationBarItem(
-                icon = { Icon(getNavbarIcon(item, isSelected), contentDescription = item) },
-                label = { Text(item) },
-                selected = isSelected,
-                onClick = { onEvent(AlarmBrowserEvent.NavBarNavigate(NavBarDestination.valueOf(item.uppercase()))) }
-            )
+    if (alarmBrowserUIState.openContent == DetailsScreenContent.NONE) {
+        NavigationBar(modifier = modifier) {
+            items.forEach { item ->
+                val isSelected =
+                    alarmBrowserUIState.selectedDestination == NavBarDestination.valueOf(item.uppercase())
+                NavigationBarItem(
+                    icon = { Icon(getNavbarIcon(item, isSelected), contentDescription = item) },
+                    label = { Text(item) },
+                    selected = isSelected,
+                    onClick = {
+                        onEvent(
+                            AlarmBrowserEvent.NavBarNavigate(
+                                NavBarDestination.valueOf(
+                                    item.uppercase()
+                                )
+                            )
+                        )
+                    }
+                )
+            }
         }
     }
 }
@@ -201,42 +213,56 @@ fun SweckerDetailsAppBar(
     modifier: Modifier = Modifier,
     uiState: AlarmBrowserUIState,
     colors: TopAppBarColors,
+    roundTopCorners: Boolean = false,
     onEvent: (AlarmBrowserEvent) -> Unit,
 ) {
-    when (uiState.openContent) {
-        DetailsScreenContent.ALARM_DETAILS -> {
-            SmallTopAppBar(
-                colors = colors,
-                modifier = modifier,
-                title = { Text(text = "Alarm details", textAlign = TextAlign.Center) },
-                navigationIcon = {
-                    IconButton(onClick = { onEvent(AlarmBrowserEvent.BackButtonPressed) }) {
-                        Icon(
-                            imageVector = Icons.Outlined.ArrowBack,
-                            contentDescription = "Go back"
-                        )
-                    }
-                },
-                actions = {
-                })
-        }
-        DetailsScreenContent.GROUP_ALARM_LIST -> {
-            SweckerGroupTopAppBar(
-                colors = colors,
-                group = uiState.selectedGroup!!,
-                onEvent = onEvent
-            ) {}
-        }
-        DetailsScreenContent.CHAT -> {
-            ChatTopAppBar(
-                modifier = modifier,
-                colors = colors,
-                title = uiState.selectedAlarm!!.name,
-                date = uiState.selectedAlarm.date,
-                onEvent = onEvent,
+    Surface(
+        shape = if (roundTopCorners) {
+            RoundedCornerShape(
+                topEnd = 20.dp,
+                topStart = 20.dp,
+                bottomEnd = 0.dp,
+                bottomStart = 0.dp
             )
+        } else {
+            RectangleShape
         }
-        DetailsScreenContent.NONE -> {}
+    ) {
+        when (uiState.openContent) {
+            DetailsScreenContent.ALARM_DETAILS -> {
+                SmallTopAppBar(
+                    colors = colors,
+                    modifier = modifier,
+                    title = { Text(text = "Alarm details", textAlign = TextAlign.Center) },
+                    navigationIcon = {
+                        IconButton(onClick = { onEvent(AlarmBrowserEvent.BackButtonPressed) }) {
+                            Icon(
+                                imageVector = Icons.Outlined.ArrowBack,
+                                contentDescription = "Go back"
+                            )
+                        }
+                    },
+                    actions = {
+                    })
+            }
+            DetailsScreenContent.GROUP_ALARM_LIST -> {
+                SweckerGroupTopAppBar(
+                    colors = colors,
+                    group = uiState.selectedGroup!!,
+                    onEvent = onEvent
+                ) {}
+            }
+            DetailsScreenContent.CHAT -> {
+                ChatTopAppBar(
+                    modifier = modifier,
+                    colors = colors,
+                    title = uiState.selectedAlarm!!.name,
+                    date = uiState.selectedAlarm.date,
+                    onEvent = onEvent,
+                )
+            }
+            DetailsScreenContent.NONE -> {}
+        }
     }
 }
 

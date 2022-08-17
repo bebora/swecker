@@ -65,6 +65,11 @@ fun MessageItem(
         Spacer(modifier = Modifier.width(8.dp))
 
         Surface(
+            modifier = if (!isOwnMessage) {
+                Modifier.weight(1f)
+            } else {
+                Modifier
+            },
             shape = if (isLastMessage) {
                 if (isOwnMessage) {
                     RoundedCornerShape(
@@ -115,6 +120,10 @@ fun MessageItem(
                     style = MaterialTheme.typography.bodyMedium
                 )
             }
+        }
+
+        if (!isOwnMessage) {
+            Spacer(modifier = Modifier.width(40.dp))
         }
     }
 }
