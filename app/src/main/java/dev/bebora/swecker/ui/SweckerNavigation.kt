@@ -30,9 +30,11 @@ fun SweckerNavigation(
         // Surface is used as a hack to prevent the screen from blinking during navigation https://stackoverflow.com/a/71889434
         Surface {
             val navController = rememberNavController()
-            NavHost(navController, startDestination = SETTINGS) {
+            NavHost(navController, startDestination = ALARM_BROWSER) {
                 composable(SETTINGS) { backStackEntry ->
-                    SettingsScreen(onNavigate = { navController.navigate(it) })
+                    SettingsScreen(
+                        onNavigate = { navController.navigate(it) },
+                        onGoBack = { navController.popBackStack() })
                 }
                 composable(LOGIN) { backStackEntry ->
                     LoginScreen(
@@ -50,15 +52,17 @@ fun SweckerNavigation(
                 }
                 composable(SIGNUP) {
                     SignUpScreen(
-                        onGoToLogin = { navController.navigate(LOGIN) {
-                            launchSingleTop = true
-                            popUpTo(SIGNUP) { inclusive = true }
-                        } },
+                        onGoToLogin = {
+                            navController.navigate(LOGIN) {
+                                launchSingleTop = true
+                                popUpTo(SIGNUP) { inclusive = true }
+                            }
+                        },
                         onGoBack = { navController.popBackStack() },
                         onSignUpSuccess = { navController.popBackStack(LOGIN, inclusive = true) })
                 }
                 composable(ALARM_BROWSER) {
-                    AlarmBrowserScreen()
+                    AlarmBrowserScreen(onNavigate = { navController.navigate(it) })
                 }
             }
         }

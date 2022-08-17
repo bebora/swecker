@@ -4,6 +4,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Campaign
 import androidx.compose.material.icons.filled.Groups
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.outlined.Campaign
 import androidx.compose.material.icons.outlined.Groups
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -28,7 +29,7 @@ data class Alarm(
 fun alarmTypeToIcon (type: AlarmType, enabled: Boolean) :ImageVector{
     return when (type){
         AlarmType.PERSONAL -> if(enabled) Icons.Default.Person else Icons.Outlined.Person
-        AlarmType.CHANNEL -> if(enabled) Icons.Default.Campaign else Icons.Outlined.Person
+        AlarmType.CHANNEL -> if(enabled) Icons.Default.Campaign else Icons.Outlined.Campaign
         AlarmType.GROUP -> if(enabled) Icons.Default.Groups else Icons.Outlined.Groups
     }
 }

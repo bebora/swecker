@@ -4,10 +4,12 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -21,6 +23,8 @@ import dev.bebora.swecker.data.local.LocalAlarmDataProvider
 import dev.bebora.swecker.ui.alarm_browser.alarm_details.AlarmDetails
 import dev.bebora.swecker.ui.alarm_browser.chat.ChatScreenPreview
 import dev.bebora.swecker.ui.theme.SweckerTheme
+import dev.bebora.swecker.util.SETTINGS
+import kotlinx.coroutines.launch
 
 
 @Composable
@@ -140,6 +144,7 @@ fun GroupListPreview() {
 fun AlarmBrowserDualPaneContent(
     modifier: Modifier = Modifier,
     onEvent: (AlarmBrowserEvent) -> Unit,
+    onOpenDrawer: () -> Unit = {},
     uiState: AlarmBrowserUIState
 ) {
     Row(
@@ -148,7 +153,10 @@ fun AlarmBrowserDualPaneContent(
             .background(MaterialTheme.colorScheme.surface)
             .padding(horizontal = 8.dp)
     ) {
-        SweckerNavRail(alarmBrowserUIState = uiState, onEvent = onEvent)
+        SweckerNavRail(
+            alarmBrowserUIState = uiState,
+            onEvent = onEvent,
+            onOpenDrawer = { onOpenDrawer() })
         DualPaneContentList(onEvent = onEvent, uiState = uiState)
         Scaffold(
             topBar = {
@@ -320,39 +328,156 @@ fun GroupSinglePaneContent(
 fun AlarmBrowserScreen(
     modifier: Modifier = Modifier,
     viewModel: AlarmBrowserViewModel = hiltViewModel(),
+    onNavigate: (String) -> Unit = {},
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    SweckerTheme() {
-        BoxWithConstraints() {
-            if (maxWidth < 840.dp) {
-                Scaffold(
-                    topBar = {
-                        SweckerTopAppBar(
-                            modifier = modifier,
-                            uiState = uiState,
-                            onEvent = viewModel::onEvent,
-                            colors = TopAppBarDefaults.smallTopAppBarColors(
-                                containerColor = MaterialTheme.colorScheme.surfaceVariant
-                            )
-                        )
+    val drawerState = rememberDrawerState(DrawerValue.Closed)
+    val scope = rememberCoroutineScope()
+// icons to mimic drawer destinations
+    val items = remember {
+        listOf(
+            DrawerSection(
+                title = "Alarms management",
+                subsections = listOf(
+                    DrawerSubSection(
+                        title = "Alarms overview",
+                        icon = Icons.Outlined.Home,
+                        selected = true
+                    ) { scope.launch { drawerState.close() } },
+                    DrawerSubSection(
+                        title = "New group",
+                        icon = Icons.Outlined.Groups
+                    ) { scope.launch { drawerState.close() } },
+                    DrawerSubSection(
+                        title = "New channel",
+                        icon = Icons.Outlined.Campaign
+                    ) { scope.launch { drawerState.close() } },
+                )
+            ),
+            DrawerSection(
+                title = "Contacts management",
+                subsections = listOf(
+                    DrawerSubSection(
+                        title = "Contacts",
+                        icon = Icons.Outlined.Contacts
+                    ) { scope.launch { drawerState.close() } },
+                    DrawerSubSection(
+                        title = "Friendship requests",
+                        icon = Icons.Outlined.GroupAdd
+                    ) { scope.launch { drawerState.close() } },
+                    DrawerSubSection(
+                        title = "Add a friend",
+                        icon = Icons.Outlined.PersonAddAlt
+                    ) { scope.launch { drawerState.close() } },
+                )
+            ),
+            DrawerSection(
+                title = "Settings",
+                subsections = listOf(
+                    DrawerSubSection(
+                        title = "Settings",
+                        icon = Icons.Outlined.Settings
+                    ) {
+                        scope.launch { drawerState.close() }
+                        onNavigate(SETTINGS)
                     },
-                    bottomBar = {
-                        SweckerNavBar(
-                            alarmBrowserUIState = uiState,
-                            onEvent = viewModel::onEvent,
+                )
+            )
+        )
+    }
+
+    ModalNavigationDrawer(
+        drawerState = drawerState,
+        drawerContent = {
+            ModalDrawerSheet {
+                Text(
+                    text = "Swecker",
+                    style = MaterialTheme.typography.titleMedium,
+                    modifier = Modifier.padding(start = 16.dp, top = 18.dp),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Column(
+                    modifier = Modifier
+                        .verticalScroll(state = rememberScrollState()),
+                ) {
+                    items.forEachIndexed { idx, drawerSection ->
+                        if (idx != 0) {
+                            Divider()
+                        }
+                        Text(
+                            text = drawerSection.title,
+                            modifier = Modifier.padding(
+                                start = 16.dp,
+                                end = 24.dp,
+                                top = 18.dp,
+                                bottom = 18.dp
+                            ),
+                            style = MaterialTheme.typography.titleSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
-                    }) {
-                    AlarmBrowserSinglePaneContent(
-                        modifier = Modifier.padding(it),
+                        drawerSection.subsections.forEach { subsection ->
+                            NavigationDrawerItem(
+                                icon = {
+                                    Icon(
+                                        subsection.icon,
+                                        contentDescription = subsection.title
+                                    )
+                                },
+                                label = {
+                                    Text(
+                                        text = subsection.title,
+                                        style = MaterialTheme.typography.labelLarge
+                                    )
+                                },
+                                selected = subsection.selected,
+                                onClick = {
+                                    scope.launch { subsection.onClick() }
+                                },
+                                modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
+                            )
+                        }
+                    }
+                }
+            }
+        },
+        content = {
+            BoxWithConstraints() {
+                if (maxWidth < 840.dp) {
+                    Scaffold(
+                        topBar = {
+                            SweckerTopAppBar(
+                                modifier = modifier,
+                                uiState = uiState,
+                                onEvent = viewModel::onEvent,
+                                colors = TopAppBarDefaults.smallTopAppBarColors(
+                                    containerColor = MaterialTheme.colorScheme.surfaceVariant
+                                ),
+                                onOpenDrawer = { scope.launch { drawerState.open() } }
+                            )
+                        },
+                        bottomBar = {
+                            SweckerNavBar(
+                                alarmBrowserUIState = uiState,
+                                onEvent = viewModel::onEvent,
+                            )
+                        }) {
+                        AlarmBrowserSinglePaneContent(
+                            modifier = Modifier.padding(it),
+                            onEvent = viewModel::onEvent,
+                            uiState = uiState
+                        )
+                    }
+                } else {
+                    AlarmBrowserDualPaneContent(
                         onEvent = viewModel::onEvent,
-                        uiState = uiState
+                        uiState = uiState,
+                        onOpenDrawer = {
+                            scope.launch { drawerState.open() }
+                        }
                     )
                 }
-            } else {
-                AlarmBrowserDualPaneContent(onEvent = viewModel::onEvent, uiState = uiState)
             }
-        }
-    }
+        })
 }
 
 @Preview(showBackground = true)

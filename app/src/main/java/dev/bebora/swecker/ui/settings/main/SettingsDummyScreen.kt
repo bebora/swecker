@@ -29,6 +29,7 @@ fun SettingsDummyScreen(
     ui: SettingsUiState,
     modifier: Modifier = Modifier,
     onEvent: (SettingsEvent) -> Unit,
+    onGoBack: () -> Unit = {},
     onNavigate: (String) -> Unit
 ) {
     val sections = listOf(
@@ -63,7 +64,7 @@ fun SettingsDummyScreen(
             SmallTopAppBar(
                 title = { Text(text = stringResource(R.string.settings_title)) },
                 navigationIcon = {
-                    IconButton(onClick = { /*TODO go back*/ }) {
+                    IconButton(onClick = { onGoBack() }) {
                         Icon(
                             Icons.Filled.ArrowBack,
                             contentDescription = stringResource(id = R.string.go_back)

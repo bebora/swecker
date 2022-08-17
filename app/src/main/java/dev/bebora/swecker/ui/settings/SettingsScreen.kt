@@ -29,6 +29,7 @@ import dev.bebora.swecker.ui.theme.SweckerTheme
 @Composable
 fun SettingsScreen(
     viewModel: SettingsViewModel = hiltViewModel(),
+    onGoBack: () -> Unit = {},
     onNavigate: (String) -> Unit = {}
 ) {
     LaunchedEffect(key1 = true) {
@@ -75,6 +76,7 @@ fun SettingsScreen(
                         settings = settingsState,
                         ui = viewModel.uiState,
                         onEvent = viewModel::onEvent,
+                        onGoBack = onGoBack,
                         onNavigate = onNavigate
                     )
                 }
@@ -85,6 +87,7 @@ fun SettingsScreen(
                         ui = viewModel.uiState,
                         onEvent = viewModel::onEvent,
                         modifier = Modifier.weight(1f),
+                        onGoBack = onGoBack,
                         onNavigate = onNavigate
                     )
                     Box(modifier = Modifier.weight(1f)) {

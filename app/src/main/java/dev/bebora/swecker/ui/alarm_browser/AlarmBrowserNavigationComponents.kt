@@ -1,5 +1,6 @@
 package dev.bebora.swecker.ui.alarm_browser
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -81,6 +82,7 @@ fun NavBarPreview() {
 fun SweckerNavRail(
     modifier: Modifier = Modifier,
     alarmBrowserUIState: AlarmBrowserUIState,
+    onOpenDrawer: () -> Unit,
     onEvent: (AlarmBrowserEvent) -> Unit,
 ) {
 
@@ -89,7 +91,11 @@ fun SweckerNavRail(
     NavigationRail(
         modifier = modifier,
         header = {
-            IconButton(onClick = { }) {
+            IconButton(
+                onClick = {
+                    Log.d("SWECKER_NAV", "Devo aprire drawer")
+                    onOpenDrawer()
+                }) {
                 Icon(imageVector = Icons.Outlined.Menu, contentDescription = "Open hamburger menu")
             }
             SweckerFab(destination = alarmBrowserUIState.selectedDestination) {
@@ -123,7 +129,8 @@ fun NavRailPreview() {
         Scaffold(bottomBar = {
             SweckerNavRail(
                 alarmBrowserUIState = uiState,
-                onEvent = { ev -> testViewModel.onEvent(ev) }
+                onEvent = { ev -> testViewModel.onEvent(ev) },
+                onOpenDrawer = {}
             )
         }) {
             Box(modifier = Modifier.padding(it)) {
@@ -249,7 +256,7 @@ fun SweckerDetailsAppBar(
                 SweckerGroupTopAppBar(
                     colors = colors,
                     group = uiState.selectedGroup!!,
-                    onEvent = onEvent
+                    onEvent = onEvent,
                 ) {}
             }
             DetailsScreenContent.CHAT -> {
@@ -272,12 +279,13 @@ fun SweckerTopAppBar(
     modifier: Modifier = Modifier,
     uiState: AlarmBrowserUIState,
     colors: TopAppBarColors,
+    onOpenDrawer: () -> Unit,
     onEvent: (AlarmBrowserEvent) -> Unit,
 ) {
     SweckerDetailsAppBar(modifier = modifier, uiState = uiState, colors = colors, onEvent = onEvent)
     if (uiState.openContent == DetailsScreenContent.NONE) {
         SweckerHomeTopAppBar(
-            navigationAction = { /*TODO*/ },
+            navigationAction = { onOpenDrawer() },
             colors = colors,
             searchAction = { /*TODO*/ },
             title = uiState.selectedDestination.toString().lowercase()
