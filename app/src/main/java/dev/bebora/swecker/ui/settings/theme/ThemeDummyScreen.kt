@@ -33,6 +33,8 @@ import dev.bebora.swecker.ui.theme.*
 import dev.bebora.swecker.ui.utils.darkModeTypeToString
 import dev.bebora.swecker.ui.utils.paletteToColorSchemes
 import dev.bebora.swecker.ui.utils.useDarkPalette
+import java.time.LocalDate
+import java.time.LocalTime
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -84,8 +86,8 @@ fun ThemeDummyScreen(
                     enabled = ui.exampleAlarmActive,
                     name = "Example alarm",
                     alarmType = AlarmType.PERSONAL,
-                    date = "9th August",
-                    time = "12:14"
+                    date = LocalDate.now(),
+                    time = LocalTime.now()
                 ),
                 modifier = Modifier.padding(horizontal = 16.dp),
                 onEvent = { onEvent(SettingsEvent.ToggleExampleAlarmActive) }

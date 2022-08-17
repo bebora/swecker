@@ -8,6 +8,9 @@ import androidx.compose.material.icons.outlined.Campaign
 import androidx.compose.material.icons.outlined.Groups
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.ui.graphics.vector.ImageVector
+import java.time.LocalDate
+import java.time.LocalTime
+import java.time.OffsetDateTime
 
 /**
  * Represents an Alarm
@@ -18,8 +21,9 @@ data class Alarm(
     val group: Group? = null,
     val enabled: Boolean = true,
     val name: String,
-    val time: String,
-    val date: String,
+    val date: LocalDate? = null,
+    val time: LocalTime? = null,
+    val dateTime: OffsetDateTime? = null,
     val enableRepetition: Boolean = false,
     val enableChat: Boolean = true,
     val enabledDays: List<Boolean> = listOf(false,false,false,false,false,false,false),

@@ -1,7 +1,5 @@
 package dev.bebora.swecker.ui.alarm_browser.alarm_details
 
-import android.icu.util.Calendar
-import android.text.format.DateFormat
 import android.widget.CalendarView
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -19,16 +17,18 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import java.util.*
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
 
 @Composable
 fun DatePicker(
     minDate: Long? = null,
     maxDate: Long? = null,
-    onDateSelected: (String) -> Unit,
+    onDateSelected: (LocalDate) -> Unit,
     onDismissRequest: () -> Unit
 ) {
-    val selDate = remember { mutableStateOf(Calendar.getInstance().time) }
+    val selDate = remember { mutableStateOf(LocalDate.now()) }
 
     Dialog(onDismissRequest = { onDismissRequest() }, properties = DialogProperties()) {
         Column(
@@ -58,7 +58,9 @@ fun DatePicker(
                 Spacer(modifier = Modifier.size(24.dp))
 
                 Text(
-                    text = DateFormat.format("MMM d, yyyy", selDate.value).toString(),
+                    text = selDate.value.format(
+                        DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)
+                    ),
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.onPrimary
                 )
@@ -94,15 +96,7 @@ fun DatePicker(
                     onClick = {
                         val newDate = selDate.value
                         onDateSelected(
-                            // This makes sure date is not out of range
-                            DateFormat.format(
-                                "EEE, MMM d", Date(
-                                    maxOf(
-                                        minOf(maxDate ?: Long.MAX_VALUE, newDate.time),
-                                        minDate ?: Long.MIN_VALUE
-                                    )
-                                )
-                            ).toString(),
+                            newDate
                         )
                         onDismissRequest()
                     },
@@ -123,7 +117,7 @@ fun DatePicker(
 fun CustomCalendarView(
     minDate: Long? = null,
     maxDate: Long? = null,
-    onDateSelected: (Date) -> Unit
+    onDateSelected: (LocalDate) -> Unit
 ) {
     // Adds view to Compose
     AndroidView(
@@ -139,39 +133,13 @@ fun CustomCalendarView(
 
             view.setOnDateChangeListener { _, year, month, dayOfMonth ->
                 onDateSelected(
-                    Calendar
-                        .getInstance()
-                        .apply {
-                            set(year, month, dayOfMonth)
-                        }
-                        .time
+                    LocalDate
+                        .now()
+                        .withMonth(month + 1)
+                        .withYear(year)
+                        .withDayOfMonth(dayOfMonth)
                 )
             }
         }
     )
-}
-
-fun getDaysOfWeekDisplayNames(loc: Locale): List<String> {
-    val calendar = java.util.Calendar.getInstance()
-
-    var dayOfWeek = calendar.firstDayOfWeek
-    val result = mutableListOf<String>()
-
-    var i = 7
-    while (i > 0) {
-        if (dayOfWeek > 7) {
-            dayOfWeek = 1
-        }
-        calendar.set(java.util.Calendar.DAY_OF_WEEK, dayOfWeek)
-        result.add(
-            calendar.getDisplayName(
-                java.util.Calendar.DAY_OF_WEEK,
-                java.util.Calendar.SHORT,
-                loc
-            )!!
-        )
-        dayOfWeek++
-        i--
-    }
-    return result
 }

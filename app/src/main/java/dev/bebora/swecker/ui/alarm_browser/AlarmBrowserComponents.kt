@@ -22,9 +22,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import dev.bebora.swecker.data.*
-import dev.bebora.swecker.data.local.LocalAlarmDataProvider
+import dev.bebora.swecker.data.Alarm
+import dev.bebora.swecker.data.AlarmType
+import dev.bebora.swecker.data.Group
+import dev.bebora.swecker.data.alarmTypeToIcon
 import dev.bebora.swecker.ui.theme.SweckerTheme
+import java.time.OffsetDateTime
+import java.time.format.DateTimeFormatter
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -51,14 +55,21 @@ fun AlarmCard(
             verticalArrangement = Arrangement.SpaceBetween
         ) {
             Row(
-                horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.fillMaxWidth(1.0f)
             ) {
                 Text(
                     style = MaterialTheme.typography.displayLarge,
-                    text = alarm.time
+                    text = alarm.time?.format(DateTimeFormatter.ofPattern("HH:mm")) ?: ""
                 )
+                Spacer(modifier = Modifier.width(4.dp))
+                Text(
+                    style = MaterialTheme.typography.displaySmall,
+                    text = alarm.time?.format(DateTimeFormatter.ofPattern("a")) ?: ""
+                )
+
+                Spacer(Modifier.weight(1f))
+
                 Switch(
                     checked = alarm.enabled,
                     onCheckedChange = {
@@ -90,7 +101,8 @@ fun AlarmCard(
                 Text(
                     style = MaterialTheme.typography.labelMedium,
                     textAlign = TextAlign.Left,
-                    text = alarm.date,
+                    text = alarm.date?.format(DateTimeFormatter.ofPattern("eee, dd MMM uuuu"))
+                        ?: "",
                     modifier = Modifier.width(120.dp)
                 )
                 Icon(
@@ -117,8 +129,6 @@ fun AlarmPreview() {
                 Alarm(
                     id = "@monesi#1",
                     name = "Alarm test",
-                    time = "14:30",
-                    date = "mon 7 December",
                     alarmType = AlarmType.PERSONAL
                 )
             )
@@ -136,7 +146,6 @@ fun AlarmPreview() {
 fun GroupItem(
     modifier: Modifier = Modifier,
     group: Group,
-    firstAlarm: Alarm,
     selected: Boolean = false,
     onEvent: (AlarmBrowserEvent) -> Unit
 ) {
@@ -180,20 +189,19 @@ fun GroupItem(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = firstAlarm.name,
+                    text = group.firstAlarmName,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.padding(all = 4.dp),
                     style = MaterialTheme.typography.titleMedium
                 )
                 Text(
-                    text = firstAlarm.date,
+                    text = group.firstAlarmDateTime!!.format(DateTimeFormatter.ofPattern("eee\n dd MMM uuuu")),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     textAlign = TextAlign.Center,
                     modifier = Modifier
                         .padding(vertical = 4.dp, horizontal = 16.dp)
-                        .width(70.dp),
+                        .width(80.dp),
                     style = MaterialTheme.typography.labelMedium,
-                    softWrap = true
                 )
             }
         }
@@ -208,15 +216,9 @@ fun GroupItemPreview() {
         GroupItem(group = Group(
             1,
             "Wanda the group",
-            alarms = LocalAlarmDataProvider.allAlarms,
+            firstAlarmDateTime = OffsetDateTime.parse("2011-12-03T10:15:30+02:00"),
             members = null,
             owner = "@me"
-        ), firstAlarm = Alarm(
-            id = "@monesi#1",
-            name = "Alarm test",
-            time = "14:30",
-            date = "mon 7 December",
-            alarmType = AlarmType.PERSONAL
         ),
             onEvent = {})
     }

@@ -16,6 +16,11 @@ import dev.bebora.swecker.data.Alarm
 import dev.bebora.swecker.data.AlarmType
 import dev.bebora.swecker.ui.alarm_browser.AlarmBrowserEvent
 import dev.bebora.swecker.ui.theme.SweckerTheme
+import java.time.*
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
+import java.time.format.TextStyle
+import java.time.temporal.TemporalAdjusters
 import java.util.*
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -28,7 +33,8 @@ fun AlarmDetails(
 ) {
     var showDatePicker by remember { mutableStateOf(false) }
     var showTimePicker by remember { mutableStateOf(false) }
-
+    val enabledRepetition = alarm.enabledDays.reduceRight { a, b -> a || b }
+    val firstEnabledDay = alarm.enabledDays.indexOfFirst { a -> a } + 1
 
     Box {
         Column(
@@ -44,7 +50,7 @@ fun AlarmDetails(
                         .weight(0.5f),
                     label = "Time",
                     placeHolder = "Select time",
-                    value = alarm.time,
+                    value = alarm.time!!.format(DateTimeFormatter.ofPattern("HH:mm a")),
                     leadingIcon = {
                         Icon(
                             imageVector = Icons.Outlined.Schedule,
@@ -54,20 +60,22 @@ fun AlarmDetails(
                     onClick = { showTimePicker = true }
                 )
 
-                ClickableOutlinedDetails(
-                    modifier = Modifier
-                        .weight(0.5f),
-                    label = "Date",
-                    placeHolder = "Select date",
-                    value = alarm.date,
-                    leadingIcon = {
-                        Icon(
-                            imageVector = Icons.Outlined.EditCalendar,
-                            contentDescription = null
-                        )
-                    },
-                    onClick = { showDatePicker = true }
-                )
+                if (!enabledRepetition) {
+                    ClickableOutlinedDetails(
+                        modifier = Modifier
+                            .weight(0.5f),
+                        label = "Date",
+                        placeHolder = "Select date",
+                        value = alarm.date!!.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT)),
+                        leadingIcon = {
+                            Icon(
+                                imageVector = Icons.Outlined.EditCalendar,
+                                contentDescription = null
+                            )
+                        },
+                        onClick = { showDatePicker = true }
+                    )
+                }
             }
             OutlinedTextField(
                 label = { Text("Name") },
@@ -189,9 +197,23 @@ fun AlarmDetails(
                     modifier = Modifier
                         .padding(4.dp),
                     onClick = ({
+                        val date = if (!enabledRepetition) {
+                            alarm.date
+                        } else {
+                            LocalDate.now().with(
+                                TemporalAdjusters.next(DayOfWeek.of(firstEnabledDay))
+                            )
+                        }
                         onEvent(
                             AlarmBrowserEvent.AlarmUpdated(
-                                alarm = alarm.copy(),
+                                alarm = alarm.copy(
+                                    date = date,
+                                    dateTime = OffsetDateTime.of(
+                                        date,
+                                        alarm.time,
+                                        OffsetDateTime.now().offset
+                                    )
+                                ),
                                 success = true
                             )
                         )
@@ -204,13 +226,25 @@ fun AlarmDetails(
         }
         if (showDatePicker)
             DatePicker(onDateSelected = { newDate ->
-                onEvent(AlarmBrowserEvent.AlarmPartiallyUpdated(alarm.copy(date = newDate)))
+                onEvent(
+                    AlarmBrowserEvent.AlarmPartiallyUpdated(
+                        alarm.copy(
+                            date = newDate
+                        )
+                    )
+                )
             }, onDismissRequest = {
                 showDatePicker = false
             })
         if (showTimePicker)
             TimePicker(onTimeSelected = { newTime ->
-                onEvent(AlarmBrowserEvent.AlarmPartiallyUpdated(alarm.copy(time = newTime)))
+                onEvent(
+                    AlarmBrowserEvent.AlarmPartiallyUpdated(
+                        alarm.copy(
+                            time = newTime
+                        )
+                    )
+                )
             }, onDismissRequest = {
                 showTimePicker = false
             })
@@ -229,7 +263,8 @@ fun RepetitionDaysSelection(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier.fillMaxWidth(1f)
     ) {
-        val days = getDaysOfWeekDisplayNames(loc = Locale.getDefault())
+        val days =
+            DayOfWeek.values().map { d -> d.getDisplayName(TextStyle.NARROW, Locale.getDefault()) }
         days.forEachIndexed { index, day ->
 
             OutlinedButton(
@@ -257,7 +292,7 @@ fun RepetitionDaysSelection(
                 }
             ) {
                 Text(
-                    text = day.uppercase().slice(IntRange(0, 0)),
+                    text = day.uppercase(),
                     textAlign = TextAlign.Center
                 )
             }
@@ -306,8 +341,6 @@ fun AlarmDetailsPreview() {
                 Alarm(
                     id = "@monesi#1",
                     name = "Alarm test",
-                    time = "14:30",
-                    date = "mon 7 December",
                     enabledDays = mutableListOf(true, false, false, false, true, true, true),
                     alarmType = AlarmType.PERSONAL
                 )

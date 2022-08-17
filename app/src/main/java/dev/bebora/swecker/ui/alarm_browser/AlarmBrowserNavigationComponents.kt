@@ -27,6 +27,7 @@ import dev.bebora.swecker.data.AlarmRepositoryImpl
 import dev.bebora.swecker.data.Group
 import dev.bebora.swecker.ui.alarm_browser.chat.ChatTopAppBar
 import dev.bebora.swecker.ui.theme.SweckerTheme
+import java.time.format.DateTimeFormatter
 
 @Composable
 fun SweckerNavBar(
@@ -264,7 +265,7 @@ fun SweckerDetailsAppBar(
                     modifier = modifier,
                     colors = colors,
                     title = uiState.selectedAlarm!!.name,
-                    date = uiState.selectedAlarm.date,
+                    date = uiState.selectedAlarm.date?.format(DateTimeFormatter.ofPattern("eee, dd MMM uuuu"))?:"",
                     onEvent = onEvent,
                 )
             }

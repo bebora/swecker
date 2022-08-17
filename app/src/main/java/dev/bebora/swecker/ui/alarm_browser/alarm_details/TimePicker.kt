@@ -1,6 +1,5 @@
 package dev.bebora.swecker.ui.alarm_browser.alarm_details
 
-import android.text.format.DateFormat
 import android.widget.TimePicker
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -18,14 +17,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import java.util.*
+import java.time.LocalTime
 
 @Composable
 fun TimePicker(
-    onTimeSelected: (String) -> Unit,
+    onTimeSelected: (LocalTime) -> Unit,
     onDismissRequest: () -> Unit
 ) {
-    val selTime = remember { mutableStateOf(android.icu.util.Calendar.getInstance().time) }
+    val selTime = remember { mutableStateOf(LocalTime.now()) }
 
     Dialog(onDismissRequest = { onDismissRequest() }, properties = DialogProperties()) {
         Column(
@@ -79,7 +78,7 @@ fun TimePicker(
                     onClick = {
                         val newTime = selTime.value
                         onTimeSelected(
-                            DateFormat.format("H:mm", newTime).toString(),
+                            newTime
                         )
                         onDismissRequest()
                     },
@@ -98,7 +97,7 @@ fun TimePicker(
 
 @Composable
 fun CustomTimePickerView(
-    onTimeSelected: (Date) -> Unit,
+    onTimeSelected: (LocalTime) -> Unit,
 ) {
     // Adds view to Compose
     AndroidView(
@@ -109,12 +108,7 @@ fun CustomTimePickerView(
         update = { view ->
             view.setOnTimeChangedListener { _, hour, minute ->
                 onTimeSelected(
-                    android.icu.util.Calendar
-                        .getInstance()
-                        .apply {
-                            set(0, 0, 0, hour, minute)
-                        }
-                        .time
+                    LocalTime.of(hour, minute)
                 )
             }
         }

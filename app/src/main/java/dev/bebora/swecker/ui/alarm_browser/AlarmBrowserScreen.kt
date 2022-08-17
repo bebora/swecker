@@ -17,7 +17,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import dev.bebora.swecker.data.Alarm
 import dev.bebora.swecker.data.AlarmRepositoryImpl
-import dev.bebora.swecker.data.AlarmType
 import dev.bebora.swecker.data.Group
 import dev.bebora.swecker.data.local.LocalAlarmDataProvider
 import dev.bebora.swecker.ui.alarm_browser.alarm_details.AlarmDetails
@@ -25,6 +24,7 @@ import dev.bebora.swecker.ui.alarm_browser.chat.ChatScreenPreview
 import dev.bebora.swecker.ui.theme.SweckerTheme
 import dev.bebora.swecker.util.SETTINGS
 import kotlinx.coroutines.launch
+import java.time.OffsetDateTime
 
 
 @Composable
@@ -71,7 +71,6 @@ fun GroupList(
                 modifier = modifier,
                 group = group,
                 selected = selectedGroupId == group.id,
-                firstAlarm = group.alarms.first(),
                 onEvent = onEvent
             )
         }
@@ -91,45 +90,24 @@ fun GroupListPreview() {
                         1,
                         "Wanda the group",
                         members = null,
-                        alarms = listOf(
-                            Alarm(
-                                id = "@monesi#1",
-                                name = "Alarm test",
-                                time = "14:30",
-                                date = "mon 7 December",
-                                alarmType = AlarmType.PERSONAL
-                            )
-                        ),
+                        firstAlarmName = "An alarm!",
+                        firstAlarmDateTime = OffsetDateTime.parse("2011-12-03T10:15:30+02:00"),
                         owner = "@me"
                     ),
                     Group(
                         2,
                         "Another group",
                         members = null,
-                        alarms = listOf(
-                            Alarm(
-                                id = "@monesi#1",
-                                name = "Alarm test",
-                                time = "14:30",
-                                date = "mon 7 December",
-                                alarmType = AlarmType.PERSONAL
-                            )
-                        ),
+                        firstAlarmName = "An alarm!",
+                        firstAlarmDateTime = OffsetDateTime.parse("2011-12-03T10:15:30+02:00"),
                         owner = "@you"
                     ),
                     Group(
                         3,
                         "A third group! Very long title",
                         members = null,
-                        alarms = listOf(
-                            Alarm(
-                                id = "@monesi#1",
-                                name = "Alarm test",
-                                time = "14:30",
-                                date = "mon 7 December",
-                                alarmType = AlarmType.PERSONAL
-                            )
-                        ),
+                        firstAlarmName = "An alarm!",
+                        firstAlarmDateTime = OffsetDateTime.parse("2011-12-03T10:15:30+02:00"),
                         owner = "@you"
                     ),
                 ),
