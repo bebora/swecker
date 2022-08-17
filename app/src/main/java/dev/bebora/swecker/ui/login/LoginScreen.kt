@@ -36,12 +36,12 @@ fun LoginScreen(
         modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             SmallTopAppBar(
-                title = { Text(text = "Login") },
+                title = { Text(text = stringResource(R.string.login_appbar_title)) },
                 navigationIcon = {
                     IconButton(onClick = { onGoBack() }) {
                         Icon(
                             Icons.Filled.ArrowBack,
-                            contentDescription = "Go back"
+                            contentDescription = stringResource(id = R.string.go_back)
                         )
                     }
                 },
@@ -71,11 +71,11 @@ fun LoginScreen(
                     onValueChange = { newValue ->
                         viewModel.onEvent(LoginEvent.SetTempEmail(newValue))
                     },
-                    placeholder = { Text(text = "Email") },
+                    placeholder = { Text(text = stringResource(R.string.email_placeholder)) },
                     leadingIcon = {
                         Icon(
                             imageVector = Icons.Default.Email,
-                            contentDescription = "Email"
+                            contentDescription = stringResource(R.string.email_placeholder)
                         )
                     },
                     modifier = Modifier

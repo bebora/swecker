@@ -64,7 +64,7 @@ fun ThemeDummyScreen(
                     IconButton(onClick = { onEvent(SettingsEvent.CloseSettingsSubsection) }) {
                         Icon(
                             Icons.Filled.ArrowBack,
-                            contentDescription = "Go back"
+                            contentDescription = stringResource(id = R.string.go_back)
                         )
                     }
                 },

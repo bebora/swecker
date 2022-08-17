@@ -47,7 +47,7 @@ fun AccountDummyScreen(
                     IconButton(onClick = { onEvent(SettingsEvent.CloseSettingsSubsection) }) {
                         Icon(
                             Icons.Filled.ArrowBack,
-                            contentDescription = "Go back"
+                            contentDescription = stringResource(id = R.string.go_back)
                         )
                     }
                 },
@@ -140,7 +140,7 @@ fun AccountDummyScreen(
     if (ui.showEditNamePopup) {
         AlertDialog(
             title = {
-                Text(text = "Edit name")
+                Text(text = stringResource(R.string.edit_name))
             },
             onDismissRequest = { onEvent(SettingsEvent.DismissEditName) },
             confirmButton = {
@@ -156,7 +156,7 @@ fun AccountDummyScreen(
                             )
                         )
                     }) {
-                    Text(text = "Confirm")
+                    Text(text = stringResource(id = R.string.confirm_dialog))
                 }
             },
             dismissButton = {
@@ -164,7 +164,7 @@ fun AccountDummyScreen(
                     onClick = {
                         onEvent(SettingsEvent.DismissEditName)
                     }) {
-                    Text(text = "Dismiss")
+                    Text(text = stringResource(id = R.string.dismiss_dialog))
                 }
             },
             text = {
@@ -177,7 +177,7 @@ fun AccountDummyScreen(
     if (ui.showEditUsernamePopup) {
         AlertDialog(
             title = {
-                Text(text = "Edit username")
+                Text(text = stringResource(R.string.edit_username))
             },
             onDismissRequest = { onEvent(SettingsEvent.DismissEditUsername) },
             confirmButton = {
@@ -193,7 +193,7 @@ fun AccountDummyScreen(
                             )
                         )
                     }) {
-                    Text(text = "Confirm")
+                    Text(text = stringResource(id = R.string.confirm_dialog))
                 }
             },
             dismissButton = {
@@ -201,7 +201,7 @@ fun AccountDummyScreen(
                     onClick = {
                         onEvent(SettingsEvent.DismissEditUsername)
                     }) {
-                    Text(text = "Dismiss")
+                    Text(text = stringResource(id = R.string.dismiss_dialog))
                 }
             },
             text = {
@@ -248,7 +248,7 @@ fun SuggestLogin(
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Text(text = "Log into your account to unlock all the features!")
+        Text(text = stringResource(R.string.login_header))
         Column(modifier = Modifier.padding(16.dp)) {
             FeatureDescription(
                 textRes = R.string.feature_sync,

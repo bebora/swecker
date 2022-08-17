@@ -39,4 +39,15 @@
     <string name="feature_channels">Subscribe to alarm channels</string>
     <string name="feature_chat">Chat with other people subscribed to the same alarms</string>
     <string name="ask_existing_account">Already have an account?</string>
+    <string name="go_back">Go back</string>
+    <string name="edit_name">Edit name</string>
+    <string name="edit_username">Edit username</string>
+    <string name="login_header">Log into your account to unlock all the features!</string>
+    <string name="magic_dynamic_theme">Magic dynamic theme</string>
+    <string name="color_scheme_selected">Color scheme selected</string>
+    <string name="email_placeholder">Email</string>
+    <string name="login_appbar_title">Login</string>
+    <string name="signup_appbar_title">Signup</string>
+    <string name="visibility">Visibility</string>
+    <string name="password_lock">Lock</string>
 </resources>

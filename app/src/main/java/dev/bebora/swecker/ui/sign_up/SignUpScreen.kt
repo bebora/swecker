@@ -35,12 +35,12 @@ fun SignUpScreen(
         modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             SmallTopAppBar(
-                title = { Text(text = "Signup") },
+                title = { Text(text = stringResource(R.string.signup_appbar_title)) },
                 navigationIcon = {
                     IconButton(onClick = { onGoBack() }) {
                         Icon(
                             Icons.Filled.ArrowBack,
-                            contentDescription = "Go back"
+                            contentDescription = stringResource(id = R.string.go_back)
                         )
                     }
                 },
@@ -70,11 +70,11 @@ fun SignUpScreen(
                     onValueChange = { newValue ->
                         viewModel.onEvent(SignUpEvent.SetTempEmail(newValue))
                     },
-                    placeholder = { Text(text = "Email") },
+                    placeholder = { Text(text = stringResource(id = R.string.email_placeholder)) },
                     leadingIcon = {
                         Icon(
                             imageVector = Icons.Default.Email,
-                            contentDescription = "Email"
+                            contentDescription = stringResource(id = R.string.email_placeholder)
                         )
                     },
                     modifier = Modifier

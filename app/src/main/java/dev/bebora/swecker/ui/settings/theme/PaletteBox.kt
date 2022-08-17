@@ -15,8 +15,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import dev.bebora.swecker.R
 import dev.bebora.swecker.ui.theme.SweckerTheme
 
 @Composable
@@ -47,7 +49,7 @@ fun PaletteBox(
                 if (showMagicIcon) {
                     Icon(
                         imageVector = Icons.Outlined.AutoAwesome,
-                        contentDescription = "Magic dynamic theme",
+                        contentDescription = stringResource(R.string.magic_dynamic_theme),
                         modifier = Modifier.padding(8.dp),
                         tint = colorScheme.onPrimary
                     )
@@ -73,7 +75,7 @@ fun PaletteBox(
         if (selected) {
             Icon(
                 imageVector = Icons.Outlined.Done,
-                contentDescription = "Color scheme selected",
+                contentDescription = stringResource(R.string.color_scheme_selected),
                 tint = colorScheme.onSurface,
                 modifier = Modifier
                     .background(
