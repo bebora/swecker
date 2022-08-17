@@ -71,7 +71,12 @@ fun LoginScreen(
                         )
                     }
                 },
-                scrollBehavior = scrollBehavior
+                scrollBehavior = scrollBehavior,
+                actions = {
+                    if (uiState.loading) {
+                        CircularProgressIndicator()
+                    }
+                }
             )
         },
         containerColor = MaterialTheme.colorScheme.surface
@@ -145,6 +150,7 @@ fun LoginScreen(
                         keyboardController?.hide()
                         viewModel.onEvent(LoginEvent.SignInClick(onLoginSuccess))
                     },
+                    enabled = !uiState.loading
                 ) {
                     Text(
                         text = stringResource(id = R.string.log_in_button),

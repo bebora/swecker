@@ -12,7 +12,9 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.bebora.swecker.R
 import dev.bebora.swecker.common.isValidEmail
 import dev.bebora.swecker.common.isValidPassword
+import dev.bebora.swecker.data.User
 import dev.bebora.swecker.data.service.AccountService
+import dev.bebora.swecker.data.service.StorageService
 import dev.bebora.swecker.ui.utils.UiText
 import dev.bebora.swecker.ui.utils.onError
 import dev.bebora.swecker.util.UiEvent
@@ -24,6 +26,7 @@ import javax.inject.Inject
 @HiltViewModel
 class SignUpViewModel @Inject constructor(
     private val accountService: AccountService,
+    private val storageService: StorageService,
 ) : ViewModel() {
     var uiState by mutableStateOf(SignUpUiState())
         private set
@@ -66,11 +69,40 @@ class SignUpViewModel @Inject constructor(
                     return
                 }
 
+                uiState = uiState.copy(
+                    loading = true
+                )
                 viewModelScope.launch {
                     accountService.createAccount(uiState.email, uiState.password) { error ->
                         if (error == null) {
-                            event.onNavigate()
+                            storageService.saveUser(
+                                user = User(
+                                    id = accountService.getUserId(),
+                                    name = uiState.email.split("@")[0],
+                                    username = accountService.getUserId()
+                                )
+                            ) { saveUserError ->
+                                uiState = uiState.copy(
+                                    loading = false
+                                )
+                                if (saveUserError == null) {
+                                    event.onNavigate()
+                                }
+                                else {
+                                    onError(error = saveUserError)
+                                    viewModelScope.launch {
+                                        _uiEvent.send(
+                                            UiEvent.ShowSnackbar(
+                                                uiText = UiText.StringResource(resId = R.string.signup_error)
+                                            )
+                                        )
+                                    }
+                                }
+                            }
                         } else {
+                            uiState = uiState.copy(
+                                loading = false
+                            )
                             onError(error = error)
                             val stringRes = when (error) {
                                 is FirebaseAuthWeakPasswordException -> R.string.invalid_password

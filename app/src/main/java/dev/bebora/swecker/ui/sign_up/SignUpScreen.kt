@@ -25,6 +25,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import dev.bebora.swecker.R
 import dev.bebora.swecker.common.composable.PasswordField
 import dev.bebora.swecker.data.service.impl.AccountServiceImpl
+import dev.bebora.swecker.data.service.impl.StorageServiceImpl
 import dev.bebora.swecker.util.UiEvent
 
 @Composable
@@ -71,7 +72,12 @@ fun SignUpScreen(
                         )
                     }
                 },
-                scrollBehavior = scrollBehavior
+                scrollBehavior = scrollBehavior,
+                actions = {
+                    if (uiState.loading) {
+                        CircularProgressIndicator()
+                    }
+                }
             )
         },
         containerColor = MaterialTheme.colorScheme.surface
@@ -145,6 +151,7 @@ fun SignUpScreen(
                         keyboardController?.hide()
                         viewModel.onEvent(SignUpEvent.SignInClick(onSignUpSuccess))
                     },
+                    enabled = !uiState.loading
                 ) {
                     Text(
                         text = stringResource(id = R.string.sign_up_button),
@@ -169,7 +176,8 @@ fun SignUpScreen(
 fun SignupScreenPreview() {
     SignUpScreen(
         viewModel = SignUpViewModel(
-            accountService = AccountServiceImpl()
+            accountService = AccountServiceImpl(),
+            storageService = StorageServiceImpl()
         )
     )
 }

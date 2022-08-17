@@ -30,5 +30,7 @@ data class SettingsUiState(
     val userId: String = "",
 
     val savedName: String = "",
-    val savedUsername: String = ""
+    val savedUsername: String = "",
+
+    val accontLoading: Boolean = false
 )

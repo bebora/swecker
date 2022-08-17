@@ -56,4 +56,8 @@
     <string name="invalid_user">The user does not exist or has been disabled</string>
     <string name="wrong_password">The entered password does not match</string>
     <string name="email_already_exists">An account is already registered with the entered email</string>
+    <string name="signup_error">An error occurred while creating your account</string>
+    <string name="save_user_error">An error occurred while saving user data</string>
+    <string name="unavailable_username">The entered username is not available</string>
+    <string name="blank_user_or_username">Name and username cannot be empty</string>
 </resources>

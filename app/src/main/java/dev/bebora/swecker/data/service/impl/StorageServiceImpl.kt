@@ -5,7 +5,9 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
 import dev.bebora.swecker.data.User
+import dev.bebora.swecker.data.service.BlankUserOrUsername
 import dev.bebora.swecker.data.service.StorageService
+import dev.bebora.swecker.data.service.UsernameAlreadyTakenException
 
 class StorageServiceImpl : StorageService {
     override fun getUser(
@@ -15,8 +17,7 @@ class StorageServiceImpl : StorageService {
     ) {
         if (userId == "") {
             Log.d("SWECKER-DEB", "userId is empty")
-        }
-        else {
+        } else {
             Firebase.firestore
                 .collection(USERS_COLLECTION)
                 .document(userId)
@@ -35,11 +36,26 @@ class StorageServiceImpl : StorageService {
 
     override fun saveUser(user: User, onResult: (Throwable?) -> Unit) {
         Log.d("SWECKER-SAVE", "Sto salvando user così $user")
-        Firebase.firestore
-            .collection(USERS_COLLECTION)
-            .document(user.id)
-            .set(user)
-            .addOnCompleteListener { onResult(it.exception) }
+        if (user.name.isBlank() || user.username.isBlank()) {
+            onResult(BlankUserOrUsername())
+        } else {
+            Firebase.firestore
+                .collection(USERS_COLLECTION)
+                .whereEqualTo("username", user.username)
+                .get()
+                .addOnFailureListener { error -> onResult(error) }
+                .addOnSuccessListener { querySnapshot ->
+                    if (querySnapshot.isEmpty || querySnapshot.documents[0].get("id") == user.id) {
+                        Firebase.firestore
+                            .collection(USERS_COLLECTION)
+                            .document(user.id)
+                            .set(user)
+                            .addOnCompleteListener { onResult(it.exception) }
+                    } else {
+                        onResult(UsernameAlreadyTakenException())
+                    }
+                }
+        }
     }
 
     /*

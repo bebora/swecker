@@ -8,12 +8,19 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dev.bebora.swecker.R
 import dev.bebora.swecker.data.service.AccountService
+import dev.bebora.swecker.data.service.BlankUserOrUsername
 import dev.bebora.swecker.data.service.StorageService
+import dev.bebora.swecker.data.service.UsernameAlreadyTakenException
 import dev.bebora.swecker.data.settings.SettingsRepositoryInterface
+import dev.bebora.swecker.ui.utils.UiText
 import dev.bebora.swecker.ui.utils.feedbackVibrationEnabled
 import dev.bebora.swecker.ui.utils.onError
+import dev.bebora.swecker.util.UiEvent
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -28,6 +35,9 @@ class SettingsViewModel @Inject constructor(
 
     var uiState by mutableStateOf(SettingsUiState())
         private set
+
+    private val _accountUiEvent = Channel<UiEvent>()
+    val accountUiEvent = _accountUiEvent.receiveAsFlow()
 
     private var userInfoChanges = accountService.getUserInfoChanges()
 
@@ -265,14 +275,32 @@ class SettingsViewModel @Inject constructor(
                 uiState = uiState.copy(
                     showEditNamePopup = false,
                     showEditUsernamePopup = false,
-                    // TODO display loading icon?
+                    accontLoading = true
                 )
                 storageService.saveUser(event.user) { error ->
+                    uiState = uiState.copy(
+                        accontLoading = false
+                    )
                     if (error == null) {
                         uiState = uiState.copy(
                             savedName = event.user.name,
                             savedUsername = event.user.username
                         )
+                    }
+                    else {
+                        onError(error)
+                        val stringRes = when (error) {
+                            is UsernameAlreadyTakenException -> R.string.unavailable_username
+                            is BlankUserOrUsername -> R.string.blank_user_or_username
+                            else -> R.string.save_user_error
+                        }
+                        viewModelScope.launch {
+                            _accountUiEvent.send(
+                                UiEvent.ShowSnackbar(
+                                    uiText = UiText.StringResource(resId = stringRes)
+                                )
+                            )
+                        }
                     }
                 }
             }

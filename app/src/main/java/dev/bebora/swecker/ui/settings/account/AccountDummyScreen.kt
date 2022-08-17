@@ -13,12 +13,15 @@ import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -27,6 +30,9 @@ import dev.bebora.swecker.R
 import dev.bebora.swecker.data.User
 import dev.bebora.swecker.ui.settings.*
 import dev.bebora.swecker.ui.theme.SweckerTheme
+import dev.bebora.swecker.util.UiEvent
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emptyFlow
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -34,11 +40,28 @@ fun AccountDummyScreen(
     ui: SettingsUiState,
     modifier: Modifier = Modifier,
     onEvent: (SettingsEvent) -> Unit,
+    uiEvent: Flow<UiEvent> = emptyFlow(),
     onNavigate: (String) -> Unit = {}
 ) {
+    val snackbarHostState = remember { SnackbarHostState() }
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
+    val context = LocalContext.current
+
+    LaunchedEffect(key1 = true) {
+        uiEvent.collect { event ->
+            when (event) {
+                is UiEvent.ShowSnackbar -> {
+                    snackbarHostState.showSnackbar(
+                        message = event.uiText.asString(context = context),
+                    )
+                }
+                else -> Unit
+            }
+        }
+    }
 
     Scaffold(
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             SmallTopAppBar(
@@ -51,7 +74,12 @@ fun AccountDummyScreen(
                         )
                     }
                 },
-                scrollBehavior = scrollBehavior
+                scrollBehavior = scrollBehavior,
+                actions = {
+                    if (ui.accontLoading || ui.savedName.isBlank()) {
+                        CircularProgressIndicator()
+                    }
+                }
             )
         },
     ) { scaffoldPadding ->
@@ -75,7 +103,7 @@ fun AccountDummyScreen(
                         onClick = { onEvent(SettingsEvent.OpenEditName) }
                     ),
                     SettingsSection(
-                        ui.savedUsername,
+                        "@${ui.savedUsername}",
                         stringResource(R.string.account_change_username),
                         Icons.Outlined.AlternateEmail,
                         onClick = { onEvent(SettingsEvent.OpenEditUsername) }
@@ -101,22 +129,6 @@ fun AccountDummyScreen(
                         )
                 )
                 Spacer(modifier = Modifier.height(16.dp))
-                Text(
-                    text = "Registered to Firebase: " + ui.hasUser.toString(),
-                    color = MaterialTheme.colorScheme.error
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-                Text(text = ui.userId, color = MaterialTheme.colorScheme.error)
-                Spacer(modifier = Modifier.height(16.dp))
-                Text(
-                    text = "current name: ${ui.currentName}",
-                    color = MaterialTheme.colorScheme.error
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-                Text(
-                    text = "current username: ${ui.currentUsername}",
-                    color = MaterialTheme.colorScheme.error
-                )
                 sections.forEach { section ->
                     Divider()
                     SettingsItem(
@@ -145,8 +157,8 @@ fun AccountDummyScreen(
                             SettingsEvent.SaveUser(
                                 User(
                                     id = ui.userId,
-                                    name = ui.currentName,
-                                    username = ui.savedUsername
+                                    name = ui.currentName.trim(),
+                                    username = ui.savedUsername.trim()
                                 )
                             )
                         )
@@ -165,7 +177,9 @@ fun AccountDummyScreen(
             text = {
                 OutlinedTextField(
                     value = ui.currentName,
-                    onValueChange = { onEvent(SettingsEvent.SetTempName(it)) })
+                    onValueChange = { onEvent(SettingsEvent.SetTempName(it)) },
+                    singleLine = true
+                )
             }
         )
     }
@@ -182,8 +196,8 @@ fun AccountDummyScreen(
                             SettingsEvent.SaveUser(
                                 User(
                                     id = ui.userId,
-                                    name = ui.savedName,
-                                    username = ui.currentUsername
+                                    name = ui.savedName.trim(),
+                                    username = ui.currentUsername.trim()
                                 )
                             )
                         )
@@ -202,7 +216,9 @@ fun AccountDummyScreen(
             text = {
                 OutlinedTextField(
                     value = ui.currentUsername,
-                    onValueChange = { onEvent(SettingsEvent.SetTempUsername(it)) })
+                    onValueChange = { onEvent(SettingsEvent.SetTempUsername(it)) },
+                    singleLine = true
+                )
             }
         )
     }
@@ -292,7 +308,7 @@ fun AccountLoggedDummyScreenPreview() {
             ui = SettingsUiState(
                 hasUser = true,
                 userId = "fakeuser",
-                savedUsername = "@example",
+                savedUsername = "example",
                 savedName = "Example"
             ),
             onEvent = {}

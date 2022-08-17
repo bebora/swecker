@@ -65,9 +65,14 @@ class LoginViewModel @Inject constructor(
                     }
                     return
                 }
-
+                uiState = uiState.copy(
+                    loading = true
+                )
                 viewModelScope.launch {
                     accountService.authenticate(uiState.email, uiState.password) { error ->
+                        uiState = uiState.copy(
+                            loading = false
+                        )
                         if (error == null) {
                             event.onNavigate()
                         } else {

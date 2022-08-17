@@ -51,6 +51,7 @@ fun SettingsScreen(
                     AccountDummyScreen(
                         ui = viewModel.uiState,
                         onEvent = viewModel::onEvent,
+                        uiEvent = viewModel.accountUiEvent,
                         onNavigate = { onNavigate(it) }
                     )
                 } else if (viewModel.uiState.openSoundsSettings) {
@@ -98,6 +99,7 @@ fun SettingsScreen(
                             AccountDummyScreen(
                                 ui = viewModel.uiState,
                                 onEvent = viewModel::onEvent,
+                                uiEvent = viewModel.accountUiEvent,
                                 onNavigate = { onNavigate(it) }
                             )
                         } else if (viewModel.uiState.openSoundsSettings) {

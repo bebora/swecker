@@ -27,3 +27,6 @@ interface StorageService {
     fun deleteTask(taskId: String, onResult: (Throwable?) -> Unit)
      */
 }
+
+class UsernameAlreadyTakenException() : Exception()
+class BlankUserOrUsername() : Exception()
