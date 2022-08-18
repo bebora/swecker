@@ -9,10 +9,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.bebora.swecker.R
-import dev.bebora.swecker.data.service.AccountService
-import dev.bebora.swecker.data.service.BlankUserOrUsername
-import dev.bebora.swecker.data.service.StorageService
-import dev.bebora.swecker.data.service.UsernameAlreadyTakenException
+import dev.bebora.swecker.data.service.*
 import dev.bebora.swecker.data.settings.SettingsRepositoryInterface
 import dev.bebora.swecker.ui.utils.UiText
 import dev.bebora.swecker.ui.utils.feedbackVibrationEnabled
@@ -29,6 +26,7 @@ import javax.inject.Inject
 class SettingsViewModel @Inject constructor(
     private val repository: SettingsRepositoryInterface, application: Application,
     private val accountService: AccountService,
+    private val imageStorageService: ImageStorageService,
     private val storageService: StorageService
 ) : AndroidViewModel(application) {
     val settings = repository.getSettings()
@@ -54,6 +52,14 @@ class SettingsViewModel @Inject constructor(
                 uiState = uiState.copy(
                     hasUser = accountService.hasUser(),
                     userId = accountService.getUserId()
+                )
+                imageStorageService.getProfilePictureUrl(
+                    userId = uiState.userId,
+                    onSuccess = {
+                        uiState = uiState.copy(
+                            propicUrl = it
+                        )
+                    }
                 )
             }
         }

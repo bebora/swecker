@@ -21,10 +21,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil.compose.SubcomposeAsyncImage
 import dev.bebora.swecker.util.LOGIN
 import dev.bebora.swecker.R
 import dev.bebora.swecker.data.User
@@ -109,25 +111,54 @@ fun AccountDummyScreen(
                         onClick = { onEvent(SettingsEvent.OpenEditUsername) }
                     )
                 )
+
                 Box(
-                    modifier = Modifier
-                        .requiredSize(160.dp)
-                        .clip(CircleShape)
-                        .background(
-                            brush = Brush.verticalGradient(
-                                colors = listOf(
-                                    MaterialTheme.colorScheme.primary,
-                                    MaterialTheme.colorScheme.secondary,
-                                    MaterialTheme.colorScheme.error
+                    contentAlignment = Alignment.BottomEnd
+                ) {
+                    SubcomposeAsyncImage(
+                        model = ui.propicUrl,
+                        loading = {
+                            PropicPlaceholder()
+                            {
+                                CircularProgressIndicator()
+                            }
+                        },
+                        error = {
+                            PropicPlaceholder {
+                                Icon(
+                                    imageVector = Icons.Default.Warning,
+                                    contentDescription = "Error getting profile picture",
+                                    modifier = Modifier
+                                        .wrapContentHeight()
+                                        .background(
+                                            color = MaterialTheme.colorScheme.errorContainer,
+                                            shape = CircleShape
+                                        )
+                                        .padding(8.dp),
+                                    tint = MaterialTheme.colorScheme.error
                                 )
-                            )
+                            }
+                        },
+                        contentDescription = "Profile picture",
+                        contentScale = ContentScale.FillBounds,
+                        modifier = Modifier
+                            .requiredSize(160.dp)
+                            .clip(CircleShape)
+                    )
+                    IconButton(
+                        modifier = Modifier.background(
+                            color = MaterialTheme.colorScheme.primary,
+                            shape = CircleShape
+                        ),
+                        onClick = { /*TODO add image uploading*/ }) {
+                        Icon(
+                            imageVector = Icons.Default.AddPhotoAlternate,
+                            contentDescription = "Add new profile picture",
+                            tint = MaterialTheme.colorScheme.onPrimary
                         )
-                        .border(
-                            width = 1.dp,
-                            color = MaterialTheme.colorScheme.outline,
-                            shape = RoundedCornerShape(80.dp)
-                        )
-                )
+                    }
+                }
+
                 Spacer(modifier = Modifier.height(16.dp))
                 sections.forEach { section ->
                     Divider()
@@ -289,6 +320,35 @@ fun SuggestLogin(
     }
 }
 
+@Composable
+fun PropicPlaceholder(
+    modifier: Modifier = Modifier,
+    content: @Composable () -> Unit
+) {
+    Box(
+        modifier = modifier
+            .requiredSize(160.dp)
+            .clip(CircleShape)
+            .background(
+                brush = Brush.verticalGradient(
+                    colors = listOf(
+                        MaterialTheme.colorScheme.primary,
+                        MaterialTheme.colorScheme.secondary,
+                        MaterialTheme.colorScheme.error
+                    )
+                )
+            )
+            .border(
+                width = 1.dp,
+                color = MaterialTheme.colorScheme.outline,
+                shape = RoundedCornerShape(80.dp)
+            ),
+        contentAlignment = Alignment.Center
+    ) {
+        content()
+    }
+}
+
 @Preview(locale = "en")
 @Composable
 fun AccountNotLoggedDummyScreenPreview() {
@@ -312,6 +372,25 @@ fun AccountLoggedDummyScreenPreview() {
                 savedName = "Example"
             ),
             onEvent = {}
+        )
+    }
+}
+
+@Preview
+@Composable
+fun PropicPlaceholderPreview() {
+    PropicPlaceholder() {
+        Icon(
+            imageVector = Icons.Default.Warning,
+            contentDescription = "Error",
+            modifier = Modifier
+                .wrapContentHeight()
+                .background(
+                    color = MaterialTheme.colorScheme.errorContainer,
+                    shape = CircleShape
+                )
+                .padding(8.dp),
+            tint = MaterialTheme.colorScheme.error
         )
     }
 }

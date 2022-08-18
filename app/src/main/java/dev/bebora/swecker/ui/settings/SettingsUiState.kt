@@ -32,5 +32,7 @@ data class SettingsUiState(
     val savedName: String = "",
     val savedUsername: String = "",
 
-    val accontLoading: Boolean = false
+    val accontLoading: Boolean = false,
+
+    val propicUrl: String = ""
 )

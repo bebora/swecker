@@ -8,8 +8,10 @@ import dagger.hilt.components.SingletonComponent
 import dev.bebora.swecker.data.AlarmRepository
 import dev.bebora.swecker.data.AlarmRepositoryImpl
 import dev.bebora.swecker.data.service.AccountService
+import dev.bebora.swecker.data.service.ImageStorageService
 import dev.bebora.swecker.data.service.StorageService
 import dev.bebora.swecker.data.service.impl.AccountServiceImpl
+import dev.bebora.swecker.data.service.impl.ImageStorageServiceImpl
 import dev.bebora.swecker.data.service.impl.StorageServiceImpl
 import dev.bebora.swecker.data.settings.SettingsRepositoryInterface
 import dev.bebora.swecker.data.settings.DataStoreManager
@@ -35,6 +37,12 @@ object AppModule {
     @Singleton
     fun provideAccountService(): AccountService {
         return AccountServiceImpl()
+    }
+
+    @Provides
+    @Singleton
+    fun provideImageStorageService(): ImageStorageService {
+        return ImageStorageServiceImpl()
     }
 
     @Provides
