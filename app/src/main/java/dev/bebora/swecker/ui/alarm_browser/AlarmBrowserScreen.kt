@@ -19,6 +19,8 @@ import dev.bebora.swecker.data.Alarm
 import dev.bebora.swecker.data.Group
 import dev.bebora.swecker.data.alarm_browser.AlarmRepositoryTestImpl
 import dev.bebora.swecker.data.local.LocalAlarmDataProvider
+import dev.bebora.swecker.ui.add_alarm.AddAlarmDialog
+import dev.bebora.swecker.ui.add_alarm.AddAlarmScreen
 import dev.bebora.swecker.ui.alarm_browser.alarm_details.AlarmDetails
 import dev.bebora.swecker.ui.alarm_browser.chat.ChatScreenPreview
 import dev.bebora.swecker.ui.theme.SweckerTheme
@@ -450,45 +452,50 @@ fun AlarmBrowserScreen(
         content = {
             BoxWithConstraints() {
                 if (maxWidth < 840.dp) {
-                    Scaffold(
-                        topBar = {
-                            SweckerTopAppBar(
-                                modifier = modifier,
-                                uiState = uiState,
-                                onEvent = viewModel::onEvent,
-                                colors = TopAppBarDefaults.smallTopAppBarColors(
-                                    containerColor = MaterialTheme.colorScheme.surfaceVariant
-                                ),
-                                onOpenDrawer = { scope.launch { drawerState.open() } }
-                            )
-                        },
-                        floatingActionButton = {
-                            SweckerFab(
-                                destination = uiState.selectedDestination,
-                                modifier = Modifier
-                                    .align(Alignment.BottomEnd)
-                                    .padding(32.dp)
-                            ) {
-                                when (uiState.selectedDestination) {
-                                    NavBarDestination.PERSONAL, NavBarDestination.HOME -> {
-                                        viewModel.onEvent(AlarmBrowserEvent.ToggleAddAlarm)
+                    if (uiState.showAddAlarm) {
+                        AddAlarmScreen(modifier = Modifier.fillMaxSize(1f),
+                            onGoBack = { viewModel.onEvent(AlarmBrowserEvent.ToggleAddAlarm) })
+                    } else {
+                        Scaffold(
+                            topBar = {
+                                SweckerTopAppBar(
+                                    modifier = modifier,
+                                    uiState = uiState,
+                                    onEvent = viewModel::onEvent,
+                                    colors = TopAppBarDefaults.smallTopAppBarColors(
+                                        containerColor = MaterialTheme.colorScheme.surfaceVariant
+                                    ),
+                                    onOpenDrawer = { scope.launch { drawerState.open() } }
+                                )
+                            },
+                            floatingActionButton = {
+                                SweckerFab(
+                                    destination = uiState.selectedDestination,
+                                    modifier = Modifier
+                                        .align(Alignment.BottomEnd)
+                                        .padding(32.dp)
+                                ) {
+                                    when (uiState.selectedDestination) {
+                                        NavBarDestination.PERSONAL, NavBarDestination.HOME -> {
+                                            viewModel.onEvent(AlarmBrowserEvent.ToggleAddAlarm)
+                                        }
+                                        else -> {}
                                     }
-                                    else -> {}
                                 }
-                            }
-                        },
-                        bottomBar = {
-                            SweckerNavBar(
-                                alarmBrowserUIState = uiState,
+                            },
+                            bottomBar = {
+                                SweckerNavBar(
+                                    alarmBrowserUIState = uiState,
+                                    onEvent = viewModel::onEvent,
+                                )
+                            }) {
+                            AlarmBrowserSinglePaneContent(
+                                modifier = Modifier.padding(it),
                                 onEvent = viewModel::onEvent,
+                                uiState = uiState,
                             )
-                        }) {
-                        AlarmBrowserSinglePaneContent(
-                            modifier = Modifier.padding(it),
-                            onEvent = viewModel::onEvent,
-                            uiState = uiState,
-                        )
 
+                        }
                     }
                 } else {
                     AlarmBrowserDualPaneContent(
@@ -509,6 +516,10 @@ fun AlarmBrowserScreen(
                             }
                         }
                     )
+                    if (uiState.showAddAlarm) {
+                        AddAlarmDialog(
+                            onGoBack = { viewModel.onEvent(AlarmBrowserEvent.ToggleAddAlarm) })
+                    }
                 }
             }
         })
