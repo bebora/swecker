@@ -34,28 +34,32 @@ class StorageServiceImpl : StorageService {
         TODO("Not yet implemented")
     }
 
-    override fun saveUser(user: User, onResult: (Throwable?) -> Unit) {
+    override fun saveUser(requestedUser: User, onResult: (Throwable?) -> Unit) {
+        var user = requestedUser.copy()
         Log.d("SWECKER-SAVE", "Sto salvando user così $user")
-        if (user.name.isBlank() || user.username.isBlank()) {
+        // An error on signup may cause empty user data
+        if (user.name.isBlank() && user.username.isBlank()) {
+            user = user.copy(name = user.id, username = user.id)
+        } else if (user.name.isBlank() || user.username.isBlank()) {
             onResult(BlankUserOrUsername())
-        } else {
-            Firebase.firestore
-                .collection(USERS_COLLECTION)
-                .whereEqualTo("username", user.username)
-                .get()
-                .addOnFailureListener { error -> onResult(error) }
-                .addOnSuccessListener { querySnapshot ->
-                    if (querySnapshot.isEmpty || querySnapshot.documents[0].get("id") == user.id) {
-                        Firebase.firestore
-                            .collection(USERS_COLLECTION)
-                            .document(user.id)
-                            .set(user)
-                            .addOnCompleteListener { onResult(it.exception) }
-                    } else {
-                        onResult(UsernameAlreadyTakenException())
-                    }
-                }
+            return
         }
+        Firebase.firestore
+            .collection(USERS_COLLECTION)
+            .whereEqualTo("username", user.username)
+            .get()
+            .addOnFailureListener { error -> onResult(error) }
+            .addOnSuccessListener { querySnapshot ->
+                if (querySnapshot.isEmpty || querySnapshot.documents[0].get("id") == user.id) {
+                    Firebase.firestore
+                        .collection(USERS_COLLECTION)
+                        .document(user.id)
+                        .set(user)
+                        .addOnCompleteListener { onResult(it.exception) }
+                } else {
+                    onResult(UsernameAlreadyTakenException())
+                }
+            }
     }
 
     /*

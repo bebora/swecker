@@ -27,10 +27,11 @@ fun SettingsItem(
 ) {
     Row(modifier = modifier
         .background(MaterialTheme.colorScheme.surface)
-        .height(88.dp)
         .fillMaxWidth()
         .clickable { onClick() }
-        .padding(16.dp),
+        .padding(
+            horizontal = 16.dp,
+            vertical = 20.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(imageVector = icon, contentDescription = icon.name, tint = MaterialTheme.colorScheme.onSurface)
@@ -42,13 +43,16 @@ fun SettingsItem(
             Text(
                 text = title,
                 style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onSurface
+                color = MaterialTheme.colorScheme.onSurface,
+                overflow = TextOverflow.Ellipsis,
+                maxLines = 1
             )
             Text(
                 text = description,
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                overflow = TextOverflow.Ellipsis
+                overflow = TextOverflow.Ellipsis,
+                maxLines = 1
             )
         }
     }

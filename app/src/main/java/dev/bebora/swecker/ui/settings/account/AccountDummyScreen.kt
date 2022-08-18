@@ -148,6 +148,11 @@ fun AccountDummyScreen(
                             modifier = Modifier
                                 .requiredSize(160.dp)
                                 .clip(CircleShape)
+                                .border(
+                                    width = 1.dp,
+                                    color = MaterialTheme.colorScheme.outline,
+                                    shape = RoundedCornerShape(80.dp)
+                                )
                         )
                         IconButton(
                             modifier = Modifier.background(

@@ -11,7 +11,7 @@ interface StorageService {
     // TODO handle profile picture
 
     fun addUserListener()
-    fun saveUser(user: User, onResult: (Throwable?) -> Unit)
+    fun saveUser(requestedUser: User, onResult: (Throwable?) -> Unit)
     // fun updateUser(user: User, onResult: (Throwable?) -> Unit)
 
     /*fun addListener(

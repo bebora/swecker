@@ -51,7 +51,8 @@ class SettingsViewModel @Inject constructor(
             userInfoChanges.collect {
                 uiState = uiState.copy(
                     hasUser = accountService.hasUser(),
-                    userId = accountService.getUserId()
+                    userId = accountService.getUserId(),
+                    propicUrl = ""
                 )
                 imageStorageService.getProfilePictureUrl(
                     userId = uiState.userId,

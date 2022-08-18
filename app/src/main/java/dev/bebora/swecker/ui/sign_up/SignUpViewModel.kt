@@ -76,7 +76,7 @@ class SignUpViewModel @Inject constructor(
                     accountService.createAccount(uiState.email, uiState.password) { error ->
                         if (error == null) {
                             storageService.saveUser(
-                                user = User(
+                                requestedUser = User(
                                     id = accountService.getUserId(),
                                     name = uiState.email.split("@")[0],
                                     username = accountService.getUserId()
