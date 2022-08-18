@@ -18,7 +18,7 @@ sealed class AlarmBrowserEvent {
 
     object BackButtonPressed : AlarmBrowserEvent()
 
-    object FabPressed : AlarmBrowserEvent()
+    object ToggleAddAlarm : AlarmBrowserEvent()
 
     object ChatTopBarPressed : AlarmBrowserEvent()
 }

@@ -86,8 +86,8 @@ fun ThemeDummyScreen(
                     enabled = ui.exampleAlarmActive,
                     name = "Example alarm",
                     alarmType = AlarmType.PERSONAL,
-                    date = LocalDate.now(),
-                    time = LocalTime.now()
+                    localDate = LocalDate.now(),
+                    localTime = LocalTime.now()
                 ),
                 modifier = Modifier.padding(horizontal = 16.dp),
                 onEvent = { onEvent(SettingsEvent.ToggleExampleAlarmActive) }

@@ -23,8 +23,8 @@ import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import dev.bebora.swecker.data.AlarmRepositoryImpl
 import dev.bebora.swecker.data.Group
+import dev.bebora.swecker.data.alarm_browser.AlarmRepositoryTestImpl
 import dev.bebora.swecker.ui.alarm_browser.chat.ChatTopAppBar
 import dev.bebora.swecker.ui.theme.SweckerTheme
 import java.time.format.DateTimeFormatter
@@ -65,7 +65,7 @@ fun SweckerNavBar(
 @Preview(showBackground = true)
 @Composable
 fun NavBarPreview() {
-    val testViewModel = AlarmBrowserViewModel(AlarmRepositoryImpl())
+    val testViewModel = AlarmBrowserViewModel(AlarmRepositoryTestImpl())
     val uiState by testViewModel.uiState.collectAsState()
     SweckerTheme() {
         Scaffold(bottomBar = {
@@ -85,6 +85,7 @@ fun SweckerNavRail(
     alarmBrowserUIState: AlarmBrowserUIState,
     onOpenDrawer: () -> Unit,
     onEvent: (AlarmBrowserEvent) -> Unit,
+    onFabPressed: () -> Unit = {}
 ) {
 
     val items = listOf("Home", "Personal", "Groups", "Channels")
@@ -100,7 +101,7 @@ fun SweckerNavRail(
                 Icon(imageVector = Icons.Outlined.Menu, contentDescription = "Open hamburger menu")
             }
             SweckerFab(destination = alarmBrowserUIState.selectedDestination) {
-                onEvent(AlarmBrowserEvent.FabPressed)
+                onFabPressed()
             }
         },
         containerColor = MaterialTheme.colorScheme.surface,
@@ -124,7 +125,7 @@ fun SweckerNavRail(
 @Preview(showBackground = true)
 @Composable
 fun NavRailPreview() {
-    val testViewModel = AlarmBrowserViewModel(AlarmRepositoryImpl())
+    val testViewModel = AlarmBrowserViewModel(AlarmRepositoryTestImpl())
     val uiState by testViewModel.uiState.collectAsState()
     SweckerTheme() {
         Scaffold(bottomBar = {
@@ -265,7 +266,8 @@ fun SweckerDetailsAppBar(
                     modifier = modifier,
                     colors = colors,
                     title = uiState.selectedAlarm!!.name,
-                    date = uiState.selectedAlarm.date?.format(DateTimeFormatter.ofPattern("eee, dd MMM uuuu"))?:"",
+                    date = uiState.selectedAlarm.localDate?.format(DateTimeFormatter.ofPattern("eee, dd MMM uuuu"))
+                        ?: "",
                     onEvent = onEvent,
                 )
             }

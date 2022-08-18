@@ -1,12 +1,14 @@
 package dev.bebora.swecker.di
 
 import android.app.Application
+import androidx.room.Room
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import dev.bebora.swecker.data.AlarmRepository
-import dev.bebora.swecker.data.AlarmRepositoryImpl
+import dev.bebora.swecker.data.SweckerDatabase
+import dev.bebora.swecker.data.alarm_browser.AlarmRepository
+import dev.bebora.swecker.data.alarm_browser.AlarmRepositoryImpl
 import dev.bebora.swecker.data.service.AccountService
 import dev.bebora.swecker.data.service.ImageStorageService
 import dev.bebora.swecker.data.service.StorageService
@@ -23,14 +25,24 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideSettingsRepository(app: Application) : SettingsRepositoryInterface {
+    fun provideSettingsRepository(app: Application): SettingsRepositoryInterface {
         return DataStoreManager(app)
     }
 
     @Provides
     @Singleton
-    fun provideAlarmRepository() : AlarmRepository {
-        return AlarmRepositoryImpl()
+    fun provideAlarmRepository(db: SweckerDatabase): AlarmRepository {
+        return AlarmRepositoryImpl(db.alarmDao)
+    }
+
+    @Provides
+    @Singleton
+    fun provideSweckerDatabase(app: Application): SweckerDatabase {
+        return Room.databaseBuilder(
+            app,
+            SweckerDatabase::class.java,
+            "swecker_db"
+        ).fallbackToDestructiveMigration().build()
     }
 
     @Provides

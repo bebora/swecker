@@ -14,7 +14,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import dev.bebora.swecker.data.Alarm
 import dev.bebora.swecker.data.AlarmType
-import dev.bebora.swecker.ui.alarm_browser.AlarmBrowserEvent
 import dev.bebora.swecker.ui.theme.SweckerTheme
 import java.time.*
 import java.time.format.DateTimeFormatter
@@ -29,7 +28,8 @@ fun AlarmDetails(
     modifier: Modifier = Modifier,
     alarm: Alarm,
     isReadOnly: Boolean,
-    onEvent: (AlarmBrowserEvent) -> Unit
+    onAlarmPartiallyUpdated: (Alarm) -> Unit,
+    onUpdateCompleted: (Alarm, Boolean) -> Unit
 ) {
     var showDatePicker by remember { mutableStateOf(false) }
     var showTimePicker by remember { mutableStateOf(false) }
@@ -50,7 +50,7 @@ fun AlarmDetails(
                         .weight(0.5f),
                     label = "Time",
                     placeHolder = "Select time",
-                    value = alarm.time!!.format(DateTimeFormatter.ofPattern("HH:mm a")),
+                    value = alarm.localTime!!.format(DateTimeFormatter.ofPattern("HH:mm a")),
                     leadingIcon = {
                         Icon(
                             imageVector = Icons.Outlined.Schedule,
@@ -66,7 +66,11 @@ fun AlarmDetails(
                             .weight(0.5f),
                         label = "Date",
                         placeHolder = "Select date",
-                        value = alarm.date!!.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT)),
+                        value = alarm.localDate!!.format(
+                            DateTimeFormatter.ofLocalizedDate(
+                                FormatStyle.SHORT
+                            )
+                        ),
                         leadingIcon = {
                             Icon(
                                 imageVector = Icons.Outlined.EditCalendar,
@@ -87,7 +91,7 @@ fun AlarmDetails(
                 },
                 value = alarm.name,
                 onValueChange = { newName ->
-                    onEvent(AlarmBrowserEvent.AlarmPartiallyUpdated(alarm.copy(name = newName)))
+                    onAlarmPartiallyUpdated(alarm.copy(name = newName))
                 },
                 readOnly = isReadOnly,
                 singleLine = true,
@@ -108,13 +112,13 @@ fun AlarmDetails(
 
             RepetitionDaysSelection(enabledDays = alarm.enabledDays,
                 onClick = { index, enabled ->
-                    onEvent(
-                        AlarmBrowserEvent.AlarmPartiallyUpdated(
-                            alarm.copy(
-                                enabledDays = alarm.enabledDays.toMutableList()
-                                    .also { it[index] = enabled })
-                        )
+                    onAlarmPartiallyUpdated(
+
+                        alarm.copy(
+                            enabledDays = alarm.enabledDays.toMutableList()
+                                .also { it[index] = enabled })
                     )
+
                 })
             Spacer(modifier = Modifier.height(4.dp))
             Divider()
@@ -123,7 +127,7 @@ fun AlarmDetails(
                 modifier = Modifier
                     .fillMaxWidth(1f)
                     .clickable {
-                        onEvent(AlarmBrowserEvent.AlarmPartiallyUpdated(alarm.copy(enableChat = !alarm.enableChat)))
+                        onAlarmPartiallyUpdated(alarm.copy(enableChat = !alarm.enableChat))
                     }
                     .padding(8.dp),
                 verticalAlignment = Alignment.CenterVertically
@@ -155,12 +159,11 @@ fun AlarmDetails(
                         )
                     },
                     onCheckedChange = {
-                        onEvent(
-                            AlarmBrowserEvent.AlarmPartiallyUpdated(
-                                alarm.copy(
-                                    enableChat = !alarm.enableChat
-                                )
+                        onAlarmPartiallyUpdated(
+                            alarm.copy(
+                                enableChat = !alarm.enableChat
                             )
+
                         )
                     },
                 ) {
@@ -182,11 +185,11 @@ fun AlarmDetails(
                     modifier = Modifier
                         .padding(4.dp),
                     onClick = ({
-                        onEvent(
-                            AlarmBrowserEvent.AlarmUpdated(
-                                alarm = alarm,
-                                success = false
-                            )
+                        onUpdateCompleted(
+
+                            alarm,
+                            false
+
                         )
                     })
                 ) {
@@ -198,24 +201,23 @@ fun AlarmDetails(
                         .padding(4.dp),
                     onClick = ({
                         val date = if (!enabledRepetition) {
-                            alarm.date
+                            alarm.localDate
                         } else {
                             LocalDate.now().with(
                                 TemporalAdjusters.next(DayOfWeek.of(firstEnabledDay))
                             )
                         }
-                        onEvent(
-                            AlarmBrowserEvent.AlarmUpdated(
-                                alarm = alarm.copy(
-                                    date = date,
-                                    dateTime = OffsetDateTime.of(
-                                        date,
-                                        alarm.time,
-                                        OffsetDateTime.now().offset
-                                    )
-                                ),
-                                success = true
-                            )
+                        onUpdateCompleted(
+                            alarm.copy(
+                                localDate = date,
+                                dateTime = OffsetDateTime.of(
+                                    date,
+                                    alarm.localTime,
+                                    OffsetDateTime.now().offset
+                                )
+                            ),
+                            true
+
                         )
                     })
                 ) {
@@ -226,11 +228,9 @@ fun AlarmDetails(
         }
         if (showDatePicker)
             DatePicker(onDateSelected = { newDate ->
-                onEvent(
-                    AlarmBrowserEvent.AlarmPartiallyUpdated(
-                        alarm.copy(
-                            date = newDate
-                        )
+                onAlarmPartiallyUpdated(
+                    alarm.copy(
+                        localDate = newDate
                     )
                 )
             }, onDismissRequest = {
@@ -238,11 +238,9 @@ fun AlarmDetails(
             })
         if (showTimePicker)
             TimePicker(onTimeSelected = { newTime ->
-                onEvent(
-                    AlarmBrowserEvent.AlarmPartiallyUpdated(
-                        alarm.copy(
-                            time = newTime
-                        )
+                onAlarmPartiallyUpdated(
+                    alarm.copy(
+                        localTime = newTime
                     )
                 )
             }, onDismissRequest = {
@@ -336,7 +334,7 @@ fun ClickableOutlinedDetails(
 @Composable
 fun AlarmDetailsPreview() {
     SweckerTheme() {
-        val alarm by remember {
+        var alarm by remember {
             mutableStateOf(
                 Alarm(
                     id = "@monesi#1",
@@ -348,7 +346,11 @@ fun AlarmDetailsPreview() {
         }
         Scaffold() {
             Box(modifier = Modifier.padding(it)) {
-                AlarmDetails(alarm = alarm, isReadOnly = false, onEvent = {})
+                AlarmDetails(
+                    alarm = alarm,
+                    isReadOnly = false,
+                    onAlarmPartiallyUpdated = { al -> alarm = al },
+                    onUpdateCompleted = { _, _ -> })
             }
         }
     }

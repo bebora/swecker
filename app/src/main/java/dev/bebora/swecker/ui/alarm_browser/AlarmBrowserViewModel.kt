@@ -11,10 +11,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.bebora.swecker.data.Alarm
-import dev.bebora.swecker.data.AlarmRepository
+import dev.bebora.swecker.data.alarm_browser.AlarmRepository
 import dev.bebora.swecker.data.AlarmType
 import dev.bebora.swecker.data.Group
 import dev.bebora.swecker.data.local.LocalAlarmDataProvider
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
@@ -90,8 +92,8 @@ class AlarmBrowserViewModel @Inject constructor(
                     )
 
                 if (event.success) {
-                    viewModelScope.launch {
-                        repository.updateAlarm(event.alarm)
+                    CoroutineScope(Dispatchers.IO).launch {
+                        repository.insertAlarm(event.alarm)
                     }
                 }
             }
@@ -160,7 +162,13 @@ class AlarmBrowserViewModel @Inject constructor(
                     )
             }
 
-            else -> {}
+            is AlarmBrowserEvent.ToggleAddAlarm -> {
+                _uiState.value = _uiState
+                    .value.copy(
+                        showAddAlarm = !_uiState.value.showAddAlarm
+                    )
+            }
+
 
         }
     }
@@ -181,7 +189,7 @@ class AlarmBrowserViewModel @Inject constructor(
         }
 
         if (selectedGroup != null) {
-            res = alarms.filter { al -> al.group?.id == selectedGroup.id }
+            res = alarms.filter { al -> al.groupId == selectedGroup.id }
         }
 
         if (searchKey.isNotEmpty()) {
@@ -227,6 +235,7 @@ data class AlarmBrowserUIState(
     val selectedAlarm: Alarm? = null,
     val selectedGroup: Group? = null,
     val openContent: DetailsScreenContent = DetailsScreenContent.NONE,
+    val showAddAlarm: Boolean = false,
     val searchKey: String = String(),
     val error: String? = "",
     val selectedDestination: NavBarDestination = NavBarDestination.HOME

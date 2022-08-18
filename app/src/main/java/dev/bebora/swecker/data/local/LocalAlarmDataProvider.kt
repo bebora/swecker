@@ -25,33 +25,13 @@ object LocalAlarmDataProvider {
         ),
         Alarm(
             id = "@nemosai#3",
-            group = Group(
-                1,
-                "Wanda the group",
-                members = listOf(
-                    Contact(
-                        name = "Paul",
-                        tag = "@theRealPaul",
-                    )
-                ),
-                owner = "@nemosai"
-            ),
+            groupId = "wandaId",
             name = "Test!",
             dateTime = OffsetDateTime.parse("2011-12-03T10:15:30+01:00"),
             alarmType = AlarmType.GROUP
         ), Alarm(
             id = "@nemosai#10",
-            group = Group(
-                1,
-                "Wanda the group",
-                members = listOf(
-                    Contact(
-                        name = "Paul",
-                        tag = "@theRealPaul",
-                    )
-                ),
-                owner = "@nemosai"
-            ),
+            groupId = "wandaId",
             name = "Group alarms!",
             dateTime = OffsetDateTime.parse("2018-11-03T10:15:30+01:00"),
             alarmType = AlarmType.GROUP
@@ -76,14 +56,14 @@ object LocalAlarmDataProvider {
         )
     ).map { al ->
         al.copy(
-            time = al.dateTime!!.toLocalTime(),
-            date = al.dateTime.toLocalDate()
+            localTime = al.dateTime!!.toLocalTime(),
+            localDate = al.dateTime.toLocalDate()
         )
     }.toMutableStateList()
 
     val allGroups = listOf(
         Group(
-            1,
+            "1",
             "Wanda the group",
             members = listOf(
                 Contact(
@@ -95,14 +75,14 @@ object LocalAlarmDataProvider {
             owner = "@me"
         ),
         Group(
-            2,
+            "2",
             "Another group",
             members = null,
             firstAlarmDateTime = OffsetDateTime.parse("2011-12-03T10:15:30+02:00"),
             owner = "@you"
         ),
         Group(
-            3,
+            "3",
             "A third group! Very long title",
             members = null,
             firstAlarmDateTime = OffsetDateTime.parse("2011-12-03T10:15:30+02:00"),
@@ -110,9 +90,6 @@ object LocalAlarmDataProvider {
         ),
     )
 
-    fun getAlarmById(id: String): Alarm? {
-        return allAlarms.firstOrNull { al -> al.id == id }
-    }
 
     fun updateAlarm(alarm: Alarm) {
         allAlarms.replaceAll { al -> if (al.id == alarm.id) alarm else al }

@@ -60,12 +60,12 @@ fun AlarmCard(
             ) {
                 Text(
                     style = MaterialTheme.typography.displayLarge,
-                    text = alarm.time?.format(DateTimeFormatter.ofPattern("HH:mm")) ?: ""
+                    text = alarm.localTime?.format(DateTimeFormatter.ofPattern("HH:mm")) ?: ""
                 )
                 Spacer(modifier = Modifier.width(4.dp))
                 Text(
                     style = MaterialTheme.typography.displaySmall,
-                    text = alarm.time?.format(DateTimeFormatter.ofPattern("a")) ?: ""
+                    text = alarm.localTime?.format(DateTimeFormatter.ofPattern("a")) ?: ""
                 )
 
                 Spacer(Modifier.weight(1f))
@@ -101,7 +101,7 @@ fun AlarmCard(
                 Text(
                     style = MaterialTheme.typography.labelMedium,
                     textAlign = TextAlign.Left,
-                    text = alarm.date?.format(DateTimeFormatter.ofPattern("eee, dd MMM uuuu"))
+                    text = alarm.localDate?.format(DateTimeFormatter.ofPattern("eee, dd MMM uuuu"))
                         ?: "",
                     modifier = Modifier.width(120.dp)
                 )
@@ -214,7 +214,7 @@ fun GroupItem(
 fun GroupItemPreview() {
     SweckerTheme() {
         GroupItem(group = Group(
-            1,
+            "1",
             "Wanda the group",
             firstAlarmDateTime = OffsetDateTime.parse("2011-12-03T10:15:30+02:00"),
             members = null,

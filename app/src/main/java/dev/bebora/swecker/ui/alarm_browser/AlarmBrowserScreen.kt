@@ -16,8 +16,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import dev.bebora.swecker.data.Alarm
-import dev.bebora.swecker.data.AlarmRepositoryImpl
 import dev.bebora.swecker.data.Group
+import dev.bebora.swecker.data.alarm_browser.AlarmRepositoryTestImpl
 import dev.bebora.swecker.data.local.LocalAlarmDataProvider
 import dev.bebora.swecker.ui.alarm_browser.alarm_details.AlarmDetails
 import dev.bebora.swecker.ui.alarm_browser.chat.ChatScreenPreview
@@ -43,7 +43,8 @@ fun AlarmList(
         items(items = alarms, key = { al -> al.id }) { al ->
             var selected = false
             if (selectedAlarm != null) {
-                selected = al.id == selectedAlarm.id
+                selected =
+                    al.id == selectedAlarm.id
             }
             AlarmCard(alarm = al, modifier = modifier, onEvent = onEvent, selected = selected)
         }
@@ -62,7 +63,7 @@ fun AlarmListPreview() {
 fun GroupList(
     modifier: Modifier = Modifier,
     groups: List<Group>,
-    selectedGroupId: Long? = null,
+    selectedGroupId: String? = null,
     onEvent: (AlarmBrowserEvent) -> Unit,
 ) {
     LazyColumn() {
@@ -87,7 +88,7 @@ fun GroupListPreview() {
                 modifier = Modifier.padding(it),
                 groups = listOf(
                     Group(
-                        1,
+                        "1",
                         "Wanda the group",
                         members = null,
                         firstAlarmName = "An alarm!",
@@ -95,7 +96,7 @@ fun GroupListPreview() {
                         owner = "@me"
                     ),
                     Group(
-                        2,
+                        "2",
                         "Another group",
                         members = null,
                         firstAlarmName = "An alarm!",
@@ -103,7 +104,7 @@ fun GroupListPreview() {
                         owner = "@you"
                     ),
                     Group(
-                        3,
+                        "3",
                         "A third group! Very long title",
                         members = null,
                         firstAlarmName = "An alarm!",
@@ -111,7 +112,7 @@ fun GroupListPreview() {
                         owner = "@you"
                     ),
                 ),
-                selectedGroupId = 3,
+                selectedGroupId = "3",
                 onEvent = {})
         }
     }
@@ -123,6 +124,7 @@ fun AlarmBrowserDualPaneContent(
     modifier: Modifier = Modifier,
     onEvent: (AlarmBrowserEvent) -> Unit,
     onOpenDrawer: () -> Unit = {},
+    onFabPressed: () -> Unit = {},
     uiState: AlarmBrowserUIState
 ) {
     Row(
@@ -134,7 +136,9 @@ fun AlarmBrowserDualPaneContent(
         SweckerNavRail(
             alarmBrowserUIState = uiState,
             onEvent = onEvent,
-            onOpenDrawer = { onOpenDrawer() })
+            onOpenDrawer = { onOpenDrawer() },
+            onFabPressed = onFabPressed
+        )
         DualPaneContentList(onEvent = onEvent, uiState = uiState)
         Scaffold(
             topBar = {
@@ -203,7 +207,14 @@ fun DualPaneContentDetails(
                 AlarmDetails(
                     alarm = uiState.selectedAlarm!!,
                     isReadOnly = false,
-                    onEvent = onEvent
+                    onAlarmPartiallyUpdated = { al ->
+                        onEvent(
+                            AlarmBrowserEvent.AlarmPartiallyUpdated(
+                                al
+                            )
+                        )
+                    },
+                    onUpdateCompleted = { al, b -> onEvent(AlarmBrowserEvent.AlarmUpdated(al, b)) }
                 )
             }
             DetailsScreenContent.GROUP_ALARM_LIST -> {
@@ -234,7 +245,7 @@ fun DualPaneContentDetails(
 fun AlarmBrowserSinglePaneContent(
     modifier: Modifier = Modifier,
     onEvent: (AlarmBrowserEvent) -> Unit,
-    uiState: AlarmBrowserUIState
+    uiState: AlarmBrowserUIState,
 ) {
     Box(
         modifier = modifier
@@ -248,7 +259,22 @@ fun AlarmBrowserSinglePaneContent(
                     DetailsScreenContent.ALARM_DETAILS -> {
                         AlarmDetails(
                             alarm = uiState.selectedAlarm!!,
-                            isReadOnly = false, onEvent = onEvent
+                            isReadOnly = false,
+                            onAlarmPartiallyUpdated = { al ->
+                                onEvent(
+                                    AlarmBrowserEvent.AlarmPartiallyUpdated(
+                                        al
+                                    )
+                                )
+                            },
+                            onUpdateCompleted = { al, b ->
+                                onEvent(
+                                    AlarmBrowserEvent.AlarmUpdated(
+                                        al,
+                                        b
+                                    )
+                                )
+                            }
                         )
                     }
                     DetailsScreenContent.CHAT -> {
@@ -283,7 +309,10 @@ fun GroupSinglePaneContent(
 ) {
     when (uiState.openContent) {
         DetailsScreenContent.ALARM_DETAILS -> {
-            AlarmDetails(alarm = uiState.selectedAlarm!!, isReadOnly = false, onEvent = onEvent)
+            AlarmDetails(alarm = uiState.selectedAlarm!!,
+                isReadOnly = false,
+                onAlarmPartiallyUpdated = { al -> onEvent(AlarmBrowserEvent.AlarmPartiallyUpdated(al)) },
+                onUpdateCompleted = { al, b -> onEvent(AlarmBrowserEvent.AlarmUpdated(al, b)) })
         }
         DetailsScreenContent.GROUP_ALARM_LIST -> {
             AlarmList(alarms = uiState.filteredAlarms!!, modifier = modifier, onEvent = onEvent)
@@ -433,6 +462,21 @@ fun AlarmBrowserScreen(
                                 onOpenDrawer = { scope.launch { drawerState.open() } }
                             )
                         },
+                        floatingActionButton = {
+                            SweckerFab(
+                                destination = uiState.selectedDestination,
+                                modifier = Modifier
+                                    .align(Alignment.BottomEnd)
+                                    .padding(32.dp)
+                            ) {
+                                when (uiState.selectedDestination) {
+                                    NavBarDestination.PERSONAL, NavBarDestination.HOME -> {
+                                        viewModel.onEvent(AlarmBrowserEvent.ToggleAddAlarm)
+                                    }
+                                    else -> {}
+                                }
+                            }
+                        },
                         bottomBar = {
                             SweckerNavBar(
                                 alarmBrowserUIState = uiState,
@@ -442,8 +486,9 @@ fun AlarmBrowserScreen(
                         AlarmBrowserSinglePaneContent(
                             modifier = Modifier.padding(it),
                             onEvent = viewModel::onEvent,
-                            uiState = uiState
+                            uiState = uiState,
                         )
+
                     }
                 } else {
                     AlarmBrowserDualPaneContent(
@@ -451,6 +496,17 @@ fun AlarmBrowserScreen(
                         uiState = uiState,
                         onOpenDrawer = {
                             scope.launch { drawerState.open() }
+                        },
+                        onFabPressed = {
+                            when (uiState.selectedDestination) {
+                                NavBarDestination.PERSONAL, NavBarDestination.HOME -> {
+                                    viewModel.onEvent(AlarmBrowserEvent.ToggleAddAlarm)
+                                }
+                                else -> {}
+                            }
+                            if (uiState.openContent == DetailsScreenContent.GROUP_ALARM_LIST) {
+                                viewModel.onEvent(AlarmBrowserEvent.ToggleAddAlarm)
+                            }
                         }
                     )
                 }
@@ -461,6 +517,6 @@ fun AlarmBrowserScreen(
 @Preview(showBackground = true)
 @Composable
 fun AlarmBrowserScreenPreview() {
-    val testViewModel = AlarmBrowserViewModel(AlarmRepositoryImpl())
+    val testViewModel = AlarmBrowserViewModel(AlarmRepositoryTestImpl())
     AlarmBrowserScreen(viewModel = testViewModel)
 }
