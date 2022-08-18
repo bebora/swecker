@@ -310,6 +310,27 @@ class SettingsViewModel @Inject constructor(
                     }
                 }
             }
+            is SettingsEvent.SetProfilePicture -> {
+                uiState = uiState.copy(
+                    accontLoading = true
+                )
+                imageStorageService.setProfilePicture(
+                    uiState.userId,
+                    event.imageUri,
+                    onSuccess = {
+                        uiState = uiState.copy(
+                            propicUrl = it,
+                            accontLoading = false
+                        )
+                    },
+                    onFailure = {
+                        Log.d("SWECKER-SET-PROPIC", it)
+                        uiState = uiState.copy(
+                            accontLoading = false
+                        )
+                    }
+                )
+            }
         }
     }
 }

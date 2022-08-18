@@ -91,5 +91,9 @@ dependencies {
     // Image loading
     implementation("io.coil-kt:coil-compose:2.2.0")
 
+    // Image picker
+    implementation("com.google.modernstorage:modernstorage-bom:1.0.0-alpha06")
+    implementation("com.google.modernstorage:modernstorage-photopicker")
+
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.2.0'
 }

@@ -1,24 +1,21 @@
 package dev.bebora.swecker.ui.settings.account
 
+import android.annotation.SuppressLint
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.annotation.StringRes
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
@@ -35,7 +32,9 @@ import dev.bebora.swecker.ui.theme.SweckerTheme
 import dev.bebora.swecker.util.UiEvent
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
+import com.google.modernstorage.photopicker.PhotoPicker
 
+@SuppressLint("UnsafeOptInUsageError")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AccountDummyScreen(
@@ -48,6 +47,16 @@ fun AccountDummyScreen(
     val snackbarHostState = remember { SnackbarHostState() }
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
     val context = LocalContext.current
+    val photoPicker = rememberLauncherForActivityResult(PhotoPicker()) { uris ->
+        if (uris.isNotEmpty()) {
+            val imageUri = uris[0]
+            onEvent(
+                SettingsEvent.SetProfilePicture(
+                    imageUri = imageUri
+                )
+            )
+        }
+    }
 
     LaunchedEffect(key1 = true) {
         uiEvent.collect { event ->
@@ -96,7 +105,6 @@ fun AccountDummyScreen(
             if (!ui.hasUser) {
                 SuggestLogin(onNavigate = onNavigate)
             } else {
-                //TODO manage profile picture
                 val sections = listOf(
                     SettingsSection(
                         title = ui.savedName,
@@ -115,47 +123,66 @@ fun AccountDummyScreen(
                 Box(
                     contentAlignment = Alignment.BottomEnd
                 ) {
-                    SubcomposeAsyncImage(
-                        model = ui.propicUrl,
-                        loading = {
-                            PropicPlaceholder()
-                            {
-                                CircularProgressIndicator()
-                            }
-                        },
-                        error = {
-                            PropicPlaceholder {
-                                Icon(
-                                    imageVector = Icons.Default.Warning,
-                                    contentDescription = "Error getting profile picture",
-                                    modifier = Modifier
-                                        .wrapContentHeight()
-                                        .background(
-                                            color = MaterialTheme.colorScheme.errorContainer,
-                                            shape = CircleShape
-                                        )
-                                        .padding(8.dp),
-                                    tint = MaterialTheme.colorScheme.error
+                    if (ui.propicUrl.isNotBlank()) {
+                        SubcomposeAsyncImage(
+                            model = ui.propicUrl,
+                            loading = {
+                                PropicPlaceholder(
+                                    color = MaterialTheme.colorScheme.primaryContainer
                                 )
-                            }
-                        },
-                        contentDescription = "Profile picture",
-                        contentScale = ContentScale.FillBounds,
-                        modifier = Modifier
-                            .requiredSize(160.dp)
-                            .clip(CircleShape)
-                    )
-                    IconButton(
-                        modifier = Modifier.background(
-                            color = MaterialTheme.colorScheme.primary,
-                            shape = CircleShape
-                        ),
-                        onClick = { /*TODO add image uploading*/ }) {
-                        Icon(
-                            imageVector = Icons.Default.AddPhotoAlternate,
-                            contentDescription = "Add new profile picture",
-                            tint = MaterialTheme.colorScheme.onPrimary
+                                {
+                                    CircularProgressIndicator()
+                                }
+                            },
+                            error = {
+                                PropicPlaceholder {
+                                    Icon(
+                                        imageVector = Icons.Default.AddPhotoAlternate,
+                                        contentDescription = "Error getting profile picture",
+                                        tint = MaterialTheme.colorScheme.onPrimary
+                                    )
+                                }
+                            },
+                            contentDescription = "Profile picture",
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier
+                                .requiredSize(160.dp)
+                                .clip(CircleShape)
                         )
+                        IconButton(
+                            modifier = Modifier.background(
+                                color = MaterialTheme.colorScheme.primary,
+                                shape = CircleShape
+                            ),
+                            onClick = {
+                                photoPicker.launch(
+                                    PhotoPicker.Args(
+                                        PhotoPicker.Type.IMAGES_ONLY,
+                                        1
+                                    )
+                                )
+                            }) {
+                            Icon(
+                                imageVector = Icons.Default.AddPhotoAlternate,
+                                contentDescription = "Add new profile picture",
+                                tint = MaterialTheme.colorScheme.onPrimary
+                            )
+                        }
+                    } else {
+                        PropicPlaceholder(onClick = {
+                            photoPicker.launch(
+                                PhotoPicker.Args(
+                                    PhotoPicker.Type.IMAGES_ONLY,
+                                    1
+                                )
+                            )
+                        }) {
+                            Icon(
+                                imageVector = Icons.Default.AddPhotoAlternate,
+                                contentDescription = "Add new profile picture",
+                                tint = MaterialTheme.colorScheme.onPrimary
+                            )
+                        }
                     }
                 }
 
@@ -323,6 +350,8 @@ fun SuggestLogin(
 @Composable
 fun PropicPlaceholder(
     modifier: Modifier = Modifier,
+    color: Color = MaterialTheme.colorScheme.primary,
+    onClick: () -> Unit = {},
     content: @Composable () -> Unit
 ) {
     Box(
@@ -330,19 +359,14 @@ fun PropicPlaceholder(
             .requiredSize(160.dp)
             .clip(CircleShape)
             .background(
-                brush = Brush.verticalGradient(
-                    colors = listOf(
-                        MaterialTheme.colorScheme.primary,
-                        MaterialTheme.colorScheme.secondary,
-                        MaterialTheme.colorScheme.error
-                    )
-                )
+                color = color
             )
             .border(
                 width = 1.dp,
                 color = MaterialTheme.colorScheme.outline,
                 shape = RoundedCornerShape(80.dp)
-            ),
+            )
+            .clickable(onClick = onClick),
         contentAlignment = Alignment.Center
     ) {
         content()

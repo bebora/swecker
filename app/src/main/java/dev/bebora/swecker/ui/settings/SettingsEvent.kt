@@ -1,5 +1,6 @@
 package dev.bebora.swecker.ui.settings
 
+import android.net.Uri
 import dev.bebora.swecker.data.User
 import dev.bebora.swecker.data.settings.DarkModeType
 import dev.bebora.swecker.data.settings.Palette
@@ -50,4 +51,7 @@ sealed class SettingsEvent {
 
     // StorageService
     data class SaveUser(val user: User) : SettingsEvent()
+
+    //ImageStorageService
+    data class SetProfilePicture(val imageUri: Uri): SettingsEvent()
 }
