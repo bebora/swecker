@@ -81,7 +81,7 @@ class AccountsServiceImpl : AccountsService {
             }
     }
 
-    override fun getFriends(userId: String, onError: (Throwable?) -> Unit): Flow<List<User>> {
+    override fun getFriends(userId: String): Flow<List<User>> {
         return callbackFlow {
             val listener = Firebase.firestore
                 .collection(USERS_COLLECTION)
@@ -130,8 +130,31 @@ class AccountsServiceImpl : AccountsService {
         TODO("Not yet implemented")
     }
 
-    override fun getFriendshipRequests(user: User, onResult: (Throwable?) -> Unit) {
-        TODO("Not yet implemented")
+    override fun getFriendshipRequests(userId: String): Flow<List<User>> {
+        return callbackFlow {
+            val listener = Firebase.firestore
+                .collection(FRIENDSHIP_REQUESTS_COLLECTION)
+                .whereEqualTo("to.id", userId)
+                .addSnapshotListener { snapshot, error ->
+                    if (error != null) {
+                        Log.w("SWECKER-GET-REQUESTS", "Listen failed.", error)
+                        return@addSnapshotListener
+                    }
+                    if (snapshot != null) {
+                        trySend(
+                            snapshot
+                                .toObjects(FriendshipRequest::class.java)
+                                .map { req -> req.from }
+                        )
+                    } else {
+                        Log.d("SWECKER-FRIENDSREQ-NOPE", "Current data: null")
+                        trySend(emptyList())
+                    }
+                }
+            awaitClose {
+                listener.remove()
+            }
+        }
     }
 
     private fun updateFriendshipRequests(user: User, onResult: (Throwable?) -> Unit) {
@@ -179,6 +202,6 @@ data class UserWithFriends(
 )
 
 data class FriendshipRequest(
-    val from: User,
-    val to: User
+    val from: User = User(),
+    val to: User = User()
 )

@@ -30,10 +30,10 @@ interface AccountsService {
     fun updateTask(task: Task, onResult: (Throwable?) -> Unit)
     fun deleteTask(taskId: String, onResult: (Throwable?) -> Unit)
      */
-    fun getFriends(userId: String, onError: (Throwable?) -> Unit) : Flow<List<User>>
+    fun getFriends(userId: String) : Flow<List<User>>
     fun requestFriendship(from: User, to: User, onResult: (Throwable?) -> Unit)
     fun acceptFriendship(me: User, newFriend: User, onResult: (Throwable?) -> Unit)
-    fun getFriendshipRequests(user: User, onResult: (Throwable?) -> Unit)
+    fun getFriendshipRequests(userId: String) : Flow<List<User>>
 }
 
 class UsernameAlreadyTakenException() : Exception()

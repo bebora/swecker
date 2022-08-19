@@ -24,7 +24,7 @@ import dev.bebora.swecker.util.UiEvent
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ContactBrowserScreen(
-    modifier : Modifier = Modifier,
+    modifier: Modifier = Modifier,
     onGoBack: () -> Unit = {},
     viewModel: ContactsBrowserViewModel = hiltViewModel()
 ) {
@@ -76,9 +76,6 @@ fun ContactBrowserScreen(
                 }
                 ContactRow(user = friend)
             }
-            Text(text = ui.me.id)
-            Text(text = ui.me.username)
-            Text(text = ui.me.name)
             if (ui.me.id.isNotBlank()) {
                 Button(onClick = {
                     viewModel.onEvent(ContactsEvent.RequestFriendship(ui.me, ui.me))
@@ -86,7 +83,16 @@ fun ContactBrowserScreen(
                     Text("Create dummy friendship request")
                 }
             }
-
+            Text(
+                text = "Friendship requests",
+                style = MaterialTheme.typography.headlineSmall
+            )
+            ui.friendshipRequests.forEachIndexed { idx, friend ->
+                if (idx != 0) {
+                    Divider()
+                }
+                ContactRow(user = friend)
+            }
         }
     }
 }

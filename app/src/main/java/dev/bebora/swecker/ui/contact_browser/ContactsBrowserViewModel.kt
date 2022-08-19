@@ -30,15 +30,25 @@ class ContactsBrowserViewModel @Inject constructor(
     val contactsUiEvent = _contactsUiEvent.receiveAsFlow()
 
     private var friends =
-        accountsService.getFriends(
-            authService.getUserId(),
-            onError = { Log.d("SWECKER-VIEWMODEL", it.toString()) })
+        accountsService.getFriends(authService.getUserId())
+
+    private var friendshipRequests =
+        accountsService.getFriendshipRequests(authService.getUserId())
+
+
 
     init {
         viewModelScope.launch {
             friends.collect {
                 uiState = uiState.copy(
                     friends = it
+                )
+            }
+        }
+        viewModelScope.launch {
+            friendshipRequests.collect {
+                uiState = uiState.copy(
+                    friendshipRequests = it
                 )
             }
         }
