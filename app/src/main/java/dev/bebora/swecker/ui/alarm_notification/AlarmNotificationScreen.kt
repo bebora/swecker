@@ -21,6 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
@@ -63,7 +64,7 @@ fun AlarmNotificationFullScreen(
 
     //animations
     val animatedScale by infiniteTransition.animateFloat(
-        initialValue = 1f, targetValue = 1.02f, animationSpec = infiniteRepeatable(
+        initialValue = 1f, targetValue = 1.2f, animationSpec = infiniteRepeatable(
             animation = tween(
                 durationMillis = duration,
                 delayMillis = delay,
@@ -136,6 +137,17 @@ fun AlarmNotificationFullScreen(
                         .size(animatedExternalCircleRadius)
                         .clip(shape = CircleShape)
                         .border(BorderStroke(4.dp, blackToWhite), shape = CircleShape)
+                        .background(
+                            brush = Brush.horizontalGradient(
+                                listOf(
+                                    Color.Gray,
+                                    Color.DarkGray,
+                                    Color.Black,
+                                    Color.DarkGray,
+                                    Color.Gray
+                                )
+                            )
+                        )
                 )
             }
 
