@@ -33,10 +33,6 @@ fun SettingsScreen(
     onGoBack: () -> Unit = {},
     onNavigate: (String) -> Unit = {}
 ) {
-    LaunchedEffect(key1 = true) {
-        viewModel.initialize()
-    }
-
     val settingsState by viewModel.settings.collectAsState(initial = Settings())
     //TODO find a way to prevent wrong UI settings from appearing (look at collectAsState with wrong initial value)
     SettingsAwareTheme(

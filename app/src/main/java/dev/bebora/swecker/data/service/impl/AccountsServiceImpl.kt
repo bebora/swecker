@@ -5,8 +5,9 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
 import dev.bebora.swecker.data.User
-import dev.bebora.swecker.data.service.BlankUserOrUsername
+import dev.bebora.swecker.data.service.BlankUserOrUsernameException
 import dev.bebora.swecker.data.service.AccountsService
+import dev.bebora.swecker.data.service.FriendshipRequestAlreadySentException
 import dev.bebora.swecker.data.service.UsernameAlreadyTakenException
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -21,13 +22,15 @@ class AccountsServiceImpl : AccountsService {
         if (userId == "") {
             Log.d("SWECKER-DEB", "userId is empty")
         } else {
+            Log.d("SWECKER-DEB", "userId is $userId")
             Firebase.firestore
                 .collection(USERS_COLLECTION)
                 .document(userId)
                 .get()
                 .addOnFailureListener { error -> onError(error) }
                 .addOnSuccessListener { result ->
-                    val user = result.toObject<User>()?.copy(id = result.id)
+                    Log.d("SWECKER-RESULT-GET", "Result is $result")
+                    val user = result.toObject<User>()
                     onSuccess(user ?: User())
                 }
         }
@@ -44,7 +47,7 @@ class AccountsServiceImpl : AccountsService {
         if (user.name.isBlank() && user.username.isBlank()) {
             user = user.copy(name = user.id, username = user.id)
         } else if (user.name.isBlank() || user.username.isBlank()) {
-            onResult(BlankUserOrUsername())
+            onResult(BlankUserOrUsernameException())
             return
         }
         Firebase.firestore
@@ -61,10 +64,16 @@ class AccountsServiceImpl : AccountsService {
                     if (update) {
                         docRef.update(
                             "name", user.name,
-                            "username", user.username
-                        ).addOnCompleteListener { onResult(it.exception) }
+                            "username", user.username,
+                            "propicUrl", user.propicUrl
+                        ).addOnCompleteListener {
+                            //onResult(it.exception)
+                            updateFriendshipRequests(user = user, onResult = onResult)
+                        }
                     } else {
-                        docRef.set(user)
+                        docRef
+                            .set(user)
+                            .addOnCompleteListener { onResult(it.exception) }
                     }
                 } else {
                     onResult(UsernameAlreadyTakenException())
@@ -100,7 +109,21 @@ class AccountsServiceImpl : AccountsService {
     }
 
     override fun requestFriendship(from: User, to: User, onResult: (Throwable?) -> Unit) {
-        TODO("Not yet implemented")
+        val collectionRef = Firebase.firestore
+            .collection(FRIENDSHIP_REQUESTS_COLLECTION)
+        collectionRef
+            .whereEqualTo("from.id", from.id)
+            .whereEqualTo("to.id", to.id)
+            .get()
+            .addOnFailureListener { error -> onResult(error) }
+            .addOnSuccessListener { querySnapshot ->
+                if (querySnapshot.isEmpty) {
+                    collectionRef.add(FriendshipRequest(from = from, to = to))
+                        .addOnCompleteListener { it.exception }
+                } else {
+                    onResult(FriendshipRequestAlreadySentException())
+                }
+            }
     }
 
     override fun acceptFriendship(me: User, newFriend: User, onResult: (Throwable?) -> Unit) {
@@ -111,9 +134,39 @@ class AccountsServiceImpl : AccountsService {
         TODO("Not yet implemented")
     }
 
+    private fun updateFriendshipRequests(user: User, onResult: (Throwable?) -> Unit) {
+        Log.d("SWECKER-UPD-FRIENDREQ", "Updating friendships requests with new user data")
+        val batch = Firebase.firestore.batch()
+        val friendReqCollection = Firebase.firestore
+            .collection(FRIENDSHIP_REQUESTS_COLLECTION)
+        friendReqCollection
+            .whereEqualTo("to.id", user.id)
+            .get()
+            .addOnFailureListener { error -> onResult(error) }
+            .addOnSuccessListener { querySnapshotTo ->
+                querySnapshotTo.forEach { res ->
+                    val docRef = friendReqCollection.document(res.id)
+                    batch.update(docRef, "to", user)
+                }
+                friendReqCollection
+                    .whereEqualTo("from.id", user.id)
+                    .get()
+                    .addOnFailureListener { error -> onResult(error) }
+                    .addOnSuccessListener { querySnapshotFrom ->
+                        querySnapshotFrom.forEach { res ->
+                            val docRef = friendReqCollection.document(res.id)
+                            batch.update(docRef, "from", user)
+                        }
+                        batch.commit()
+                            .addOnFailureListener { onResult(it) }
+                            .addOnSuccessListener { onResult(null) } // No error
+                    }
+            }
+    }
 
     companion object {
         private val USERS_COLLECTION = "users"
+        private val FRIENDSHIP_REQUESTS_COLLECTION = "friendrequests"
     }
 }
 
@@ -123,4 +176,9 @@ data class UserWithFriends(
     val username: String = "",
     val propicUrl: String = "",
     val friends: List<User> = emptyList()
+)
+
+data class FriendshipRequest(
+    val from: User,
+    val to: User
 )

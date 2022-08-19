@@ -37,4 +37,5 @@ interface AccountsService {
 }
 
 class UsernameAlreadyTakenException() : Exception()
-class BlankUserOrUsername() : Exception()
+class BlankUserOrUsernameException() : Exception()
+class FriendshipRequestAlreadySentException() : Exception()

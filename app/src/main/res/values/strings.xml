@@ -61,4 +61,7 @@
     <string name="unavailable_username">The entered username is not available</string>
     <string name="blank_user_or_username">Name and username cannot be empty</string>
     <string name="contacts_title">Contacts</string>
+    <string name="friendship_request_already_sent">The selected user has already received a friendship request from you</string>
+    <string name="request_friendship_error">An error has occurred while sending your friendship request</string>
+    <string name="friendship_request_correctly_sent">The friendship request has been sent</string>
 </resources>

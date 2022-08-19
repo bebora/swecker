@@ -40,7 +40,7 @@ class SettingsViewModel @Inject constructor(
 
     private var userInfoChanges = authService.getUserInfoChanges()
 
-    fun initialize() {
+    init {
         viewModelScope.launch {
             accountsService.getUser(authService.getUserId(), ::onError) {
                 uiState = uiState.copy(
@@ -302,7 +302,7 @@ class SettingsViewModel @Inject constructor(
                         onError(error)
                         val stringRes = when (error) {
                             is UsernameAlreadyTakenException -> R.string.unavailable_username
-                            is BlankUserOrUsername -> R.string.blank_user_or_username
+                            is BlankUserOrUsernameException -> R.string.blank_user_or_username
                             else -> R.string.save_user_error
                         }
                         viewModelScope.launch {

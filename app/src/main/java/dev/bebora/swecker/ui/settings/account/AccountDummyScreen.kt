@@ -221,7 +221,8 @@ fun AccountDummyScreen(
                                 User(
                                     id = ui.userId,
                                     name = ui.currentName.trim(),
-                                    username = ui.savedUsername.trim()
+                                    username = ui.savedUsername.trim(),
+                                    propicUrl = ui.propicUrl
                                 )
                             )
                         )
@@ -260,7 +261,8 @@ fun AccountDummyScreen(
                                 User(
                                     id = ui.userId,
                                     name = ui.savedName.trim(),
-                                    username = ui.currentUsername.trim()
+                                    username = ui.currentUsername.trim(),
+                                    propicUrl = ui.propicUrl
                                 )
                             )
                         )

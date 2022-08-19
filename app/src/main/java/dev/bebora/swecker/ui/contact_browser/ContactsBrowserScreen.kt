@@ -8,26 +8,47 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import dev.bebora.swecker.R
 import dev.bebora.swecker.data.service.impl.AccountsServiceImpl
 import dev.bebora.swecker.data.service.impl.AuthServiceImpl
+import dev.bebora.swecker.util.UiEvent
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ContactBrowserScreen(
     modifier : Modifier = Modifier,
     onGoBack: () -> Unit = {},
-    viewModel: ContactBrowserViewModel = hiltViewModel()
+    viewModel: ContactsBrowserViewModel = hiltViewModel()
 ) {
+    val snackbarHostState = remember { SnackbarHostState() }
     val ui = viewModel.uiState
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
+    val context = LocalContext.current
+
+    LaunchedEffect(key1 = true) {
+        viewModel.contactsUiEvent.collect { event ->
+            when (event) {
+                is UiEvent.ShowSnackbar -> {
+                    snackbarHostState.showSnackbar(
+                        message = event.uiText.asString(context = context),
+                    )
+                }
+                else -> Unit
+            }
+        }
+    }
+
     //TODO handle larger screen
     Scaffold(
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             SmallTopAppBar(
@@ -55,6 +76,17 @@ fun ContactBrowserScreen(
                 }
                 ContactRow(user = friend)
             }
+            Text(text = ui.me.id)
+            Text(text = ui.me.username)
+            Text(text = ui.me.name)
+            if (ui.me.id.isNotBlank()) {
+                Button(onClick = {
+                    viewModel.onEvent(ContactsEvent.RequestFriendship(ui.me, ui.me))
+                }) {
+                    Text("Create dummy friendship request")
+                }
+            }
+
         }
     }
 }
@@ -63,7 +95,7 @@ fun ContactBrowserScreen(
 @Composable
 fun ContactBrowserScreenPreview() {
     ContactBrowserScreen(
-        viewModel = ContactBrowserViewModel(
+        viewModel = ContactsBrowserViewModel(
             authService = AuthServiceImpl(),
             accountsService = AccountsServiceImpl()
         )
