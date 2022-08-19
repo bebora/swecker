@@ -9,6 +9,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.bebora.swecker.R
+import dev.bebora.swecker.data.User
 import dev.bebora.swecker.data.service.*
 import dev.bebora.swecker.data.settings.SettingsRepositoryInterface
 import dev.bebora.swecker.ui.utils.UiText
@@ -25,9 +26,9 @@ import javax.inject.Inject
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
     private val repository: SettingsRepositoryInterface, application: Application,
-    private val accountService: AccountService,
+    private val authService: AuthService,
     private val imageStorageService: ImageStorageService,
-    private val storageService: StorageService
+    private val accountsService: AccountsService
 ) : AndroidViewModel(application) {
     val settings = repository.getSettings()
 
@@ -37,11 +38,11 @@ class SettingsViewModel @Inject constructor(
     private val _accountUiEvent = Channel<UiEvent>()
     val accountUiEvent = _accountUiEvent.receiveAsFlow()
 
-    private var userInfoChanges = accountService.getUserInfoChanges()
+    private var userInfoChanges = authService.getUserInfoChanges()
 
     fun initialize() {
         viewModelScope.launch {
-            storageService.getUser(accountService.getUserId(), ::onError) {
+            accountsService.getUser(authService.getUserId(), ::onError) {
                 uiState = uiState.copy(
                     savedName = it.name,
                     savedUsername = it.username
@@ -50,17 +51,20 @@ class SettingsViewModel @Inject constructor(
             }
             userInfoChanges.collect {
                 uiState = uiState.copy(
-                    hasUser = accountService.hasUser(),
-                    userId = accountService.getUserId(),
+                    hasUser = authService.hasUser(),
+                    userId = authService.getUserId(),
                     propicUrl = ""
                 )
-                imageStorageService.getProfilePictureUrl(
-                    userId = uiState.userId,
+                accountsService.getUser(
+                    userId = authService.getUserId(),
                     onSuccess = {
                         uiState = uiState.copy(
-                            propicUrl = it
+                            propicUrl = it.propicUrl,
+                            savedName = it.name,
+                            savedUsername = it.username
                         )
-                    }
+                    },
+                    onError = ::onError
                 )
             }
         }
@@ -254,8 +258,8 @@ class SettingsViewModel @Inject constructor(
                     openAccountSettings = true,
                     openSoundsSettings = false,
                     openThemeSettings = false,
-                    hasUser = accountService.hasUser(),
-                    userId = accountService.getUserId(),
+                    hasUser = authService.hasUser(),
+                    userId = authService.getUserId(),
                 )
             }
             SettingsEvent.OpenSoundsSettings -> {
@@ -284,17 +288,17 @@ class SettingsViewModel @Inject constructor(
                     showEditUsernamePopup = false,
                     accontLoading = true
                 )
-                storageService.saveUser(event.user) { error ->
+                accountsService.saveUser(event.user, update = true) { error ->
                     uiState = uiState.copy(
                         accontLoading = false
                     )
                     if (error == null) {
                         uiState = uiState.copy(
                             savedName = event.user.name,
-                            savedUsername = event.user.username
+                            savedUsername = event.user.username,
+                            propicUrl = event.user.propicUrl
                         )
-                    }
-                    else {
+                    } else {
                         onError(error)
                         val stringRes = when (error) {
                             is UsernameAlreadyTakenException -> R.string.unavailable_username
@@ -319,9 +323,15 @@ class SettingsViewModel @Inject constructor(
                     uiState.userId,
                     event.imageUri,
                     onSuccess = {
-                        uiState = uiState.copy(
-                            propicUrl = it,
-                            accontLoading = false
+                        onEvent(
+                            SettingsEvent.SaveUser(
+                                user = User(
+                                    id = uiState.userId,
+                                    name = uiState.savedName,
+                                    username = uiState.savedUsername,
+                                    propicUrl = it
+                                )
+                            )
                         )
                     },
                     onFailure = {

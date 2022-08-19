@@ -5,6 +5,7 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -19,12 +20,13 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import dev.bebora.swecker.R
 import dev.bebora.swecker.common.composable.PasswordField
-import dev.bebora.swecker.data.service.impl.AccountServiceImpl
+import dev.bebora.swecker.data.service.impl.AuthServiceImpl
 import dev.bebora.swecker.util.UiEvent
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
@@ -125,6 +127,9 @@ fun LoginScreen(
                             FocusDirection.Next
                         )
                     }),
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Email
+                    ),
                 )
 
                 PasswordField(
@@ -175,7 +180,7 @@ fun LoginScreen(
 fun LoginScreenPreview() {
     LoginScreen(
         viewModel = LoginViewModel(
-            accountService = AccountServiceImpl()
+            authService = AuthServiceImpl()
         )
     )
 }

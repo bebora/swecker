@@ -24,6 +24,7 @@ import dev.bebora.swecker.ui.add_alarm.AddAlarmScreen
 import dev.bebora.swecker.ui.alarm_browser.alarm_details.AlarmDetails
 import dev.bebora.swecker.ui.alarm_browser.chat.ChatScreenPreview
 import dev.bebora.swecker.ui.theme.SweckerTheme
+import dev.bebora.swecker.util.CONTACT_BROWSER
 import dev.bebora.swecker.util.SETTINGS
 import kotlinx.coroutines.launch
 import java.time.OffsetDateTime
@@ -369,7 +370,10 @@ fun AlarmBrowserScreen(
                     DrawerSubSection(
                         title = "Contacts",
                         icon = Icons.Outlined.Contacts
-                    ) { scope.launch { drawerState.close() } },
+                    ) {
+                        scope.launch { drawerState.close() }
+                        onNavigate(CONTACT_BROWSER)
+                      },
                     DrawerSubSection(
                         title = "Friendship requests",
                         icon = Icons.Outlined.GroupAdd

@@ -4,13 +4,13 @@ import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
-import dev.bebora.swecker.data.service.AccountService
+import dev.bebora.swecker.data.service.AuthService
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import javax.inject.Inject
 
-class AccountServiceImpl @Inject constructor() : AccountService {
+class AuthServiceImpl @Inject constructor() : AuthService {
     override fun hasUser(): Boolean {
         return Firebase.auth.currentUser != null
     }

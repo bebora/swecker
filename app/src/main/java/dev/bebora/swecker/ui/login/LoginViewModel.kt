@@ -11,7 +11,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.bebora.swecker.R
 import dev.bebora.swecker.common.isValidEmail
 import dev.bebora.swecker.common.isValidPassword
-import dev.bebora.swecker.data.service.AccountService
+import dev.bebora.swecker.data.service.AuthService
 import dev.bebora.swecker.ui.utils.UiText
 import dev.bebora.swecker.ui.utils.onError
 import dev.bebora.swecker.util.UiEvent
@@ -22,7 +22,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    private val accountService: AccountService
+    private val authService: AuthService
 ) : ViewModel() {
 
     var uiState by mutableStateOf(LoginUiState())
@@ -69,7 +69,7 @@ class LoginViewModel @Inject constructor(
                     loading = true
                 )
                 viewModelScope.launch {
-                    accountService.authenticate(uiState.email, uiState.password) { error ->
+                    authService.authenticate(uiState.email, uiState.password) { error ->
                         uiState = uiState.copy(
                             loading = false
                         )

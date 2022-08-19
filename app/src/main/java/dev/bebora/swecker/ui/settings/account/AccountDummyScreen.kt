@@ -6,7 +6,6 @@ import androidx.annotation.StringRes
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.outlined.*
@@ -22,6 +21,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil.compose.SubcomposeAsyncImage
 import dev.bebora.swecker.util.LOGIN
@@ -151,7 +151,7 @@ fun AccountDummyScreen(
                                 .border(
                                     width = 1.dp,
                                     color = MaterialTheme.colorScheme.outline,
-                                    shape = RoundedCornerShape(80.dp)
+                                    shape = CircleShape
                                 )
                         )
                         IconButton(
@@ -357,11 +357,12 @@ fun PropicPlaceholder(
     modifier: Modifier = Modifier,
     color: Color = MaterialTheme.colorScheme.primary,
     onClick: () -> Unit = {},
+    size: Dp = 160.dp,
     content: @Composable () -> Unit
 ) {
     Box(
         modifier = modifier
-            .requiredSize(160.dp)
+            .requiredSize(size)
             .clip(CircleShape)
             .background(
                 color = color
@@ -369,7 +370,7 @@ fun PropicPlaceholder(
             .border(
                 width = 1.dp,
                 color = MaterialTheme.colorScheme.outline,
-                shape = RoundedCornerShape(80.dp)
+                shape = CircleShape
             )
             .clickable(onClick = onClick),
         contentAlignment = Alignment.Center

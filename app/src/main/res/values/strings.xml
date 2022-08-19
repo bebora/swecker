@@ -60,4 +60,5 @@
     <string name="save_user_error">An error occurred while saving user data</string>
     <string name="unavailable_username">The entered username is not available</string>
     <string name="blank_user_or_username">Name and username cannot be empty</string>
+    <string name="contacts_title">Contacts</string>
 </resources>

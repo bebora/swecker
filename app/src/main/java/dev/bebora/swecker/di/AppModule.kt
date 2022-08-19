@@ -9,12 +9,12 @@ import dagger.hilt.components.SingletonComponent
 import dev.bebora.swecker.data.SweckerDatabase
 import dev.bebora.swecker.data.alarm_browser.AlarmRepository
 import dev.bebora.swecker.data.alarm_browser.AlarmRepositoryImpl
-import dev.bebora.swecker.data.service.AccountService
+import dev.bebora.swecker.data.service.AuthService
 import dev.bebora.swecker.data.service.ImageStorageService
-import dev.bebora.swecker.data.service.StorageService
-import dev.bebora.swecker.data.service.impl.AccountServiceImpl
+import dev.bebora.swecker.data.service.AccountsService
+import dev.bebora.swecker.data.service.impl.AuthServiceImpl
 import dev.bebora.swecker.data.service.impl.ImageStorageServiceImpl
-import dev.bebora.swecker.data.service.impl.StorageServiceImpl
+import dev.bebora.swecker.data.service.impl.AccountsServiceImpl
 import dev.bebora.swecker.data.settings.SettingsRepositoryInterface
 import dev.bebora.swecker.data.settings.DataStoreManager
 import javax.inject.Singleton
@@ -47,8 +47,8 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideAccountService(): AccountService {
-        return AccountServiceImpl()
+    fun provideAccountService(): AuthService {
+        return AuthServiceImpl()
     }
 
     @Provides
@@ -59,7 +59,7 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideStorageService(): StorageService {
-        return StorageServiceImpl()
+    fun provideStorageService(): AccountsService {
+        return AccountsServiceImpl()
     }
 }

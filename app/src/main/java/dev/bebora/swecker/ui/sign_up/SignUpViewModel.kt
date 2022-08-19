@@ -13,8 +13,8 @@ import dev.bebora.swecker.R
 import dev.bebora.swecker.common.isValidEmail
 import dev.bebora.swecker.common.isValidPassword
 import dev.bebora.swecker.data.User
-import dev.bebora.swecker.data.service.AccountService
-import dev.bebora.swecker.data.service.StorageService
+import dev.bebora.swecker.data.service.AuthService
+import dev.bebora.swecker.data.service.AccountsService
 import dev.bebora.swecker.ui.utils.UiText
 import dev.bebora.swecker.ui.utils.onError
 import dev.bebora.swecker.util.UiEvent
@@ -25,8 +25,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SignUpViewModel @Inject constructor(
-    private val accountService: AccountService,
-    private val storageService: StorageService,
+    private val authService: AuthService,
+    private val accountsService: AccountsService,
 ) : ViewModel() {
     var uiState by mutableStateOf(SignUpUiState())
         private set
@@ -73,14 +73,16 @@ class SignUpViewModel @Inject constructor(
                     loading = true
                 )
                 viewModelScope.launch {
-                    accountService.createAccount(uiState.email, uiState.password) { error ->
+                    authService.createAccount(uiState.email, uiState.password) { error ->
                         if (error == null) {
-                            storageService.saveUser(
+                            accountsService.saveUser(
                                 requestedUser = User(
-                                    id = accountService.getUserId(),
+                                    id = authService.getUserId(),
                                     name = uiState.email.split("@")[0],
-                                    username = accountService.getUserId()
-                                )
+                                    username = authService.getUserId(),
+                                    propicUrl = ""
+                                ),
+                                update = false // Create new user
                             ) { saveUserError ->
                                 uiState = uiState.copy(
                                     loading = false

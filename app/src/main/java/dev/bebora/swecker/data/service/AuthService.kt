@@ -2,7 +2,7 @@ package dev.bebora.swecker.data.service
 
 import kotlinx.coroutines.flow.Flow
 
-interface AccountService {
+interface AuthService {
     fun hasUser(): Boolean
     fun isAnonymousUser(): Boolean
     fun getUserId(): String

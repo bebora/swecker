@@ -1,17 +1,21 @@
 package dev.bebora.swecker.data.service
 
 import dev.bebora.swecker.data.User
+import kotlinx.coroutines.flow.Flow
 
-interface StorageService {
+interface AccountsService {
     fun getUser(
         userId: String,
         onError: (Throwable) -> Unit,
         onSuccess: (User) -> Unit
     )
-    // TODO handle profile picture
 
     fun addUserListener()
-    fun saveUser(requestedUser: User, onResult: (Throwable?) -> Unit)
+
+    /**
+     * If update is true, the existing user will be updated, otherwise it will be created
+     */
+    fun saveUser(requestedUser: User, update: Boolean, onResult: (Throwable?) -> Unit)
     // fun updateUser(user: User, onResult: (Throwable?) -> Unit)
 
     /*fun addListener(
@@ -26,6 +30,10 @@ interface StorageService {
     fun updateTask(task: Task, onResult: (Throwable?) -> Unit)
     fun deleteTask(taskId: String, onResult: (Throwable?) -> Unit)
      */
+    fun getFriends(userId: String, onError: (Throwable?) -> Unit) : Flow<List<User>>
+    fun requestFriendship(from: User, to: User, onResult: (Throwable?) -> Unit)
+    fun acceptFriendship(me: User, newFriend: User, onResult: (Throwable?) -> Unit)
+    fun getFriendshipRequests(user: User, onResult: (Throwable?) -> Unit)
 }
 
 class UsernameAlreadyTakenException() : Exception()
