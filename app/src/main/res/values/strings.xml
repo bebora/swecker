@@ -64,4 +64,5 @@
     <string name="friendship_request_already_sent">The selected user has already received a friendship request from you</string>
     <string name="request_friendship_error">An error has occurred while sending your friendship request</string>
     <string name="friendship_request_correctly_sent">The friendship request has been sent</string>
+    <string name="title_activity_notification">NotificationActivity</string>
 </resources>

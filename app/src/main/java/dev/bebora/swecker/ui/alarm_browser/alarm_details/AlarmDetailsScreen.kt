@@ -212,7 +212,7 @@ fun AlarmDetails(
                                 localDate = date,
                                 dateTime = OffsetDateTime.of(
                                     date,
-                                    alarm.localTime,
+                                    alarm.localTime?.withSecond(0),
                                     OffsetDateTime.now().offset
                                 )
                             ),

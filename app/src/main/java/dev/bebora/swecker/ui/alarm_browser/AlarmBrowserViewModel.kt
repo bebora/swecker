@@ -1,5 +1,6 @@
 package dev.bebora.swecker.ui.alarm_browser
 
+import android.app.Application
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.outlined.Campaign
@@ -15,17 +16,20 @@ import dev.bebora.swecker.data.alarm_browser.AlarmRepository
 import dev.bebora.swecker.data.AlarmType
 import dev.bebora.swecker.data.Group
 import dev.bebora.swecker.data.local.LocalAlarmDataProvider
+import dev.bebora.swecker.ui.alarm_notification.scheduleExactAlarm
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
+import java.time.OffsetDateTime
 import javax.inject.Inject
 
 @HiltViewModel
 class AlarmBrowserViewModel @Inject constructor(
-    private val repository: AlarmRepository
+    private val repository: AlarmRepository,
+    private val application: Application? = null
 ) : ViewModel() {
     // UI state exposed to the UI
     private val _uiState = MutableStateFlow(AlarmBrowserUIState())
@@ -42,12 +46,26 @@ class AlarmBrowserViewModel @Inject constructor(
                     _uiState.value = AlarmBrowserUIState(error = ex.message)
                 }
                 .collect { alarms ->
+                    val sortedAlarms = alarms.sortedBy {
+                        it.dateTime
+                    }
+                    if (application != null ) {
+                        val alarmToSchedule = sortedAlarms.find { al ->
+                            (al.dateTime!! > OffsetDateTime.now()) && al.enabled }
+                        if(alarmToSchedule != null) {
+                            scheduleExactAlarm(
+                                context = application.baseContext,
+                                dateTime = alarmToSchedule.dateTime!!,
+                                name = alarmToSchedule.name
+                            )
+                        }
+                    }
                     val curState = _uiState.value
                     _uiState.value = _uiState
                         .value.copy(
-                            alarms = alarms,
+                            alarms = sortedAlarms,
                             filteredAlarms = filterAlarms(
-                                alarms = alarms,
+                                alarms = sortedAlarms,
                                 selectedDestination = curState.selectedDestination,
                                 selectedGroup = curState.selectedGroup,
                                 searchKey = curState.searchKey
@@ -57,7 +75,6 @@ class AlarmBrowserViewModel @Inject constructor(
         }
     }
 
-    //TODO move selection logic to repository
     fun onEvent(event: AlarmBrowserEvent) {
         when (event) {
             is AlarmBrowserEvent.NavBarNavigate -> {

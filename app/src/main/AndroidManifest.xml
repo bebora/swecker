@@ -3,6 +3,11 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="com.android.alarm.permission.SET_ALARM" />
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
+
     <application
         android:name=".SweckerApp"
         android:allowBackup="true"
@@ -14,6 +19,17 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Swecker"
         tools:targetApi="31">
+        <activity
+            android:name=".ui.alarm_notification.NotificationActivity"
+            android:exported="false"
+            android:label="@string/title_activity_notification"
+            android:theme="@style/Theme.Swecker"
+            android:launchMode="singleTop"
+            android:showOnLockScreen="true">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -29,6 +45,14 @@
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
+
+        <receiver
+            android:name=".ui.alarm_notification.AlarmNotificationReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.ACTION_SCHEDULE_EXACT_ALARM_PERMISSION_STATE_CHANGED" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>
