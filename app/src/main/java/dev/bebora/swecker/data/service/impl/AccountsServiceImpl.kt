@@ -40,7 +40,7 @@ class AccountsServiceImpl : AccountsService {
     }
 
     // TODO update reference to me in my friends documents
-    override fun saveUser(requestedUser: User, update: Boolean, onResult: (Throwable?) -> Unit) {
+    override fun saveUser(requestedUser: User, oldUser: User?, onResult: (Throwable?) -> Unit) {
         var user = requestedUser.copy(
             username = requestedUser.username.lowercase()
         )
@@ -63,14 +63,22 @@ class AccountsServiceImpl : AccountsService {
                         .collection(USERS_COLLECTION)
                         .document(user.id)
 
-                    if (update) {
+                    if (oldUser != null) {
                         docRef.update(
                             "name", user.name,
                             "username", user.username,
                             "propicUrl", user.propicUrl
                         ).addOnCompleteListener {
                             //onResult(it.exception)
-                            updateFriendshipRequests(user = user, onResult = onResult)
+                            updateFriendshipRequests(user = user) {
+                                if (it == null) {
+                                    updateOwnInfoInFriendsDocuments(
+                                        newMe = requestedUser,
+                                    oldMe = oldUser) { updateInfoException ->
+                                        onResult(updateInfoException)
+                                    }
+                                }
+                            }
                         }
                     } else {
                         docRef
@@ -282,6 +290,30 @@ class AccountsServiceImpl : AccountsService {
                             .addOnSuccessListener { onResult(null) } // No error
                     }
             }
+    }
+
+    private fun updateOwnInfoInFriendsDocuments(newMe: User, oldMe: User, onResult: (Throwable?) -> Unit) {
+        Log.d("SWECKER-UPD-FRIDATA", "Updating friends with new user data")
+        if (newMe.id.isBlank()) {
+            onResult(UserNotFoundException())
+        } else {
+            val store = Firebase.firestore
+            val usersRef = store.collection(USERS_COLLECTION)
+            val meRef = usersRef.document(newMe.id)
+            store.runTransaction { transaction ->
+                val meInDb = transaction.get(meRef)
+                val friends = meInDb.toObject(UserWithFriends::class.java)?.friends ?: emptyList()
+                friends.forEach {
+                    transaction.update(usersRef.document(it.id), "friends", FieldValue.arrayRemove(oldMe))
+                    transaction.update(usersRef.document(it.id), "friends", FieldValue.arrayUnion(newMe))
+                }
+                null
+            }
+                .addOnCompleteListener {
+                    onResult(it.exception)
+                }
+        }
+
     }
 
     companion object {

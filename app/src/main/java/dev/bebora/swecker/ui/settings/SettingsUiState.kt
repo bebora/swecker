@@ -1,5 +1,6 @@
 package dev.bebora.swecker.ui.settings
 
+import dev.bebora.swecker.data.User
 import dev.bebora.swecker.data.settings.Ringtone
 import dev.bebora.swecker.data.settings.RingtoneDuration
 
@@ -29,10 +30,7 @@ data class SettingsUiState(
     val hasUser: Boolean = false,
     val userId: String = "",
 
-    val savedName: String = "",
-    val savedUsername: String = "",
+    val me: User = User(),
 
     val accontLoading: Boolean = false,
-
-    val propicUrl: String = ""
 )

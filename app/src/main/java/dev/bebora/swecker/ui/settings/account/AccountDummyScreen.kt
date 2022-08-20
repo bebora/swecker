@@ -87,7 +87,7 @@ fun AccountDummyScreen(
                 },
                 scrollBehavior = scrollBehavior,
                 actions = {
-                    if (ui.accontLoading || ui.savedName.isBlank()) {
+                    if (ui.accontLoading || ui.me.id.isBlank()) {
                         CircularProgressIndicator()
                     }
                     if (ui.userId.isNotBlank()) {
@@ -115,13 +115,13 @@ fun AccountDummyScreen(
             } else {
                 val sections = listOf(
                     SettingsSection(
-                        title = ui.savedName,
+                        title = ui.me.name,
                         stringResource(R.string.account_change_name),
                         Icons.Outlined.Person,
                         onClick = { onEvent(SettingsEvent.OpenEditName) }
                     ),
                     SettingsSection(
-                        "@${ui.savedUsername}",
+                        "@${ui.me.username}",
                         stringResource(R.string.account_change_username),
                         Icons.Outlined.AlternateEmail,
                         onClick = { onEvent(SettingsEvent.OpenEditUsername) }
@@ -131,9 +131,9 @@ fun AccountDummyScreen(
                 Box(
                     contentAlignment = Alignment.BottomEnd
                 ) {
-                    if (ui.propicUrl.isNotBlank()) {
+                    if (ui.me.propicUrl.isNotBlank()) {
                         SubcomposeAsyncImage(
-                            model = ui.propicUrl,
+                            model = ui.me.propicUrl,
                             loading = {
                                 PropicPlaceholder(
                                     color = MaterialTheme.colorScheme.primaryContainer
@@ -227,11 +227,8 @@ fun AccountDummyScreen(
                     onClick = {
                         onEvent(
                             SettingsEvent.SaveUser(
-                                User(
-                                    id = ui.userId,
+                                ui.me.copy(
                                     name = ui.currentName.trim(),
-                                    username = ui.savedUsername.trim(),
-                                    propicUrl = ui.propicUrl
                                 )
                             )
                         )
@@ -267,11 +264,8 @@ fun AccountDummyScreen(
                     onClick = {
                         onEvent(
                             SettingsEvent.SaveUser(
-                                User(
-                                    id = ui.userId,
-                                    name = ui.savedName.trim(),
+                                ui.me.copy(
                                     username = ui.currentUsername.trim(),
-                                    propicUrl = ui.propicUrl
                                 )
                             )
                         )
@@ -409,8 +403,11 @@ fun AccountLoggedDummyScreenPreview() {
             ui = SettingsUiState(
                 hasUser = true,
                 userId = "fakeuser",
-                savedUsername = "example",
-                savedName = "Example"
+                me = User(
+                    id = "hello",
+                    name = "fake",
+                    username = "usernameexample"
+                )
             ),
             onEvent = {}
         )

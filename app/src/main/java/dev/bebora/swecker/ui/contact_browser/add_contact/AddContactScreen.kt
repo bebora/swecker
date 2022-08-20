@@ -126,22 +126,24 @@ fun AddContactScreen(
                         )
                     },
                 )
-                ui.queryResults.forEachIndexed { idx, friend ->
-                    if (idx != 0) {
-                        Divider()
-                    }
-                    ContactRow(user = friend, trailingIcon = {
-                        IconButton(
-                            onClick = {
-                                viewModel.onEvent(AddContactEvent.SendFriendshipRequest(to = friend))
-                            }) {
-                            Icon(
-                                imageVector = Icons.Outlined.PersonAddAlt,
-                                contentDescription = "Send friendship request to ${friend.name}"
-                            )
+                ui.queryResults
+                    .filter { !ui.friends.contains(it) }
+                    .forEachIndexed { idx, friend ->
+                        if (idx != 0) {
+                            Divider()
                         }
-                    })
-                }
+                        ContactRow(user = friend, trailingIcon = {
+                            IconButton(
+                                onClick = {
+                                    viewModel.onEvent(AddContactEvent.SendFriendshipRequest(to = friend))
+                                }) {
+                                Icon(
+                                    imageVector = Icons.Outlined.PersonAddAlt,
+                                    contentDescription = "Send friendship request to ${friend.name}"
+                                )
+                            }
+                        })
+                    }
             }
         }
     }

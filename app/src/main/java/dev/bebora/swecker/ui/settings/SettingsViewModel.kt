@@ -44,8 +44,7 @@ class SettingsViewModel @Inject constructor(
         viewModelScope.launch {
             accountsService.getUser(authService.getUserId(), ::onError) {
                 uiState = uiState.copy(
-                    savedName = it.name,
-                    savedUsername = it.username
+                    me = it,
                 )
                 Log.d("SWECKER-GET", "Preso user da storage, ed è $it")
             }
@@ -53,15 +52,12 @@ class SettingsViewModel @Inject constructor(
                 uiState = uiState.copy(
                     hasUser = authService.hasUser(),
                     userId = authService.getUserId(),
-                    propicUrl = ""
                 )
                 accountsService.getUser(
                     userId = authService.getUserId(),
                     onSuccess = {
                         uiState = uiState.copy(
-                            propicUrl = it.propicUrl,
-                            savedName = it.name,
-                            savedUsername = it.username
+                            me = it
                         )
                     },
                     onError = ::onError
@@ -75,7 +71,7 @@ class SettingsViewModel @Inject constructor(
             SettingsEvent.OpenEditName -> {
                 uiState = uiState.copy(
                     showEditNamePopup = true,
-                    currentName = uiState.savedName
+                    currentName = uiState.me.name
                 )
                 /*
                 viewModelScope.launch {
@@ -107,7 +103,7 @@ class SettingsViewModel @Inject constructor(
             SettingsEvent.OpenEditUsername -> {
                 uiState = uiState.copy(
                     showEditUsernamePopup = true,
-                    currentUsername = uiState.savedUsername
+                    currentUsername = uiState.me.username
                 )
                 /*viewModelScope.launch {
                     uiState = uiState.copy(
@@ -288,15 +284,17 @@ class SettingsViewModel @Inject constructor(
                     showEditUsernamePopup = false,
                     accontLoading = true
                 )
-                accountsService.saveUser(event.user, update = true) { error ->
+                accountsService.saveUser(event.user, oldUser = uiState.me) { error ->
                     uiState = uiState.copy(
                         accontLoading = false
                     )
                     if (error == null) {
                         uiState = uiState.copy(
-                            savedName = event.user.name,
-                            savedUsername = event.user.username.lowercase(),
-                            propicUrl = event.user.propicUrl
+                            me = uiState.me.copy(
+                                name = event.user.name,
+                                username = event.user.username.lowercase(),
+                                propicUrl = event.user.propicUrl
+                            )
                         )
                     } else {
                         onError(error)
@@ -325,10 +323,7 @@ class SettingsViewModel @Inject constructor(
                     onSuccess = {
                         onEvent(
                             SettingsEvent.SaveUser(
-                                user = User(
-                                    id = uiState.userId,
-                                    name = uiState.savedName,
-                                    username = uiState.savedUsername,
+                                user = uiState.me.copy(
                                     propicUrl = it
                                 )
                             )

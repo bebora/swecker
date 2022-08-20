@@ -82,7 +82,7 @@ class SignUpViewModel @Inject constructor(
                                     username = authService.getUserId(),
                                     propicUrl = ""
                                 ),
-                                update = false // Create new user
+                                oldUser = null,
                             ) { saveUserError ->
                                 uiState = uiState.copy(
                                     loading = false

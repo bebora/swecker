@@ -15,7 +15,7 @@ interface AccountsService {
     /**
      * If update is true, the existing user will be updated, otherwise it will be created
      */
-    fun saveUser(requestedUser: User, update: Boolean, onResult: (Throwable?) -> Unit)
+    fun saveUser(requestedUser: User, oldUser: User?, onResult: (Throwable?) -> Unit)
     // fun updateUser(user: User, onResult: (Throwable?) -> Unit)
 
     /*fun addListener(
