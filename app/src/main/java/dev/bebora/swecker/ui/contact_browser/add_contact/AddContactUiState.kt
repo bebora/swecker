@@ -8,5 +8,6 @@ data class AddContactUiState(
     val currentQuery: String = "",
     val uploadingFriendshipRequest: Boolean = false,
     val friendsIds: Set<String> = emptySet(),
-    val processingQuery: Boolean = false
+    val processingQuery: Boolean = false,
+    val accountStatusLoaded: Boolean = false
 )

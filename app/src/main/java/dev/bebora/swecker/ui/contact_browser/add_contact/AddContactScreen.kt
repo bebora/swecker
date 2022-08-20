@@ -99,7 +99,7 @@ fun AddContactScreen(
                     keyboardController?.hide()
                 },
         ) {
-            if (ui.me.id.isBlank()) {
+            if (ui.me.id.isBlank() && ui.accountStatusLoaded) {
                 SuggestLogin(onNavigate = onNavigate)
             } else {
                 OutlinedTextField(

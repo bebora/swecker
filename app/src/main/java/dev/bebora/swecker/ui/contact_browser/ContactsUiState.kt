@@ -6,5 +6,6 @@ data class ContactsUiState(
     val friends: List<User> = emptyList(),
     val friendshipRequests: List<User> = emptyList(),
     val uploadingFriendshipRequest: Boolean = false,
-    val me: User = User()
+    val me: User = User(),
+    val accountStatusLoaded: Boolean = false
 )

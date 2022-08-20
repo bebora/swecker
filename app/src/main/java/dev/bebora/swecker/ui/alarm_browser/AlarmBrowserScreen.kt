@@ -1,5 +1,6 @@
 package dev.bebora.swecker.ui.alarm_browser
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -498,6 +499,9 @@ fun AlarmBrowserScreen(
             BoxWithConstraints() {
                 if (maxWidth < 840.dp) {
                     if (uiState.dialogContent != DialogContent.NONE) {
+                        BackHandler {
+                            viewModel.onEvent(AlarmBrowserEvent.BackButtonPressed)
+                        }
                         SinglePaneDialog(
                             dialogContent = uiState.dialogContent,
                             onNavigate = onNavigate,

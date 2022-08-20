@@ -20,6 +20,7 @@ class AccountsServiceImpl : AccountsService {
     ) {
         if (userId == "") {
             Log.d("SWECKER-DEB", "userId is empty")
+            onError(BlankUserOrUsernameException())
         } else {
             Log.d("SWECKER-DEB", "userId is $userId")
             Firebase.firestore

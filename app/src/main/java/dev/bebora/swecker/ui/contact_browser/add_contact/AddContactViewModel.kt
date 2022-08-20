@@ -47,10 +47,16 @@ class AddContactViewModel @Inject constructor(
                     userId = authService.getUserId(),
                     onSuccess = {
                         uiState = uiState.copy(
-                            me = it
+                            me = it,
+                            accountStatusLoaded = true
                         )
                     },
-                    onError = ::onError
+                    onError = {
+                        uiState = uiState.copy(
+                            accountStatusLoaded = true
+                        )
+                        onError(it)
+                    }
                 )
             }
         }
