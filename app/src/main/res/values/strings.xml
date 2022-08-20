@@ -68,4 +68,7 @@
     <string name="add_contact_title">Add contacts</string>
     <string name="search_contact_placeholder">Search by username</string>
     <string name="friendship_request_to_yourself">You cannot add yourself as a friend</string>
+    <string name="friendship_request_correctly_accepted">You have correctly accepted the friendship request</string>
+    <string name="friendship_request_not_exists">Friendship request not found</string>
+    <string name="accept_friendship_error">An error has occurred while accepting the friendship request</string>
 </resources>

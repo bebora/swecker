@@ -1,10 +1,12 @@
 package dev.bebora.swecker.ui.contact_browser
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -84,7 +86,16 @@ fun ContactBrowserScreen(
                 if (idx != 0) {
                     Divider()
                 }
-                ContactRow(user = friend)
+                ContactRow(user = friend) {
+                    Icon(
+                        modifier = Modifier
+                            .clickable {
+                                viewModel.onEvent(ContactsEvent.AcceptFriendshipRequest(from = friend))
+                            },
+                        imageVector = Icons.Default.Add,
+                        contentDescription = "Add friend"
+                    )
+                }
             }
         }
     }

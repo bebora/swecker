@@ -1,6 +1,7 @@
 package dev.bebora.swecker.data.service.impl
 
 import android.util.Log
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
@@ -37,6 +38,7 @@ class AccountsServiceImpl : AccountsService {
         TODO("Not yet implemented")
     }
 
+    // TODO update reference to me in my friends documents
     override fun saveUser(requestedUser: User, update: Boolean, onResult: (Throwable?) -> Unit) {
         var user = requestedUser.copy(
             username = requestedUser.username.lowercase()
@@ -133,7 +135,40 @@ class AccountsServiceImpl : AccountsService {
     }
 
     override fun acceptFriendship(me: User, newFriend: User, onResult: (Throwable?) -> Unit) {
-        TODO("Not yet implemented")
+        val friendRequestsRef = Firebase.firestore
+            .collection(FRIENDSHIP_REQUESTS_COLLECTION)
+        friendRequestsRef
+            .whereEqualTo("from.id", newFriend.id)
+            .whereEqualTo("to.id", me.id)
+            .get()
+            .addOnFailureListener(onResult)
+            .addOnSuccessListener { querySnapshot ->
+                if (querySnapshot.isEmpty) {
+                    onResult(FriendshipRequestNotExistingException())
+                } else {
+                    val batch = Firebase.firestore.batch()
+                    val usersRef = Firebase.firestore
+                        .collection(USERS_COLLECTION)
+                    val meRef = usersRef
+                        .document(me.id)
+                    batch.update(meRef, "friends", FieldValue.arrayUnion(newFriend))
+                    val newFriendRef = usersRef
+                        .document(newFriend.id)
+                    batch.update(newFriendRef, "friends", FieldValue.arrayUnion(me))
+                    batch.commit()
+                        .addOnFailureListener(onResult)
+                        .addOnSuccessListener {
+                            val toDeleteId = querySnapshot.documents[0].id
+                            friendRequestsRef
+                                .document(toDeleteId)
+                                .delete()
+                                .addOnFailureListener(onResult)
+                                .addOnSuccessListener {
+                                    onResult(null)
+                                }
+                        }
+                }
+            }
     }
 
     override fun getFriendshipRequests(userId: String): Flow<List<User>> {

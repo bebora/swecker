@@ -68,9 +68,9 @@ class ContactsBrowserViewModel @Inject constructor(
         }
     }
 
-    // TODO event is currently the same in AddContactViewModel and this one is not used
     fun onEvent(event: ContactsEvent) {
         when (event) {
+            // TODO this event is currently the same in AddContactViewModel and this one is not used
             is ContactsEvent.RequestFriendship -> {
                 uiState = uiState.copy(
                     uploadingFriendshipRequest = true
@@ -96,6 +96,41 @@ class ContactsBrowserViewModel @Inject constructor(
                         val stringRes = when (error) {
                             is FriendshipRequestAlreadySentException -> R.string.friendship_request_already_sent
                             else -> R.string.request_friendship_error
+                        }
+                        viewModelScope.launch {
+                            _contactsUiEvent.send(
+                                UiEvent.ShowSnackbar(
+                                    uiText = UiText.StringResource(resId = stringRes)
+                                )
+                            )
+                        }
+                    }
+                }
+            }
+            is ContactsEvent.AcceptFriendshipRequest -> {
+                uiState = uiState.copy(
+                    uploadingFriendshipRequest = true
+                )
+                accountsService.acceptFriendship(
+                    me = uiState.me,
+                    newFriend = event.from
+                ) { error ->
+                    uiState = uiState.copy(
+                        uploadingFriendshipRequest = false
+                    )
+                    if (error == null) {
+                        viewModelScope.launch {
+                            _contactsUiEvent.send(
+                                UiEvent.ShowSnackbar(
+                                    uiText = UiText.StringResource(resId = R.string.friendship_request_correctly_accepted)
+                                )
+                            )
+                        }
+                    } else {
+                        onError(error)
+                        val stringRes = when (error) {
+                            is FriendshipRequestNotExistingException -> R.string.friendship_request_not_exists
+                            else -> R.string.accept_friendship_error
                         }
                         viewModelScope.launch {
                             _contactsUiEvent.send(
