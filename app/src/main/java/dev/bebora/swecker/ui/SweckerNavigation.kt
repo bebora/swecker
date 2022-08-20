@@ -68,12 +68,14 @@ fun SweckerNavigation(
                 }
                 composable(CONTACT_BROWSER) {
                     ContactBrowserScreen(
+                        onNavigate = { navController.navigate(it) },
                         onGoBack = { navController.popBackStack() },
                     )
                 }
                 composable(ADD_CONTACT) {
                     AddContactScreen(
                         onGoBack = { navController.popBackStack() },
+                        onNavigate = { navController.navigate(it) }
                     )
                 }
             }

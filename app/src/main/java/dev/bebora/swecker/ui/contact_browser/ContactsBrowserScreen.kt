@@ -25,12 +25,14 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import dev.bebora.swecker.R
 import dev.bebora.swecker.data.service.impl.AccountsServiceImpl
 import dev.bebora.swecker.data.service.impl.AuthServiceImpl
+import dev.bebora.swecker.ui.settings.account.SuggestLogin
 import dev.bebora.swecker.util.UiEvent
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ContactBrowserScreen(
     modifier: Modifier = Modifier,
+    onNavigate: (String) -> Unit,
     onGoBack: () -> Unit = {},
     viewModel: ContactsBrowserViewModel = hiltViewModel()
 ) {
@@ -75,29 +77,34 @@ fun ContactBrowserScreen(
                 .padding(it)
                 .verticalScroll(state = rememberScrollState()),
         ) {
-            ui.friends.forEachIndexed { idx, friend ->
-                if (idx != 0) {
-                    Divider()
-                }
-                ContactRow(user = friend)
+            if (ui.me.id.isBlank()) {
+                SuggestLogin(onNavigate = onNavigate)
             }
-            Text(
-                text = "Friendship requests",
-                style = MaterialTheme.typography.headlineSmall
-            )
-            ui.friendshipRequests.forEachIndexed { idx, friend ->
-                if (idx != 0) {
-                    Divider()
+            else {
+                ui.friends.forEachIndexed { idx, friend ->
+                    if (idx != 0) {
+                        Divider()
+                    }
+                    ContactRow(user = friend)
                 }
-                ContactRow(user = friend) {
-                    Icon(
-                        modifier = Modifier
-                            .clickable {
-                                viewModel.onEvent(ContactsEvent.AcceptFriendshipRequest(from = friend))
-                            },
-                        imageVector = Icons.Default.Add,
-                        contentDescription = "Add friend"
-                    )
+                Text(
+                    text = "Friendship requests",
+                    style = MaterialTheme.typography.headlineSmall
+                )
+                ui.friendshipRequests.forEachIndexed { idx, friend ->
+                    if (idx != 0) {
+                        Divider()
+                    }
+                    ContactRow(user = friend) {
+                        Icon(
+                            modifier = Modifier
+                                .clickable {
+                                    viewModel.onEvent(ContactsEvent.AcceptFriendshipRequest(from = friend))
+                                },
+                            imageVector = Icons.Default.Add,
+                            contentDescription = "Add friend"
+                        )
+                    }
                 }
             }
         }
@@ -111,7 +118,8 @@ fun ContactBrowserScreenPreview() {
         viewModel = ContactsBrowserViewModel(
             authService = AuthServiceImpl(),
             accountsService = AccountsServiceImpl()
-        )
+        ),
+        onNavigate = {}
     )
 }
 
@@ -120,6 +128,7 @@ fun ContactBrowserScreenPreview() {
 fun ContactBrowserDialog(
     modifier: Modifier = Modifier,
     onGoBack: () -> Unit = {},
+    onNavigate: (String) -> Unit,
     viewModel: ContactsBrowserViewModel = hiltViewModel()
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
@@ -170,29 +179,34 @@ fun ContactBrowserDialog(
                         .padding(it)
                         .verticalScroll(state = rememberScrollState()),
                 ) {
-                    ui.friends.forEachIndexed { idx, friend ->
-                        if (idx != 0) {
-                            Divider()
-                        }
-                        ContactRow(user = friend)
+                    if (ui.me.id.isBlank()) {
+                        SuggestLogin(onNavigate = onNavigate)
                     }
-                    Text(
-                        text = "Friendship requests",
-                        style = MaterialTheme.typography.headlineSmall
-                    )
-                    ui.friendshipRequests.forEachIndexed { idx, friend ->
-                        if (idx != 0) {
-                            Divider()
+                    else {
+                        ui.friends.forEachIndexed { idx, friend ->
+                            if (idx != 0) {
+                                Divider()
+                            }
+                            ContactRow(user = friend)
                         }
-                        ContactRow(user = friend) {
-                            Icon(
-                                modifier = Modifier
-                                    .clickable {
-                                        viewModel.onEvent(ContactsEvent.AcceptFriendshipRequest(from = friend))
-                                    },
-                                imageVector = Icons.Default.Add,
-                                contentDescription = "Add friend"
-                            )
+                        Text(
+                            text = "Friendship requests",
+                            style = MaterialTheme.typography.headlineSmall
+                        )
+                        ui.friendshipRequests.forEachIndexed { idx, friend ->
+                            if (idx != 0) {
+                                Divider()
+                            }
+                            ContactRow(user = friend) {
+                                Icon(
+                                    modifier = Modifier
+                                        .clickable {
+                                            viewModel.onEvent(ContactsEvent.AcceptFriendshipRequest(from = friend))
+                                        },
+                                    imageVector = Icons.Default.Add,
+                                    contentDescription = "Add friend"
+                                )
+                            }
                         }
                     }
                 }

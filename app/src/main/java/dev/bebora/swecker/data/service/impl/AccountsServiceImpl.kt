@@ -10,6 +10,7 @@ import dev.bebora.swecker.data.service.*
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.emptyFlow
 
 class AccountsServiceImpl : AccountsService {
     override fun getUser(
@@ -83,6 +84,9 @@ class AccountsServiceImpl : AccountsService {
     }
 
     override fun getFriends(userId: String): Flow<List<User>> {
+        if (userId.isBlank()) {
+            return emptyFlow()
+        }
         return callbackFlow {
             val listener = Firebase.firestore
                 .collection(USERS_COLLECTION)
@@ -172,6 +176,9 @@ class AccountsServiceImpl : AccountsService {
     }
 
     override fun getFriendshipRequests(userId: String): Flow<List<User>> {
+        if (userId.isBlank()) {
+            return emptyFlow()
+        }
         return callbackFlow {
             val listener = Firebase.firestore
                 .collection(FRIENDSHIP_REQUESTS_COLLECTION)

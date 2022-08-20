@@ -342,6 +342,9 @@ class SettingsViewModel @Inject constructor(
                     }
                 )
             }
+            SettingsEvent.SignOut -> {
+                authService.signOut()
+            }
         }
     }
 }

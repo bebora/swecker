@@ -2,7 +2,9 @@ package dev.bebora.swecker.ui.contact_browser.add_contact
 
 import android.util.Log
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -16,9 +18,11 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -27,19 +31,22 @@ import dev.bebora.swecker.R
 import dev.bebora.swecker.data.service.impl.AccountsServiceImpl
 import dev.bebora.swecker.data.service.impl.AuthServiceImpl
 import dev.bebora.swecker.ui.contact_browser.ContactRow
+import dev.bebora.swecker.ui.settings.account.SuggestLogin
 import dev.bebora.swecker.util.UiEvent
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
 fun AddContactScreen(
     modifier: Modifier = Modifier,
     onGoBack: () -> Unit = {},
+    onNavigate: (String) -> Unit = {},
     viewModel: AddContactViewModel = hiltViewModel(),
 ) {
     val ui = viewModel.uiState
     val snackbarHostState = remember { SnackbarHostState() }
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
     val context = LocalContext.current
+    val keyboardController = LocalSoftwareKeyboardController.current
 
     LaunchedEffect(key1 = true) {
         viewModel.addContactUiEvent.collect { event ->
@@ -83,47 +90,58 @@ fun AddContactScreen(
             modifier = Modifier
                 .padding(padding)
                 .padding(8.dp)
-                .verticalScroll(state = rememberScrollState()),
+                .fillMaxSize()
+                .verticalScroll(state = rememberScrollState())
+                .clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = null
+                ) {
+                    keyboardController?.hide()
+                },
         ) {
-            OutlinedTextField(
-                modifier = Modifier.fillMaxWidth(),
-                placeholder = {
-                    Text(text = stringResource(R.string.search_contact_placeholder))
-                },
-                value = ui.currentQuery,
-                onValueChange = {
-                    viewModel.onEvent(AddContactEvent.QueueSearch(it))
-                },
-                singleLine = true,
-                maxLines = 1,
-                trailingIcon = {
-                    Icon(
-                        imageVector = Icons.Outlined.Search,
-                        contentDescription = "Search contact icon"
-                    )
-                },
-                leadingIcon = {
-                    Icon(
-                        imageVector = Icons.Outlined.AlternateEmail,
-                        contentDescription = "Search contact icon"
-                    )
-                },
-
+            if (ui.me.id.isBlank()) {
+                SuggestLogin(onNavigate = onNavigate)
+            } else {
+                OutlinedTextField(
+                    modifier = Modifier.fillMaxWidth(),
+                    placeholder = {
+                        Text(text = stringResource(R.string.search_contact_placeholder))
+                    },
+                    value = ui.currentQuery,
+                    onValueChange = {
+                        viewModel.onEvent(AddContactEvent.QueueSearch(it))
+                    },
+                    singleLine = true,
+                    maxLines = 1,
+                    trailingIcon = {
+                        Icon(
+                            imageVector = Icons.Outlined.Search,
+                            contentDescription = "Search contact icon"
+                        )
+                    },
+                    leadingIcon = {
+                        Icon(
+                            imageVector = Icons.Outlined.AlternateEmail,
+                            contentDescription = "Search contact icon"
+                        )
+                    },
                 )
-            ui.queryResults.forEachIndexed { idx, friend ->
-                if (idx != 0) {
-                    Divider()
-                }
-                ContactRow(user = friend, trailingIcon = {
-                    Icon(
-                        modifier = Modifier
-                            .clickable {
+                ui.queryResults.forEachIndexed { idx, friend ->
+                    if (idx != 0) {
+                        Divider()
+                    }
+                    ContactRow(user = friend, trailingIcon = {
+                        IconButton(
+                            onClick = {
                                 viewModel.onEvent(AddContactEvent.SendFriendshipRequest(to = friend))
-                            },
-                        imageVector = Icons.Outlined.PersonAddAlt,
-                        contentDescription = "Send friendship request to ${friend.name}"
-                    )
-                })
+                            }) {
+                            Icon(
+                                imageVector = Icons.Outlined.PersonAddAlt,
+                                contentDescription = "Send friendship request to ${friend.name}"
+                            )
+                        }
+                    })
+                }
             }
         }
     }

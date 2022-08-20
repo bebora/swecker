@@ -90,6 +90,14 @@ fun AccountDummyScreen(
                     if (ui.accontLoading || ui.savedName.isBlank()) {
                         CircularProgressIndicator()
                     }
+                    if (ui.userId.isNotBlank()) {
+                        IconButton(onClick = { onEvent(SettingsEvent.SignOut) }) {
+                            Icon(
+                                imageVector = Icons.Default.Logout,
+                                contentDescription = "Sign out"
+                            )
+                        }
+                    }
                 }
             )
         },
@@ -201,6 +209,7 @@ fun AccountDummyScreen(
                         onClick = section.onClick
                     )
                 }
+                // TODO remove this button
                 Button(onClick = { onNavigate(LOGIN) }) {
                     Text(text = stringResource(id = R.string.log_in_button))
                 }

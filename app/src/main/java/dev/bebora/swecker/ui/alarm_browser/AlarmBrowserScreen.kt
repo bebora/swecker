@@ -201,13 +201,15 @@ fun DualPaneContentList(
 fun DualPaneDialog(
     modifier: Modifier = Modifier,
     dialogContent: DialogContent,
+    onNavigate: (String) -> Unit,
     onEvent: (AlarmBrowserEvent) -> Unit
 ) {
     when (dialogContent) {
         DialogContent.ADD_ALARM -> AddAlarmDialog(modifier = modifier,
             onGoBack = { onEvent(AlarmBrowserEvent.BackButtonPressed) })
         DialogContent.CONTACT_BROWSER -> ContactBrowserDialog(
-            onGoBack = { onEvent(AlarmBrowserEvent.BackButtonPressed) }
+            onGoBack = { onEvent(AlarmBrowserEvent.BackButtonPressed) },
+            onNavigate = onNavigate
         )
         else -> {}
     }
@@ -355,13 +357,15 @@ fun GroupSinglePaneContent(
 fun SinglePaneDialog(
     modifier: Modifier = Modifier,
     dialogContent: DialogContent,
+    onNavigate: (String) -> Unit,
     onEvent: (AlarmBrowserEvent) -> Unit
 ) {
     when (dialogContent) {
         DialogContent.ADD_ALARM -> AddAlarmScreen(modifier = modifier.fillMaxSize(1f),
             onGoBack = { onEvent(AlarmBrowserEvent.BackButtonPressed) })
         DialogContent.CONTACT_BROWSER -> ContactBrowserScreen(
-            onGoBack = { onEvent(AlarmBrowserEvent.BackButtonPressed) }
+            onGoBack = { onEvent(AlarmBrowserEvent.BackButtonPressed) },
+            onNavigate = onNavigate
         )
         else -> {}
     }
@@ -496,6 +500,7 @@ fun AlarmBrowserScreen(
                     if (uiState.dialogContent != DialogContent.NONE) {
                         SinglePaneDialog(
                             dialogContent = uiState.dialogContent,
+                            onNavigate = onNavigate,
                             onEvent = viewModel::onEvent
                         )
                     } else {
@@ -566,6 +571,7 @@ fun AlarmBrowserScreen(
                     if (uiState.dialogContent != DialogContent.NONE) {
                         DualPaneDialog(
                             dialogContent = uiState.dialogContent,
+                            onNavigate = onNavigate,
                             onEvent = viewModel::onEvent
                         )
                     }

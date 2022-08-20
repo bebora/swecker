@@ -54,4 +54,6 @@ sealed class SettingsEvent {
 
     //ImageStorageService
     data class SetProfilePicture(val imageUri: Uri): SettingsEvent()
+
+    object SignOut: SettingsEvent()
 }
