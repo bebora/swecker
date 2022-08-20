@@ -75,6 +75,7 @@ class DataStoreManager @Inject constructor(@ApplicationContext appContext: Conte
                 ?: RingtoneDuration.SECONDS_30.ordinal],
             ringtoneVolume = it[RINGTONE_VOLUME] ?: 70,
             vibration = it[VIBRATION] ?: true,
+            settingsLoaded = true
         )
     }
 }

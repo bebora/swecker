@@ -34,7 +34,8 @@ data class Settings(
     val ringtone: Ringtone = Ringtone.DEFAULT,
     val ringtoneVolume: Int = 70,
     val ringtoneDuration: RingtoneDuration = RingtoneDuration.SECONDS_5,
-    val vibration: Boolean = true
+    val vibration: Boolean = true,
+    val settingsLoaded: Boolean = true
 )
 
 interface SettingsRepositoryInterface {
