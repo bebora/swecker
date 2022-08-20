@@ -23,9 +23,10 @@ import dev.bebora.swecker.ui.add_alarm.AddAlarmDialog
 import dev.bebora.swecker.ui.add_alarm.AddAlarmScreen
 import dev.bebora.swecker.ui.alarm_browser.alarm_details.AlarmDetails
 import dev.bebora.swecker.ui.alarm_browser.chat.ChatScreenPreview
+import dev.bebora.swecker.ui.contact_browser.ContactBrowserDialog
+import dev.bebora.swecker.ui.contact_browser.ContactBrowserScreen
 import dev.bebora.swecker.ui.theme.SweckerTheme
 import dev.bebora.swecker.util.ADD_CONTACT
-import dev.bebora.swecker.util.CONTACT_BROWSER
 import dev.bebora.swecker.util.SETTINGS
 import kotlinx.coroutines.launch
 import java.time.OffsetDateTime
@@ -205,7 +206,9 @@ fun DualPaneDialog(
     when (dialogContent) {
         DialogContent.ADD_ALARM -> AddAlarmDialog(modifier = modifier,
             onGoBack = { onEvent(AlarmBrowserEvent.BackButtonPressed) })
-
+        DialogContent.CONTACT_BROWSER -> ContactBrowserDialog(
+            onGoBack = { onEvent(AlarmBrowserEvent.BackButtonPressed) }
+        )
         else -> {}
     }
 }
@@ -357,7 +360,9 @@ fun SinglePaneDialog(
     when (dialogContent) {
         DialogContent.ADD_ALARM -> AddAlarmScreen(modifier = modifier.fillMaxSize(1f),
             onGoBack = { onEvent(AlarmBrowserEvent.BackButtonPressed) })
-
+        DialogContent.CONTACT_BROWSER -> ContactBrowserScreen(
+            onGoBack = { onEvent(AlarmBrowserEvent.BackButtonPressed) }
+        )
         else -> {}
     }
 }
@@ -401,7 +406,7 @@ fun AlarmBrowserScreen(
                         icon = Icons.Outlined.Contacts
                     ) {
                         scope.launch { drawerState.close() }
-                        onNavigate(CONTACT_BROWSER)
+                        viewModel.onEvent(AlarmBrowserEvent.DialogOpened(DialogContent.CONTACT_BROWSER))
                     },
                     DrawerSubSection(
                         title = "Friendship requests",

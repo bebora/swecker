@@ -279,7 +279,7 @@ enum class DialogContent {
     ADD_GROUP,
     ADD_CHANNEL,
     ADD_CONTACT,
-    CONTACTS
+    CONTACT_BROWSER
 }
 
 enum class NavBarDestination {
