@@ -19,8 +19,9 @@ import dev.bebora.swecker.ui.settings.account.PropicPlaceholder
 
 @Composable
 fun ContactRow(
+    modifier: Modifier = Modifier,
     user: User,
-    modifier: Modifier = Modifier
+    trailingIcon: @Composable () -> Unit = {},
 ) {
     Row(
         modifier = modifier
@@ -74,7 +75,8 @@ fun ContactRow(
                 color = MaterialTheme.colorScheme.outline
             )
         }
-
+        Spacer(modifier = Modifier.weight(1f))
+        trailingIcon()
     }
 }
 

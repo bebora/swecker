@@ -295,7 +295,7 @@ class SettingsViewModel @Inject constructor(
                     if (error == null) {
                         uiState = uiState.copy(
                             savedName = event.user.name,
-                            savedUsername = event.user.username,
+                            savedUsername = event.user.username.lowercase(),
                             propicUrl = event.user.propicUrl
                         )
                     } else {

@@ -5,10 +5,7 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
 import dev.bebora.swecker.data.User
-import dev.bebora.swecker.data.service.BlankUserOrUsernameException
-import dev.bebora.swecker.data.service.AccountsService
-import dev.bebora.swecker.data.service.FriendshipRequestAlreadySentException
-import dev.bebora.swecker.data.service.UsernameAlreadyTakenException
+import dev.bebora.swecker.data.service.*
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -41,11 +38,13 @@ class AccountsServiceImpl : AccountsService {
     }
 
     override fun saveUser(requestedUser: User, update: Boolean, onResult: (Throwable?) -> Unit) {
-        var user = requestedUser.copy()
+        var user = requestedUser.copy(
+            username = requestedUser.username.lowercase()
+        )
         Log.d("SWECKER-SAVE", "Sto salvando user così $user")
         // An error on signup may cause empty user data
         if (user.name.isBlank() && user.username.isBlank()) {
-            user = user.copy(name = user.id, username = user.id)
+            user = user.copy(name = user.id, username = user.id.lowercase())
         } else if (user.name.isBlank() || user.username.isBlank()) {
             onResult(BlankUserOrUsernameException())
             return
@@ -109,6 +108,10 @@ class AccountsServiceImpl : AccountsService {
     }
 
     override fun requestFriendship(from: User, to: User, onResult: (Throwable?) -> Unit) {
+        if (from.id == to.id) {
+            onResult(FriendshipRequestToYourselfException())
+            return
+        }
         val collectionRef = Firebase.firestore
             .collection(FRIENDSHIP_REQUESTS_COLLECTION)
         collectionRef
@@ -119,7 +122,10 @@ class AccountsServiceImpl : AccountsService {
             .addOnSuccessListener { querySnapshot ->
                 if (querySnapshot.isEmpty) {
                     collectionRef.add(FriendshipRequest(from = from, to = to))
-                        .addOnCompleteListener { it.exception }
+                        .addOnFailureListener(onResult)
+                        .addOnSuccessListener {
+                            onResult(null)
+                        }
                 } else {
                     onResult(FriendshipRequestAlreadySentException())
                 }
@@ -154,6 +160,34 @@ class AccountsServiceImpl : AccountsService {
             awaitClose {
                 listener.remove()
             }
+        }
+    }
+
+    override fun searchUsers(
+        from: User,
+        query: String,
+        onError: (Throwable) -> Unit,
+        onSuccess: (List<User>) -> Unit
+    ) {
+        Log.d("SWECKER-SEARCH", "Searching for users starting with '$query'")
+        if (query.isEmpty()) {
+            onSuccess(emptyList())
+        } else {
+            Firebase.firestore
+                .collection(USERS_COLLECTION)
+                .whereGreaterThanOrEqualTo("username", query)
+                .whereLessThanOrEqualTo(
+                    "username",
+                    "${query}~"
+                ) // https://stackoverflow.com/questions/46568142/google-firestore-query-on-substring-of-a-property-value-text-search
+                .whereNotEqualTo("username", from.username)
+                .get()
+                .addOnFailureListener(onError)
+                .addOnSuccessListener { querySnapshot ->
+                    onSuccess(
+                        querySnapshot.toObjects(User::class.java)
+                    )
+                }
         }
     }
 

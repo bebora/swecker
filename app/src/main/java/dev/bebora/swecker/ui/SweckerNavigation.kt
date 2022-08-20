@@ -11,6 +11,7 @@ import androidx.navigation.compose.rememberNavController
 import dev.bebora.swecker.data.settings.Settings
 import dev.bebora.swecker.ui.alarm_browser.AlarmBrowserScreen
 import dev.bebora.swecker.ui.contact_browser.ContactBrowserScreen
+import dev.bebora.swecker.ui.contact_browser.add_contact.AddContactScreen
 import dev.bebora.swecker.ui.login.LoginScreen
 import dev.bebora.swecker.ui.settings.SettingsScreen
 import dev.bebora.swecker.ui.settings.SettingsViewModel
@@ -67,6 +68,11 @@ fun SweckerNavigation(
                 }
                 composable(CONTACT_BROWSER) {
                     ContactBrowserScreen(
+                        onGoBack = { navController.popBackStack() },
+                    )
+                }
+                composable(ADD_CONTACT) {
+                    AddContactScreen(
                         onGoBack = { navController.popBackStack() },
                     )
                 }

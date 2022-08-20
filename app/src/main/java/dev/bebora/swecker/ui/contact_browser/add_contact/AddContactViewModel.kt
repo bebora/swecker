@@ -1,4 +1,4 @@
-package dev.bebora.swecker.ui.contact_browser
+package dev.bebora.swecker.ui.contact_browser.add_contact
 
 import android.util.Log
 import androidx.compose.runtime.getValue
@@ -8,50 +8,35 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.bebora.swecker.R
-import dev.bebora.swecker.data.service.*
+import dev.bebora.swecker.data.service.AccountsService
+import dev.bebora.swecker.data.service.AuthService
+import dev.bebora.swecker.data.service.FriendshipRequestAlreadySentException
+import dev.bebora.swecker.data.service.FriendshipRequestToYourselfException
 import dev.bebora.swecker.ui.utils.UiText
 import dev.bebora.swecker.ui.utils.onError
 import dev.bebora.swecker.util.UiEvent
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class ContactsBrowserViewModel @Inject constructor(
+class AddContactViewModel @Inject constructor(
     private val authService: AuthService,
     private val accountsService: AccountsService,
 ) : ViewModel() {
     private val userInfoChanges = authService.getUserInfoChanges()
-    var uiState by mutableStateOf(ContactsUiState())
+
+    private var searchJob: Job? = null
+    var uiState by mutableStateOf(AddContactUiState())
         private set
 
-    private val _contactsUiEvent = Channel<UiEvent>()
-    val contactsUiEvent = _contactsUiEvent.receiveAsFlow()
-
-    private var friends =
-        accountsService.getFriends(authService.getUserId())
-
-    private var friendshipRequests =
-        accountsService.getFriendshipRequests(authService.getUserId())
-
-
+    private val _addContactUiEvent = Channel<UiEvent>()
+    val addContactUiEvent = _addContactUiEvent.receiveAsFlow()
 
     init {
-        viewModelScope.launch {
-            friends.collect {
-                uiState = uiState.copy(
-                    friends = it
-                )
-            }
-        }
-        viewModelScope.launch {
-            friendshipRequests.collect {
-                uiState = uiState.copy(
-                    friendshipRequests = it
-                )
-            }
-        }
         viewModelScope.launch {
             userInfoChanges.collect {
                 Log.d("SWECKER-CHANGE-AUTH", "Rilevato cambio utente")
@@ -68,15 +53,42 @@ class ContactsBrowserViewModel @Inject constructor(
         }
     }
 
-    // TODO event is currently the same in AddContactViewModel and this one is not used
-    fun onEvent(event: ContactsEvent) {
+    private fun searchDebounced(searchText: String) {
+        if (uiState.me.id.isBlank()) {
+            Log.d("SWECKER-", "id vuoto")
+            return
+        }
+        searchJob?.cancel()
+        searchJob = viewModelScope.launch {
+            delay(250)
+            accountsService.searchUsers(
+                from = uiState.me,
+                query = searchText,
+                onError = { Log.e("SWECKER-SEARCH-ERR", it.message ?: "Generic search error") },
+                onSuccess = {
+                    uiState = uiState.copy(
+                        queryResults = it
+                    )
+                }
+            )
+        }
+    }
+
+    fun onEvent(event: AddContactEvent) {
         when (event) {
-            is ContactsEvent.RequestFriendship -> {
+            is AddContactEvent.QueueSearch -> {
+                uiState = uiState.copy(
+                    currentQuery = event.query
+                )
+                val actualquery = event.query.lowercase()
+                searchDebounced(searchText = actualquery)
+            }
+            is AddContactEvent.SendFriendshipRequest -> {
                 uiState = uiState.copy(
                     uploadingFriendshipRequest = true
                 )
                 accountsService.requestFriendship(
-                    from = event.from,
+                    from = uiState.me,
                     to = event.to
                 ) { error ->
                     uiState = uiState.copy(
@@ -85,7 +97,7 @@ class ContactsBrowserViewModel @Inject constructor(
                     if (error == null) {
                         // TODO do something with successful request
                         viewModelScope.launch {
-                            _contactsUiEvent.send(
+                            _addContactUiEvent.send(
                                 UiEvent.ShowSnackbar(
                                     uiText = UiText.StringResource(resId = R.string.friendship_request_correctly_sent)
                                 )
@@ -95,10 +107,11 @@ class ContactsBrowserViewModel @Inject constructor(
                         onError(error)
                         val stringRes = when (error) {
                             is FriendshipRequestAlreadySentException -> R.string.friendship_request_already_sent
+                            is FriendshipRequestToYourselfException -> R.string.friendship_request_to_yourself
                             else -> R.string.request_friendship_error
                         }
                         viewModelScope.launch {
-                            _contactsUiEvent.send(
+                            _addContactUiEvent.send(
                                 UiEvent.ShowSnackbar(
                                     uiText = UiText.StringResource(resId = stringRes)
                                 )

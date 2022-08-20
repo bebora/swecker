@@ -24,6 +24,7 @@ import dev.bebora.swecker.ui.add_alarm.AddAlarmScreen
 import dev.bebora.swecker.ui.alarm_browser.alarm_details.AlarmDetails
 import dev.bebora.swecker.ui.alarm_browser.chat.ChatScreenPreview
 import dev.bebora.swecker.ui.theme.SweckerTheme
+import dev.bebora.swecker.util.ADD_CONTACT
 import dev.bebora.swecker.util.CONTACT_BROWSER
 import dev.bebora.swecker.util.SETTINGS
 import kotlinx.coroutines.launch
@@ -381,7 +382,10 @@ fun AlarmBrowserScreen(
                     DrawerSubSection(
                         title = "Add a friend",
                         icon = Icons.Outlined.PersonAddAlt
-                    ) { scope.launch { drawerState.close() } },
+                    ) {
+                        scope.launch { drawerState.close() }
+                        onNavigate(ADD_CONTACT)
+                      },
                 )
             ),
             DrawerSection(
