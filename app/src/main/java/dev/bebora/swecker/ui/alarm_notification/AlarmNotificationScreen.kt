@@ -20,6 +20,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -69,6 +70,18 @@ fun AlarmNotificationFullScreen(
                 durationMillis = duration,
                 delayMillis = delay,
                 easing = FastOutSlowInEasing
+            ),
+            repeatMode = RepeatMode.Reverse
+        )
+    )
+
+    val animatedRotation by infiniteTransition.animateFloat(
+        initialValue = -15f,
+        targetValue = 15f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(
+                durationMillis = 200,
+                easing = LinearEasing
             ),
             repeatMode = RepeatMode.Reverse
         )
@@ -206,6 +219,7 @@ fun AlarmNotificationFullScreen(
                             modifier = modifier
                                 .size(buttonSize)
                                 .scale(animatedScale)
+                                .rotate(animatedRotation)
                                 .clip(shape = CircleShape)
                                 .background(MaterialTheme.colorScheme.surface),
                             contentAlignment = Alignment.Center
