@@ -40,6 +40,8 @@ interface AccountsService {
         onError: (Throwable) -> Unit,
         onSuccess: (List<User>) -> Unit
     )
+
+    fun removeFriend(me: User, friend: User, onResult: (Throwable?) -> Unit)
 }
 
 class UsernameAlreadyTakenException() : Exception()
@@ -47,3 +49,4 @@ class BlankUserOrUsernameException() : Exception()
 class FriendshipRequestAlreadySentException() : Exception()
 class FriendshipRequestToYourselfException() : Exception()
 class FriendshipRequestNotExistingException() : Exception()
+class UserNotFoundException() : Exception()

@@ -142,6 +142,41 @@ class ContactsBrowserViewModel @Inject constructor(
                     }
                 }
             }
+            is ContactsEvent.RemoveFriend -> {
+                uiState = uiState.copy(
+                    uploadingFriendshipRequest = true
+                )
+                accountsService.removeFriend(
+                    me = uiState.me,
+                    friend = event.friend
+                ) { error ->
+                    uiState = uiState.copy(
+                        uploadingFriendshipRequest = false
+                    )
+                    if (error == null) {
+                        viewModelScope.launch {
+                            _contactsUiEvent.send(
+                                UiEvent.ShowSnackbar(
+                                    uiText = UiText.StringResource(resId = R.string.friend_correctly_removed)
+                                )
+                            )
+                        }
+                    } else {
+                        onError(error)
+                        val stringRes = when (error) {
+                            is UserNotFoundException -> R.string.invalid_user
+                            else -> R.string.remove_friend_error
+                        }
+                        viewModelScope.launch {
+                            _contactsUiEvent.send(
+                                UiEvent.ShowSnackbar(
+                                    uiText = UiText.StringResource(resId = stringRes)
+                                )
+                            )
+                        }
+                    }
+                }
+            }
         }
     }
 }

@@ -10,6 +10,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.PersonRemove
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -28,6 +29,7 @@ import dev.bebora.swecker.data.service.impl.AuthServiceImpl
 import dev.bebora.swecker.ui.settings.account.SuggestLogin
 import dev.bebora.swecker.util.UiEvent
 
+// TODO This screen and the corresponding dialog have a lot in common, the content should be a common composable
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ContactBrowserScreen(
@@ -68,7 +70,12 @@ fun ContactBrowserScreen(
                         )
                     }
                 },
-                scrollBehavior = scrollBehavior
+                scrollBehavior = scrollBehavior,
+                actions = {
+                    if (ui.uploadingFriendshipRequest) {
+                        CircularProgressIndicator()
+                    }
+                }
             )
         },
     ) {
@@ -79,13 +86,27 @@ fun ContactBrowserScreen(
         ) {
             if (ui.me.id.isBlank()) {
                 SuggestLogin(onNavigate = onNavigate)
-            }
-            else {
+            } else {
                 ui.friends.forEachIndexed { idx, friend ->
                     if (idx != 0) {
                         Divider()
                     }
-                    ContactRow(user = friend)
+                    ContactRow(user = friend) {
+                        IconButton(
+                            onClick = {
+                                viewModel.onEvent(
+                                    ContactsEvent.RemoveFriend(
+                                        friend = friend
+                                    )
+                                )
+                            }
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.PersonRemove,
+                                contentDescription = "Remove friend"
+                            )
+                        }
+                    }
                 }
                 Text(
                     text = "Friendship requests",
@@ -96,14 +117,20 @@ fun ContactBrowserScreen(
                         Divider()
                     }
                     ContactRow(user = friend) {
-                        Icon(
-                            modifier = Modifier
-                                .clickable {
-                                    viewModel.onEvent(ContactsEvent.AcceptFriendshipRequest(from = friend))
-                                },
-                            imageVector = Icons.Default.Add,
-                            contentDescription = "Add friend"
-                        )
+                        IconButton(
+                            onClick = {
+                                viewModel.onEvent(
+                                    ContactsEvent.AcceptFriendshipRequest(
+                                        from = friend
+                                    )
+                                )
+                            }
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Add,
+                                contentDescription = "Add friend"
+                            )
+                        }
                     }
                 }
             }
@@ -163,6 +190,9 @@ fun ContactBrowserDialog(
                     SmallTopAppBar(
                         title = { Text(text = stringResource(R.string.contacts_title)) },
                         actions = {
+                            if (ui.uploadingFriendshipRequest) {
+                                CircularProgressIndicator()
+                            }
                             IconButton(onClick = { onGoBack() }) {
                                 Icon(
                                     Icons.Filled.Close,
@@ -181,13 +211,27 @@ fun ContactBrowserDialog(
                 ) {
                     if (ui.me.id.isBlank()) {
                         SuggestLogin(onNavigate = onNavigate)
-                    }
-                    else {
+                    } else {
                         ui.friends.forEachIndexed { idx, friend ->
                             if (idx != 0) {
                                 Divider()
                             }
-                            ContactRow(user = friend)
+                            ContactRow(user = friend) {
+                                IconButton(
+                                    onClick = {
+                                        viewModel.onEvent(
+                                            ContactsEvent.RemoveFriend(
+                                                friend = friend
+                                            )
+                                        )
+                                    }
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.PersonRemove,
+                                        contentDescription = "Remove friend"
+                                    )
+                                }
+                            }
                         }
                         Text(
                             text = "Friendship requests",
@@ -198,14 +242,20 @@ fun ContactBrowserDialog(
                                 Divider()
                             }
                             ContactRow(user = friend) {
-                                Icon(
-                                    modifier = Modifier
-                                        .clickable {
-                                            viewModel.onEvent(ContactsEvent.AcceptFriendshipRequest(from = friend))
-                                        },
-                                    imageVector = Icons.Default.Add,
-                                    contentDescription = "Add friend"
-                                )
+                                IconButton(
+                                    onClick = {
+                                        viewModel.onEvent(
+                                            ContactsEvent.AcceptFriendshipRequest(
+                                                from = friend
+                                            )
+                                        )
+                                    }
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Add,
+                                        contentDescription = "Add friend"
+                                    )
+                                }
                             }
                         }
                     }

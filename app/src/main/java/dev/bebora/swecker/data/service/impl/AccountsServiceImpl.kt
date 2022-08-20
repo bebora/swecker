@@ -128,9 +128,8 @@ class AccountsServiceImpl : AccountsService {
             .addOnSuccessListener { querySnapshot ->
                 if (querySnapshot.isEmpty) {
                     collectionRef.add(FriendshipRequest(from = from, to = to))
-                        .addOnFailureListener(onResult)
-                        .addOnSuccessListener {
-                            onResult(null)
+                        .addOnCompleteListener {
+                            onResult(it.exception)
                         }
                 } else {
                     onResult(FriendshipRequestAlreadySentException())
@@ -233,6 +232,28 @@ class AccountsServiceImpl : AccountsService {
         }
     }
 
+    override fun removeFriend(me: User, friend: User, onResult: (Throwable?) -> Unit) {
+        if (me.id.isBlank() || friend.id.isBlank()) {
+            onResult(UserNotFoundException())
+        } else {
+            val store = Firebase.firestore
+            val usersRef = store.collection(USERS_COLLECTION)
+            val meRef = usersRef.document(me.id)
+            val friendRef = usersRef.document(friend.id)
+            store.runTransaction { transaction ->
+                transaction.update(meRef, "friends", FieldValue.arrayRemove(friend))
+                transaction.update(friendRef, "friends", FieldValue.arrayRemove(me))
+                null
+            }
+                .addOnCompleteListener {
+                    onResult(it.exception)
+                }
+        }
+    }
+
+    /**
+     * To be called after the user has changed name, username or profile picture
+     */
     private fun updateFriendshipRequests(user: User, onResult: (Throwable?) -> Unit) {
         Log.d("SWECKER-UPD-FRIENDREQ", "Updating friendships requests with new user data")
         val batch = Firebase.firestore.batch()
