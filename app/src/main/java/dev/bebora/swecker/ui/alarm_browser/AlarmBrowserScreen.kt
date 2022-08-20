@@ -197,6 +197,20 @@ fun DualPaneContentList(
 }
 
 @Composable
+fun DualPaneDialog(
+    modifier: Modifier = Modifier,
+    dialogContent: DialogContent,
+    onEvent: (AlarmBrowserEvent) -> Unit
+) {
+    when (dialogContent) {
+        DialogContent.ADD_ALARM -> AddAlarmDialog(modifier = modifier,
+            onGoBack = { onEvent(AlarmBrowserEvent.BackButtonPressed) })
+
+        else -> {}
+    }
+}
+
+@Composable
 fun DualPaneContentDetails(
     modifier: Modifier = Modifier,
     onEvent: (AlarmBrowserEvent) -> Unit,
@@ -206,7 +220,7 @@ fun DualPaneContentDetails(
         modifier = modifier.fillMaxWidth(1f),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        when (uiState.openContent) {
+        when (uiState.detailsScreenContent) {
             DetailsScreenContent.ALARM_DETAILS -> {
                 AlarmDetails(
                     alarm = uiState.selectedAlarm!!,
@@ -259,7 +273,7 @@ fun AlarmBrowserSinglePaneContent(
     ) {
         when (uiState.selectedDestination) {
             NavBarDestination.HOME, NavBarDestination.PERSONAL -> {
-                when (uiState.openContent) {
+                when (uiState.detailsScreenContent) {
                     DetailsScreenContent.ALARM_DETAILS -> {
                         AlarmDetails(
                             alarm = uiState.selectedAlarm!!,
@@ -311,7 +325,7 @@ fun GroupSinglePaneContent(
     onEvent: (AlarmBrowserEvent) -> Unit,
     uiState: AlarmBrowserUIState
 ) {
-    when (uiState.openContent) {
+    when (uiState.detailsScreenContent) {
         DetailsScreenContent.ALARM_DETAILS -> {
             AlarmDetails(alarm = uiState.selectedAlarm!!,
                 isReadOnly = false,
@@ -331,6 +345,20 @@ fun GroupSinglePaneContent(
                 selectedGroupId = uiState.selectedGroup?.id
             )
         }
+    }
+}
+
+@Composable
+fun SinglePaneDialog(
+    modifier: Modifier = Modifier,
+    dialogContent: DialogContent,
+    onEvent: (AlarmBrowserEvent) -> Unit
+) {
+    when (dialogContent) {
+        DialogContent.ADD_ALARM -> AddAlarmScreen(modifier = modifier.fillMaxSize(1f),
+            onGoBack = { onEvent(AlarmBrowserEvent.BackButtonPressed) })
+
+        else -> {}
     }
 }
 
@@ -374,7 +402,7 @@ fun AlarmBrowserScreen(
                     ) {
                         scope.launch { drawerState.close() }
                         onNavigate(CONTACT_BROWSER)
-                      },
+                    },
                     DrawerSubSection(
                         title = "Friendship requests",
                         icon = Icons.Outlined.GroupAdd
@@ -385,7 +413,7 @@ fun AlarmBrowserScreen(
                     ) {
                         scope.launch { drawerState.close() }
                         onNavigate(ADD_CONTACT)
-                      },
+                    },
                 )
             ),
             DrawerSection(
@@ -460,9 +488,11 @@ fun AlarmBrowserScreen(
         content = {
             BoxWithConstraints() {
                 if (maxWidth < 840.dp) {
-                    if (uiState.showAddAlarm) {
-                        AddAlarmScreen(modifier = Modifier.fillMaxSize(1f),
-                            onGoBack = { viewModel.onEvent(AlarmBrowserEvent.ToggleAddAlarm) })
+                    if (uiState.dialogContent != DialogContent.NONE) {
+                        SinglePaneDialog(
+                            dialogContent = uiState.dialogContent,
+                            onEvent = viewModel::onEvent
+                        )
                     } else {
                         Scaffold(
                             topBar = {
@@ -485,7 +515,11 @@ fun AlarmBrowserScreen(
                                 ) {
                                     when (uiState.selectedDestination) {
                                         NavBarDestination.PERSONAL, NavBarDestination.HOME -> {
-                                            viewModel.onEvent(AlarmBrowserEvent.ToggleAddAlarm)
+                                            viewModel.onEvent(
+                                                AlarmBrowserEvent.DialogOpened(
+                                                    DialogContent.ADD_ALARM
+                                                )
+                                            )
                                         }
                                         else -> {}
                                     }
@@ -515,18 +549,20 @@ fun AlarmBrowserScreen(
                         onFabPressed = {
                             when (uiState.selectedDestination) {
                                 NavBarDestination.PERSONAL, NavBarDestination.HOME -> {
-                                    viewModel.onEvent(AlarmBrowserEvent.ToggleAddAlarm)
+                                    viewModel.onEvent(AlarmBrowserEvent.DialogOpened(DialogContent.ADD_ALARM))
                                 }
                                 else -> {}
                             }
-                            if (uiState.openContent == DetailsScreenContent.GROUP_ALARM_LIST) {
-                                viewModel.onEvent(AlarmBrowserEvent.ToggleAddAlarm)
+                            if (uiState.detailsScreenContent == DetailsScreenContent.GROUP_ALARM_LIST) {
+                                viewModel.onEvent(AlarmBrowserEvent.DialogOpened(DialogContent.ADD_ALARM))
                             }
                         }
                     )
-                    if (uiState.showAddAlarm) {
-                        AddAlarmDialog(
-                            onGoBack = { viewModel.onEvent(AlarmBrowserEvent.ToggleAddAlarm) })
+                    if (uiState.dialogContent != DialogContent.NONE) {
+                        DualPaneDialog(
+                            dialogContent = uiState.dialogContent,
+                            onEvent = viewModel::onEvent
+                        )
                     }
                 }
             }

@@ -49,10 +49,11 @@ class AlarmBrowserViewModel @Inject constructor(
                     val sortedAlarms = alarms.sortedBy {
                         it.dateTime
                     }
-                    if (application != null ) {
+                    if (application != null) {
                         val alarmToSchedule = sortedAlarms.find { al ->
-                            (al.dateTime!! > OffsetDateTime.now()) && al.enabled }
-                        if(alarmToSchedule != null) {
+                            (al.dateTime!! > OffsetDateTime.now()) && al.enabled
+                        }
+                        if (alarmToSchedule != null) {
                             scheduleExactAlarm(
                                 context = application.baseContext,
                                 dateTime = alarmToSchedule.dateTime!!,
@@ -81,7 +82,7 @@ class AlarmBrowserViewModel @Inject constructor(
                 _uiState.value = _uiState
                     .value.copy(
                         selectedDestination = event.destination,
-                        openContent = DetailsScreenContent.NONE,
+                        detailsScreenContent = DetailsScreenContent.NONE,
                         selectedAlarm = null,
                         selectedGroup = null,
                         filteredAlarms = filterAlarms(
@@ -96,7 +97,7 @@ class AlarmBrowserViewModel @Inject constructor(
 
             is AlarmBrowserEvent.AlarmUpdated -> {
                 val selectedAlarm = _uiState.value.selectedAlarm
-                var detailsScreenContent = _uiState.value.openContent
+                var detailsScreenContent = _uiState.value.detailsScreenContent
 
                 if (selectedAlarm?.id.equals(event.alarm.id)) {
                     detailsScreenContent = updateDetailsScreenContent()
@@ -105,7 +106,7 @@ class AlarmBrowserViewModel @Inject constructor(
                 _uiState.value = _uiState
                     .value.copy(
                         selectedAlarm = selectedAlarm,
-                        openContent = detailsScreenContent
+                        detailsScreenContent = detailsScreenContent
                     )
 
                 if (event.success) {
@@ -126,7 +127,7 @@ class AlarmBrowserViewModel @Inject constructor(
                 _uiState.value = _uiState
                     .value.copy(
                         selectedAlarm = event.alarm,
-                        openContent = if (event.alarm.alarmType == AlarmType.PERSONAL) {
+                        detailsScreenContent = if (event.alarm.alarmType == AlarmType.PERSONAL) {
                             DetailsScreenContent.ALARM_DETAILS
                         } else {
                             DetailsScreenContent.CHAT
@@ -146,15 +147,22 @@ class AlarmBrowserViewModel @Inject constructor(
                             "",
                             event.group
                         ),
-                        openContent = DetailsScreenContent.GROUP_ALARM_LIST
+                        detailsScreenContent = DetailsScreenContent.GROUP_ALARM_LIST
                     )
             }
 
             is AlarmBrowserEvent.BackButtonPressed -> {
-                _uiState.value = _uiState
-                    .value.copy(
-                        openContent = updateDetailsScreenContent()
-                    )
+                if (_uiState.value.dialogContent != DialogContent.NONE) {
+                    _uiState.value = _uiState
+                        .value.copy(
+                            dialogContent = DialogContent.NONE,
+                        )
+                } else {
+                    _uiState.value = _uiState
+                        .value.copy(
+                            detailsScreenContent = updateDetailsScreenContent()
+                        )
+                }
             }
 
             //TODO add group search
@@ -175,14 +183,14 @@ class AlarmBrowserViewModel @Inject constructor(
             is AlarmBrowserEvent.ChatTopBarPressed -> {
                 _uiState.value = _uiState
                     .value.copy(
-                        openContent = DetailsScreenContent.ALARM_DETAILS
+                        detailsScreenContent = DetailsScreenContent.ALARM_DETAILS
                     )
             }
 
-            is AlarmBrowserEvent.ToggleAddAlarm -> {
+            is AlarmBrowserEvent.DialogOpened -> {
                 _uiState.value = _uiState
                     .value.copy(
-                        showAddAlarm = !_uiState.value.showAddAlarm
+                        dialogContent = event.type
                     )
             }
 
@@ -219,7 +227,7 @@ class AlarmBrowserViewModel @Inject constructor(
     private fun updateDetailsScreenContent(): DetailsScreenContent {
         val curState = _uiState.value
 
-        return when (curState.openContent) {
+        return when (curState.detailsScreenContent) {
             DetailsScreenContent.ALARM_DETAILS -> {
                 if (curState.selectedAlarm?.alarmType != AlarmType.PERSONAL) {
                     DetailsScreenContent.CHAT
@@ -251,8 +259,8 @@ data class AlarmBrowserUIState(
     val groups: List<Group> = LocalAlarmDataProvider.allGroups,
     val selectedAlarm: Alarm? = null,
     val selectedGroup: Group? = null,
-    val openContent: DetailsScreenContent = DetailsScreenContent.NONE,
-    val showAddAlarm: Boolean = false,
+    val detailsScreenContent: DetailsScreenContent = DetailsScreenContent.NONE,
+    val dialogContent: DialogContent = DialogContent.NONE,
     val searchKey: String = String(),
     val error: String? = "",
     val selectedDestination: NavBarDestination = NavBarDestination.HOME
@@ -263,6 +271,15 @@ enum class DetailsScreenContent {
     CHAT,
     GROUP_ALARM_LIST,
     ALARM_DETAILS
+}
+
+enum class DialogContent {
+    NONE,
+    ADD_ALARM,
+    ADD_GROUP,
+    ADD_CHANNEL,
+    ADD_CONTACT,
+    CONTACTS
 }
 
 enum class NavBarDestination {

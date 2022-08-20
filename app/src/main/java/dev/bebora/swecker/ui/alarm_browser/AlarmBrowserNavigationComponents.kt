@@ -37,7 +37,7 @@ fun SweckerNavBar(
 ) {
     val items = listOf("Home", "Personal", "Groups", "Channels")
 
-    if (alarmBrowserUIState.openContent == DetailsScreenContent.NONE) {
+    if (alarmBrowserUIState.detailsScreenContent == DetailsScreenContent.NONE) {
         NavigationBar(modifier = modifier) {
             items.forEach { item ->
                 val isSelected =
@@ -237,7 +237,7 @@ fun SweckerDetailsAppBar(
             RectangleShape
         }
     ) {
-        when (uiState.openContent) {
+        when (uiState.detailsScreenContent) {
             DetailsScreenContent.ALARM_DETAILS -> {
                 SmallTopAppBar(
                     colors = colors,
@@ -286,7 +286,7 @@ fun SweckerTopAppBar(
     onEvent: (AlarmBrowserEvent) -> Unit,
 ) {
     SweckerDetailsAppBar(modifier = modifier, uiState = uiState, colors = colors, onEvent = onEvent)
-    if (uiState.openContent == DetailsScreenContent.NONE) {
+    if (uiState.detailsScreenContent == DetailsScreenContent.NONE) {
         SweckerHomeTopAppBar(
             navigationAction = { onOpenDrawer() },
             colors = colors,

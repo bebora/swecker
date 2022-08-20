@@ -14,11 +14,11 @@ sealed class AlarmBrowserEvent {
 
     data class AlarmPartiallyUpdated(val alarm: Alarm) : AlarmBrowserEvent()
 
+    data class DialogOpened(val type: DialogContent) : AlarmBrowserEvent()
+
     data class Search(val key: String) : AlarmBrowserEvent()
 
     object BackButtonPressed : AlarmBrowserEvent()
-
-    object ToggleAddAlarm : AlarmBrowserEvent()
 
     object ChatTopBarPressed : AlarmBrowserEvent()
 }
