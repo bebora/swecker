@@ -194,6 +194,9 @@ fun AlarmNotificationFullScreen(
                             isStopSelected = true
                         } else if (newValue <= -60f) {
                             isSnoozeSelected = true
+                        } else {
+                            isSnoozeSelected = false
+                            isStopSelected = false
                         }
                         dragOffset.value = newValue
                     }
@@ -296,7 +299,7 @@ fun AlarmNotificationPreview() {
     AlarmNotificationFullScreen(
         alarmName = "Test name",
         time = "12:30",
-        onAlarmDismiss = { /*TODO*/ }) {
+        onAlarmDismiss = { }) {
 
     }
 }

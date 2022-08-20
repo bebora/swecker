@@ -25,8 +25,8 @@ fun scheduleExactAlarm(context: Context, dateTime: OffsetDateTime, name: String)
         alarmMgr.setExact(
             AlarmManager.RTC_WAKEUP, dateTime.toInstant().toEpochMilli(), alarmIntent
         )
-    } else if (Build.VERSION.SDK_INT <= 24) {
-        alarmMgr.set(
+    } else {
+        alarmMgr.setExact(
             AlarmManager.RTC_WAKEUP, dateTime.toInstant().toEpochMilli(), alarmIntent
         )
     }
