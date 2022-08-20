@@ -79,7 +79,7 @@ fun AddContactScreen(
                 },
                 scrollBehavior = scrollBehavior,
                 actions = {
-                    if (ui.uploadingFriendshipRequest) {
+                    if (ui.uploadingFriendshipRequest || ui.processingQuery) {
                         CircularProgressIndicator()
                     }
                 }
@@ -126,9 +126,16 @@ fun AddContactScreen(
                         )
                     },
                 )
-                ui.queryResults
-                    .filter { !ui.friends.contains(it) }
-                    .forEachIndexed { idx, friend ->
+                val showableResults = ui.queryResults
+                    .filter { !ui.friendsIds.contains(it.id) }
+                if (showableResults.isEmpty() && !ui.processingQuery && ui.currentQuery.isNotBlank()) {
+                    // TODO improve design
+                    Text(
+                        text = stringResource(R.string.no_users_found),
+                        style = MaterialTheme.typography.titleSmall
+                    )
+                } else {
+                    showableResults.forEachIndexed { idx, friend ->
                         if (idx != 0) {
                             Divider()
                         }
@@ -144,6 +151,7 @@ fun AddContactScreen(
                             }
                         })
                     }
+                }
             }
         }
     }

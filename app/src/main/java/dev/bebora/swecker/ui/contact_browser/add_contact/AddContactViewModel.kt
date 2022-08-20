@@ -33,6 +33,9 @@ class AddContactViewModel @Inject constructor(
     var uiState by mutableStateOf(AddContactUiState())
         private set
 
+    private var friends =
+        accountsService.getFriends(authService.getUserId())
+
     private val _addContactUiEvent = Channel<UiEvent>()
     val addContactUiEvent = _addContactUiEvent.receiveAsFlow()
 
@@ -51,6 +54,13 @@ class AddContactViewModel @Inject constructor(
                 )
             }
         }
+        viewModelScope.launch {
+            friends.collect { updatedFriends ->
+                uiState = uiState.copy(
+                    friendsIds = updatedFriends.map { it.id }.toSet()
+                )
+            }
+        }
     }
 
     private fun searchDebounced(searchText: String) {
@@ -58,6 +68,9 @@ class AddContactViewModel @Inject constructor(
             Log.d("SWECKER-", "id vuoto")
             return
         }
+        uiState = uiState.copy(
+            processingQuery = true
+        )
         searchJob?.cancel()
         searchJob = viewModelScope.launch {
             delay(250)
@@ -67,7 +80,8 @@ class AddContactViewModel @Inject constructor(
                 onError = { Log.e("SWECKER-SEARCH-ERR", it.message ?: "Generic search error") },
                 onSuccess = {
                     uiState = uiState.copy(
-                        queryResults = it
+                        queryResults = it,
+                        processingQuery = false
                     )
                 }
             )
