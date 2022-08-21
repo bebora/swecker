@@ -25,6 +25,8 @@ import dev.bebora.swecker.data.service.impl.AuthServiceImpl
 import dev.bebora.swecker.data.service.impl.ChatServiceImpl
 import dev.bebora.swecker.ui.add_alarm.AddAlarmDialog
 import dev.bebora.swecker.ui.add_alarm.AddAlarmScreen
+import dev.bebora.swecker.ui.add_group.AddGroupDialog
+import dev.bebora.swecker.ui.add_group.AddGroupScreen
 import dev.bebora.swecker.ui.alarm_browser.alarm_details.AlarmDetails
 import dev.bebora.swecker.ui.alarm_browser.chat.ChatScreenContent
 import dev.bebora.swecker.ui.alarm_browser.chat.ChatScreenPreview
@@ -216,6 +218,9 @@ fun DualPaneDialog(
             onGoBack = { onEvent(AlarmBrowserEvent.BackButtonPressed) },
             onNavigate = onNavigate
         )
+        DialogContent.ADD_GROUP -> AddGroupDialog(
+            onGoBack = { onEvent(AlarmBrowserEvent.BackButtonPressed) },
+        )
         else -> {}
     }
 }
@@ -384,6 +389,7 @@ fun SinglePaneDialog(
             onGoBack = { onEvent(AlarmBrowserEvent.BackButtonPressed) },
             onNavigate = onNavigate
         )
+        DialogContent.ADD_GROUP -> AddGroupScreen(onGoBack = { onEvent(AlarmBrowserEvent.BackButtonPressed) })
         else -> {}
     }
 }
@@ -412,7 +418,10 @@ fun AlarmBrowserScreen(
                     DrawerSubSection(
                         title = "New group",
                         icon = Icons.Outlined.Groups
-                    ) { scope.launch { drawerState.close() } },
+                    ) {
+                        scope.launch { drawerState.close() }
+                        viewModel.onEvent(AlarmBrowserEvent.DialogOpened(DialogContent.ADD_GROUP))
+                    },
                     DrawerSubSection(
                         title = "New channel",
                         icon = Icons.Outlined.Campaign

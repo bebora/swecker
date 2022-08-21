@@ -6,8 +6,9 @@ import java.time.OffsetDateTime
 data class Group(
     val id: String,
     val name: String,
+    val groupPicUrl: String = "",
     val firstAlarmName: String = "",
     val firstAlarmDateTime: OffsetDateTime? = null,
-    val members: List<Contact>? = emptyList(),
+    val members: List<User>? = emptyList(),
     val owner: String,
 )

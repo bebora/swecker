@@ -3,7 +3,6 @@ package dev.bebora.swecker.data.local
 import androidx.compose.runtime.toMutableStateList
 import dev.bebora.swecker.data.Alarm
 import dev.bebora.swecker.data.AlarmType
-import dev.bebora.swecker.data.Contact
 import dev.bebora.swecker.data.Group
 import java.time.OffsetDateTime
 
@@ -66,10 +65,6 @@ object LocalAlarmDataProvider {
             "1",
             "Wanda the group",
             members = listOf(
-                Contact(
-                    name = "Paul",
-                    tag = "@theRealPaul",
-                )
             ),
             firstAlarmDateTime = OffsetDateTime.parse("2011-12-03T10:15:30+02:00"),
             owner = "@me"

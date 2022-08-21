@@ -1,0 +1,134 @@
+package dev.bebora.swecker.ui.add_group
+
+import android.annotation.SuppressLint
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.AddPhotoAlternate
+import androidx.compose.material3.*
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.unit.dp
+import coil.compose.SubcomposeAsyncImage
+import com.google.modernstorage.photopicker.PhotoPicker
+import dev.bebora.swecker.data.User
+import dev.bebora.swecker.ui.settings.account.PropicPlaceholder
+
+@SuppressLint("UnsafeOptInUsageError")
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun AddGroupSelectNameScreen(
+    modifier: Modifier = Modifier,
+    selectedMembers: List<User>,
+    groupPicUrl: String,
+    groupName: String,
+    setGroupName: (String) -> Unit = {},
+    setGroupPicUrl: (String) -> Unit = {},
+) {
+    val photoPicker = rememberLauncherForActivityResult(PhotoPicker()) { uris ->
+        if (uris.isNotEmpty()) {
+            val imageUri = uris[0]
+            setGroupPicUrl(imageUri.toString())
+        }
+    }
+
+    Column(modifier = modifier) {
+        Row(
+            modifier = Modifier
+                .height(80.dp)
+                .padding(4.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+
+            if (groupPicUrl.isNotEmpty()) {
+                SubcomposeAsyncImage(
+                    model = groupPicUrl,
+                    loading = {
+                        PropicPlaceholder(
+                            size = 60.dp,
+                            color = MaterialTheme.colorScheme.primaryContainer
+                        )
+                        {
+                            CircularProgressIndicator()
+                        }
+                    },
+                    error = {
+                        PropicPlaceholder(
+                            size = 60.dp,
+                            color = MaterialTheme.colorScheme.primaryContainer
+                        ) {
+                        }
+                    },
+                    contentDescription = "Profile picture",
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .requiredSize(60.dp)
+                        .clip(CircleShape)
+                        .border(
+                            width = 1.dp,
+                            color = MaterialTheme.colorScheme.outline,
+                            shape = CircleShape
+                        )
+                        .clickable {
+                            photoPicker.launch(
+                                PhotoPicker.Args(
+                                    PhotoPicker.Type.IMAGES_ONLY,
+                                    1
+                                )
+                            )
+                        }
+                )
+            } else {
+                FilledIconButton(
+                    modifier = Modifier.requiredSize(60.dp),
+                    onClick = {
+                        photoPicker.launch(
+                            PhotoPicker.Args(
+                                PhotoPicker.Type.IMAGES_ONLY,
+                                1
+                            )
+                        )
+                    }) {
+                    Icon(
+                        imageVector = Icons.Outlined.AddPhotoAlternate,
+                        contentDescription = "Add profile picture"
+                    )
+                }
+            }
+
+            OutlinedTextField(
+                modifier = Modifier
+                    .weight(1f),
+                label = { Text("Name") },
+                value = groupName,
+                onValueChange = setGroupName,
+            )
+
+        }
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Text(
+            modifier = Modifier.padding(horizontal = 8.dp),
+            text = "${selectedMembers.size} members",
+            style = MaterialTheme.typography.labelSmall
+        )
+
+        Spacer(modifier = Modifier.height(4.dp))
+        AddGroupContactsList(
+            selectedMembers = emptyList(),
+            contacts = selectedMembers,
+            searchKey = "",
+            onContactPressed = {}
+        )
+    }
+
+
+}
