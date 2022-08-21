@@ -7,6 +7,8 @@ import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
 import dev.bebora.swecker.data.User
 import dev.bebora.swecker.data.service.*
+import dev.bebora.swecker.data.service.impl.FirebaseConstants.FRIENDSHIP_REQUESTS_COLLECTION
+import dev.bebora.swecker.data.service.impl.FirebaseConstants.USERS_COLLECTION
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -315,11 +317,6 @@ class AccountsServiceImpl : AccountsService {
                 }
         }
 
-    }
-
-    companion object {
-        private val USERS_COLLECTION = "users"
-        private val FRIENDSHIP_REQUESTS_COLLECTION = "friendrequests"
     }
 }
 

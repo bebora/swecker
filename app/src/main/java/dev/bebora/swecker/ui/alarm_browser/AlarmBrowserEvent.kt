@@ -21,4 +21,8 @@ sealed class AlarmBrowserEvent {
     object BackButtonPressed : AlarmBrowserEvent()
 
     object ChatTopBarPressed : AlarmBrowserEvent()
+
+    object OpenChatTEMP: AlarmBrowserEvent() //Remove this
+
+    data class SendMessageTEMP(val text: String): AlarmBrowserEvent()
 }

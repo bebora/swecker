@@ -1,26 +1,30 @@
 package dev.bebora.swecker.ui.alarm_browser
 
 import android.app.Application
+import android.util.Log
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.outlined.Campaign
 import androidx.compose.material.icons.outlined.Groups
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Person
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dev.bebora.swecker.data.Alarm
+import dev.bebora.swecker.data.*
 import dev.bebora.swecker.data.alarm_browser.AlarmRepository
-import dev.bebora.swecker.data.AlarmType
-import dev.bebora.swecker.data.Group
 import dev.bebora.swecker.data.local.LocalAlarmDataProvider
+import dev.bebora.swecker.data.service.AccountsService
+import dev.bebora.swecker.data.service.AuthService
+import dev.bebora.swecker.data.service.ChatService
 import dev.bebora.swecker.ui.alarm_notification.scheduleExactAlarm
+import dev.bebora.swecker.ui.utils.onError
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 import java.time.OffsetDateTime
@@ -29,21 +33,57 @@ import javax.inject.Inject
 @HiltViewModel
 class AlarmBrowserViewModel @Inject constructor(
     private val repository: AlarmRepository,
+    private val chatService: ChatService,
+    private val authService: AuthService,
+    private val accountsService: AccountsService,
     private val application: Application? = null
 ) : ViewModel() {
     // UI state exposed to the UI
-    private val _uiState = MutableStateFlow(AlarmBrowserUIState())
-    val uiState: StateFlow<AlarmBrowserUIState> = _uiState
+    var uiState by mutableStateOf(AlarmBrowserUIState())
+        private set
+
+    private val userInfoChanges = authService.getUserInfoChanges()
 
     init {
         observeAlarms()
+        viewModelScope.launch {
+            accountsService.getUser(authService.getUserId(), ::onError) {
+                uiState = uiState.copy(
+                    me = it,
+                )
+                Log.d("SWECKER-GET", "Preso user da storage, ed è $it")
+            }
+            userInfoChanges.collect {
+                /*uiState = uiState.copy(
+                    hasUser = authService.hasUser(),
+                    userId = authService.getUserId(),
+                )*/
+                accountsService.getUser(
+                    userId = authService.getUserId(),
+                    onSuccess = {
+                        uiState = uiState.copy(
+                            me = it
+                        )
+                    },
+                    onError = ::onError
+                )
+            }
+        }
+        viewModelScope.launch {
+            chatService.getMessages("testchat")
+                .collect {
+                    uiState = uiState.copy(
+                        messages = it
+                    )
+                }
+        }
     }
 
     private fun observeAlarms() {
         viewModelScope.launch {
             repository.getAllAlarms()
                 .catch { ex ->
-                    _uiState.value = AlarmBrowserUIState(error = ex.message)
+                    uiState = AlarmBrowserUIState(error = ex.message)
                 }
                 .collect { alarms ->
                     val sortedAlarms = alarms.sortedBy {
@@ -61,17 +101,16 @@ class AlarmBrowserViewModel @Inject constructor(
                             )
                         }
                     }
-                    val curState = _uiState.value
-                    _uiState.value = _uiState
-                        .value.copy(
+                    val curState = uiState
+                    uiState = uiState.copy(
+                        alarms = sortedAlarms,
+                        filteredAlarms = filterAlarms(
                             alarms = sortedAlarms,
-                            filteredAlarms = filterAlarms(
-                                alarms = sortedAlarms,
-                                selectedDestination = curState.selectedDestination,
-                                selectedGroup = curState.selectedGroup,
-                                searchKey = curState.searchKey
-                            )
+                            selectedDestination = curState.selectedDestination,
+                            selectedGroup = curState.selectedGroup,
+                            searchKey = curState.searchKey
                         )
+                    )
                 }
         }
     }
@@ -79,35 +118,33 @@ class AlarmBrowserViewModel @Inject constructor(
     fun onEvent(event: AlarmBrowserEvent) {
         when (event) {
             is AlarmBrowserEvent.NavBarNavigate -> {
-                _uiState.value = _uiState
-                    .value.copy(
-                        selectedDestination = event.destination,
-                        detailsScreenContent = DetailsScreenContent.NONE,
-                        selectedAlarm = null,
+                uiState = uiState.copy(
+                    selectedDestination = event.destination,
+                    detailsScreenContent = DetailsScreenContent.NONE,
+                    selectedAlarm = null,
+                    selectedGroup = null,
+                    filteredAlarms = filterAlarms(
+                        alarms = uiState.alarms,
                         selectedGroup = null,
-                        filteredAlarms = filterAlarms(
-                            alarms = _uiState.value.alarms,
-                            selectedGroup = null,
-                            selectedDestination = event.destination,
-                            searchKey = ""
-                        ),
+                        selectedDestination = event.destination,
                         searchKey = ""
-                    )
+                    ),
+                    searchKey = ""
+                )
             }
 
             is AlarmBrowserEvent.AlarmUpdated -> {
-                val selectedAlarm = _uiState.value.selectedAlarm
-                var detailsScreenContent = _uiState.value.detailsScreenContent
+                val selectedAlarm = uiState.selectedAlarm
+                var detailsScreenContent = uiState.detailsScreenContent
 
                 if (selectedAlarm?.id.equals(event.alarm.id)) {
                     detailsScreenContent = updateDetailsScreenContent()
                 }
 
-                _uiState.value = _uiState
-                    .value.copy(
-                        selectedAlarm = selectedAlarm,
-                        detailsScreenContent = detailsScreenContent
-                    )
+                uiState = uiState.copy(
+                    selectedAlarm = selectedAlarm,
+                    detailsScreenContent = detailsScreenContent
+                )
 
                 if (event.success) {
                     CoroutineScope(Dispatchers.IO).launch {
@@ -117,84 +154,93 @@ class AlarmBrowserViewModel @Inject constructor(
             }
 
             is AlarmBrowserEvent.AlarmPartiallyUpdated -> {
-                _uiState.value = _uiState
-                    .value.copy(
-                        selectedAlarm = event.alarm
-                    )
+                uiState = uiState.copy(
+                    selectedAlarm = event.alarm
+                )
             }
 
             is AlarmBrowserEvent.AlarmSelected -> {
-                _uiState.value = _uiState
-                    .value.copy(
-                        selectedAlarm = event.alarm,
-                        detailsScreenContent = if (event.alarm.alarmType == AlarmType.PERSONAL) {
-                            DetailsScreenContent.ALARM_DETAILS
-                        } else {
-                            DetailsScreenContent.CHAT
-                        }
-                    )
+                uiState = uiState.copy(
+                    selectedAlarm = event.alarm,
+                    detailsScreenContent = if (event.alarm.alarmType == AlarmType.PERSONAL) {
+                        DetailsScreenContent.ALARM_DETAILS
+                    } else {
+                        DetailsScreenContent.CHAT
+                    }
+                )
             }
 
             //TODO add actual alarm selection logic
             is AlarmBrowserEvent.GroupSelected -> {
-                _uiState.value = _uiState
-                    .value.copy(
-                        selectedGroup = event.group,
-                        selectedAlarm = null,
-                        filteredAlarms = filterAlarms(
-                            _uiState.value.alarms,
-                            NavBarDestination.GROUPS,
-                            "",
-                            event.group
-                        ),
-                        detailsScreenContent = DetailsScreenContent.GROUP_ALARM_LIST
-                    )
+                uiState = uiState.copy(
+                    selectedGroup = event.group,
+                    selectedAlarm = null,
+                    filteredAlarms = filterAlarms(
+                        uiState.alarms,
+                        NavBarDestination.GROUPS,
+                        "",
+                        event.group
+                    ),
+                    detailsScreenContent = DetailsScreenContent.GROUP_ALARM_LIST
+                )
             }
 
             is AlarmBrowserEvent.BackButtonPressed -> {
-                if (_uiState.value.dialogContent != DialogContent.NONE) {
-                    _uiState.value = _uiState
-                        .value.copy(
-                            dialogContent = DialogContent.NONE,
-                        )
+                if (uiState.dialogContent != DialogContent.NONE) {
+                    uiState = uiState.copy(
+                        dialogContent = DialogContent.NONE,
+                    )
                 } else {
-                    _uiState.value = _uiState
-                        .value.copy(
-                            detailsScreenContent = updateDetailsScreenContent()
-                        )
+                    uiState = uiState.copy(
+                        detailsScreenContent = updateDetailsScreenContent()
+                    )
                 }
             }
 
             //TODO add group search
             is AlarmBrowserEvent.Search -> {
-                val curState = _uiState.value
-                _uiState.value = _uiState
-                    .value.copy(
+                val curState = uiState
+                uiState = uiState.copy(
+                    searchKey = event.key,
+                    filteredAlarms = filterAlarms(
+                        alarms = curState.alarms,
+                        selectedDestination = curState.selectedDestination,
                         searchKey = event.key,
-                        filteredAlarms = filterAlarms(
-                            alarms = curState.alarms,
-                            selectedDestination = curState.selectedDestination,
-                            searchKey = event.key,
-                            selectedGroup = curState.selectedGroup
-                        )
+                        selectedGroup = curState.selectedGroup
                     )
+                )
             }
 
             is AlarmBrowserEvent.ChatTopBarPressed -> {
-                _uiState.value = _uiState
-                    .value.copy(
-                        detailsScreenContent = DetailsScreenContent.ALARM_DETAILS
-                    )
+                uiState = uiState.copy(
+                    detailsScreenContent = DetailsScreenContent.ALARM_DETAILS
+                )
             }
 
             is AlarmBrowserEvent.DialogOpened -> {
-                _uiState.value = _uiState
-                    .value.copy(
-                        dialogContent = event.type
-                    )
+                uiState = uiState.copy(
+                    dialogContent = event.type
+                )
             }
 
+            is AlarmBrowserEvent.OpenChatTEMP -> {
+                uiState = uiState.copy(
+                    detailsScreenContent = DetailsScreenContent.CHAT
+                )
+            }
 
+            is AlarmBrowserEvent.SendMessageTEMP -> {
+                chatService.sendMessage(
+                    chatId = "testchat",
+                    senderId = uiState.me.id,
+                    text = event.text,
+                    onResult = {
+                        if (it != null) {
+                            onError(it)
+                        }
+                    }
+                )
+            }
         }
     }
 
@@ -225,7 +271,7 @@ class AlarmBrowserViewModel @Inject constructor(
     }
 
     private fun updateDetailsScreenContent(): DetailsScreenContent {
-        val curState = _uiState.value
+        val curState = uiState
 
         return when (curState.detailsScreenContent) {
             DetailsScreenContent.ALARM_DETAILS -> {
@@ -263,7 +309,9 @@ data class AlarmBrowserUIState(
     val dialogContent: DialogContent = DialogContent.NONE,
     val searchKey: String = String(),
     val error: String? = "",
-    val selectedDestination: NavBarDestination = NavBarDestination.HOME
+    val selectedDestination: NavBarDestination = NavBarDestination.HOME,
+    val me: User = User(),
+    val messages: List<Message> = emptyList()
 )
 
 enum class DetailsScreenContent {

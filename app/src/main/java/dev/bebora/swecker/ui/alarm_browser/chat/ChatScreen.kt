@@ -6,6 +6,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateListOf
@@ -13,12 +14,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import dev.bebora.swecker.data.Message
 import dev.bebora.swecker.ui.theme.SweckerTheme
+import java.lang.System.currentTimeMillis
 
-//TODO add actual message data class
-data class Message(
-    val messageId: String, val senderId: String, val messageBody: String
-)
 
 @Composable
 fun ChatScreenContent(
@@ -44,17 +43,17 @@ fun ChatScreenContent(
         ) {
             itemsIndexed(
                 items = messages,
-                key = { _, message -> message.messageId }) { index: Int, message ->
-                val isOwnMessage = message.senderId == ownerId
+                key = { idx, _ -> idx }) { index: Int, message ->
+                val isOwnMessage = message.uId == ownerId
                 val isFirstMessage =
-                    (index - 1 < 0) || message.senderId != messages[index - 1].senderId
+                    (index - 1 < 0) || message.uId != messages[index - 1].uId
                 val isLastMessage =
-                    (index + 1 > messages.lastIndex) || message.senderId != messages[index + 1].senderId
+                    (index + 1 > messages.lastIndex) || message.uId != messages[index + 1].uId
 
                 //TODO get actual contact name and image
                 MessageItem(
-                    author = message.senderId,
-                    body = message.messageBody,
+                    author = message.uId,
+                    body = message.text,
                     showContactName = isFirstMessage && !isOwnMessage,
                     isOwnMessage = isOwnMessage,
                     isLastMessage = isLastMessage,
@@ -64,7 +63,9 @@ fun ChatScreenContent(
         }
 
         LaunchedEffect(messages.size) {
-            lazyListState.animateScrollToItem(messages.size - 1)
+            if (messages.isNotEmpty()) {
+                lazyListState.animateScrollToItem(messages.size - 1)
+            }
         }
 
         Spacer(modifier = Modifier.height(4.dp))
@@ -82,19 +83,19 @@ fun ChatScreenPreview() {
             val messages = remember {
                 mutableStateListOf(
                     Message(
-                        messageId = "@150109",
-                        senderId = "@me",
-                        messageBody = "Prova di un mio messaggio"
+                        time = 1661089449,
+                        uId = "@me",
+                        text = "Prova di un mio messaggio"
                     ),
                     Message(
-                        messageId = "@12345665",
-                        senderId = "@me",
-                        messageBody = "Prova di un altro mio messaggio"
+                        time = 1661089459,
+                        uId = "@me",
+                        text = "Prova di un altro mio messaggio"
                     ),
                     Message(
-                        messageId = "@451451",
-                        senderId = "@you",
-                        messageBody = "Hi, this is a super damn " +
+                        time = 1661089549,
+                        uId = "@you",
+                        text = "Hi, this is a super damn " +
                                 "incredibly long multilined message!" +
                                 "Incredible! Let's see how stuff behaves with very long messages" +
                                 " such as this incredibly long message" +
@@ -103,9 +104,9 @@ fun ChatScreenPreview() {
                                 " such as this incredibly long message"
                     ),
                     Message(
-                        messageId = "@1asdf",
-                        senderId = "@you",
-                        messageBody = "Message from my friend"
+                        time = 1661089699,
+                        uId = "@you",
+                        text = "Message from my friend"
                     ),
                 )
             }
@@ -119,13 +120,27 @@ fun ChatScreenPreview() {
                     i++
                     messages.add(
                         Message(
-                            messageId = "@123f$i",
-                            messageBody = newMessage,
-                            senderId = "@me"
+                            time = currentTimeMillis(),
+                            text = newMessage,
+                            uId = "@me"
                         )
                     )
                 }
             )
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Preview
+@Composable
+fun ChatScreenDynamicPreview() {
+    SweckerTheme() {
+        Scaffold() {
+            ChatScreenContent(
+                modifier = Modifier.padding(it),
+                messages = emptyList() ,
+                ownerId = "hello")
         }
     }
 }

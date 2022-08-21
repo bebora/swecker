@@ -13,8 +13,6 @@ import androidx.compose.material.icons.outlined.Menu
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -25,8 +23,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import dev.bebora.swecker.data.Group
 import dev.bebora.swecker.data.alarm_browser.AlarmRepositoryTestImpl
+import dev.bebora.swecker.data.service.impl.AccountsServiceImpl
+import dev.bebora.swecker.data.service.impl.AuthServiceImpl
+import dev.bebora.swecker.data.service.impl.ChatServiceImpl
 import dev.bebora.swecker.ui.alarm_browser.chat.ChatTopAppBar
 import dev.bebora.swecker.ui.theme.SweckerTheme
+import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 @Composable
@@ -65,8 +67,13 @@ fun SweckerNavBar(
 @Preview(showBackground = true)
 @Composable
 fun NavBarPreview() {
-    val testViewModel = AlarmBrowserViewModel(AlarmRepositoryTestImpl())
-    val uiState by testViewModel.uiState.collectAsState()
+    val testViewModel = AlarmBrowserViewModel(
+        AlarmRepositoryTestImpl(),
+        chatService = ChatServiceImpl(),
+        accountsService = AccountsServiceImpl(),
+        authService = AuthServiceImpl()
+    )
+    val uiState = testViewModel.uiState
     SweckerTheme() {
         Scaffold(bottomBar = {
             SweckerNavBar(
@@ -125,8 +132,13 @@ fun SweckerNavRail(
 @Preview(showBackground = true)
 @Composable
 fun NavRailPreview() {
-    val testViewModel = AlarmBrowserViewModel(AlarmRepositoryTestImpl())
-    val uiState by testViewModel.uiState.collectAsState()
+    val testViewModel = AlarmBrowserViewModel(
+        AlarmRepositoryTestImpl(),
+        chatService = ChatServiceImpl(),
+        accountsService = AccountsServiceImpl(),
+        authService = AuthServiceImpl()
+    )
+    val uiState = testViewModel.uiState
     SweckerTheme() {
         Scaffold(bottomBar = {
             SweckerNavRail(
@@ -265,8 +277,8 @@ fun SweckerDetailsAppBar(
                 ChatTopAppBar(
                     modifier = modifier,
                     colors = colors,
-                    title = uiState.selectedAlarm!!.name,
-                    date = uiState.selectedAlarm.localDate?.format(DateTimeFormatter.ofPattern("eee, dd MMM uuuu"))
+                    title = uiState.selectedAlarm?.name ?: "Hello world",
+                    date = (uiState.selectedAlarm?.localDate ?: LocalDate.now()).format(DateTimeFormatter.ofPattern("eee, dd MMM uuuu"))
                         ?: "",
                     onEvent = onEvent,
                 )

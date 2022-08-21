@@ -20,9 +20,13 @@ import dev.bebora.swecker.data.Alarm
 import dev.bebora.swecker.data.Group
 import dev.bebora.swecker.data.alarm_browser.AlarmRepositoryTestImpl
 import dev.bebora.swecker.data.local.LocalAlarmDataProvider
+import dev.bebora.swecker.data.service.impl.AccountsServiceImpl
+import dev.bebora.swecker.data.service.impl.AuthServiceImpl
+import dev.bebora.swecker.data.service.impl.ChatServiceImpl
 import dev.bebora.swecker.ui.add_alarm.AddAlarmDialog
 import dev.bebora.swecker.ui.add_alarm.AddAlarmScreen
 import dev.bebora.swecker.ui.alarm_browser.alarm_details.AlarmDetails
+import dev.bebora.swecker.ui.alarm_browser.chat.ChatScreenContent
 import dev.bebora.swecker.ui.alarm_browser.chat.ChatScreenPreview
 import dev.bebora.swecker.ui.contact_browser.ContactBrowserDialog
 import dev.bebora.swecker.ui.contact_browser.ContactBrowserScreen
@@ -302,14 +306,26 @@ fun AlarmBrowserSinglePaneContent(
                         )
                     }
                     DetailsScreenContent.CHAT -> {
-                        ChatScreenPreview()
+                        ChatScreenContent(
+                            modifier = Modifier,
+                            messages = uiState.messages,
+                            ownerId = uiState.me.id,
+                            onSendMessage = {
+                                onEvent(AlarmBrowserEvent.SendMessageTEMP(it))
+                            }
+                        )
                     }
                     DetailsScreenContent.NONE -> {
-                        AlarmList(
-                            alarms = uiState.filteredAlarms ?: uiState.alarms,
-                            onEvent = onEvent,
-                            selectedAlarm = uiState.selectedAlarm
-                        )
+                        Column {
+                            AlarmList(
+                                alarms = uiState.filteredAlarms ?: uiState.alarms,
+                                onEvent = onEvent,
+                                selectedAlarm = uiState.selectedAlarm
+                            )
+                            TextButton(onClick = { onEvent(AlarmBrowserEvent.OpenChatTEMP) }) {
+                                Text(text = "Open test chat")
+                            }
+                        }
                     }
                     else -> {}
                 }
@@ -379,7 +395,7 @@ fun AlarmBrowserScreen(
     viewModel: AlarmBrowserViewModel = hiltViewModel(),
     onNavigate: (String) -> Unit = {},
 ) {
-    val uiState by viewModel.uiState.collectAsState()
+    val uiState = viewModel.uiState
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val scope = rememberCoroutineScope()
 // icons to mimic drawer destinations
@@ -587,6 +603,11 @@ fun AlarmBrowserScreen(
 @Preview(showBackground = true)
 @Composable
 fun AlarmBrowserScreenPreview() {
-    val testViewModel = AlarmBrowserViewModel(AlarmRepositoryTestImpl())
+    val testViewModel = AlarmBrowserViewModel(
+        AlarmRepositoryTestImpl(),
+        chatService = ChatServiceImpl(),
+        accountsService = AccountsServiceImpl(),
+        authService = AuthServiceImpl()
+    )
     AlarmBrowserScreen(viewModel = testViewModel)
 }

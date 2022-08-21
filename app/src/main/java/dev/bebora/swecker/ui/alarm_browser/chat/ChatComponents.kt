@@ -15,12 +15,11 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import dev.bebora.swecker.ui.alarm_browser.AlarmBrowserEvent
 import dev.bebora.swecker.ui.theme.SweckerTheme
 
@@ -28,7 +27,7 @@ import dev.bebora.swecker.ui.theme.SweckerTheme
 fun MessageItem(
     modifier: Modifier = Modifier,
     body: String = "",
-    profilePic: ImageBitmap? = null,
+    propicUrl: String? = null,
     author: String,
     showContactName: Boolean,
     isLastMessage: Boolean = false,
@@ -47,13 +46,11 @@ fun MessageItem(
     ) {
 
         if (isLastMessage && !isOwnMessage) {
-            Image(
-                painter = if (profilePic != null) {
-                    BitmapPainter(image = profilePic)
-                } else {
-                    painterResource(dev.bebora.swecker.R.drawable.temp_icon)
-                },
-                contentDescription = null,
+            AsyncImage(
+                model = propicUrl,
+                contentDescription = "Profile picture",
+                placeholder = painterResource(dev.bebora.swecker.R.drawable.temp_icon),
+                error = painterResource(dev.bebora.swecker.R.drawable.temp_icon),
                 modifier = Modifier
                     .size(40.dp)
                     .clip(CircleShape)
