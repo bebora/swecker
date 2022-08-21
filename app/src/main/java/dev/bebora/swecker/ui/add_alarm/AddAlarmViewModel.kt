@@ -1,11 +1,11 @@
 package dev.bebora.swecker.ui.add_alarm
 
-import android.os.Build
-import androidx.annotation.RequiresApi
+
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.bebora.swecker.data.Alarm
 import dev.bebora.swecker.data.AlarmType
+import dev.bebora.swecker.data.Group
 import dev.bebora.swecker.data.alarm_browser.AlarmRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -34,16 +34,20 @@ class AddAlarmViewModel @Inject constructor(
     )
     val alarm: StateFlow<Alarm> = _alarm
 
-    @RequiresApi(Build.VERSION_CODES.S)
-    fun onUpdateCompleted(alarm: Alarm, success: Boolean) {
+    fun onUpdateCompleted(alarm: Alarm, success: Boolean, group: Group?) {
         if (success) {
             _alarm.value = Alarm(
                 id = UUID.randomUUID().toString(),
                 name = "",
+                groupId = group?.id?:"",
                 localDate = LocalDate.now(),
                 localTime = LocalTime.now(),
                 dateTime = OffsetDateTime.now(),
-                alarmType = AlarmType.PERSONAL
+                alarmType = if (group != null) {
+                    AlarmType.GROUP
+                } else {
+                    AlarmType.PERSONAL
+                }
             )
 
             CoroutineScope(Dispatchers.IO).launch {
