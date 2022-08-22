@@ -44,6 +44,10 @@ class AlarmBrowserViewModel @Inject constructor(
 
     private val userInfoChanges = authService.getUserInfoChanges()
 
+    private var usersAlreadyRequested: MutableSet<String> = mutableSetOf()
+
+    private var mutableUsersData: MutableMap<String, User> = mutableMapOf()
+
     init {
         observeAlarms()
         viewModelScope.launch {
@@ -75,8 +79,30 @@ class AlarmBrowserViewModel @Inject constructor(
                     uiState = uiState.copy(
                         messages = it
                     )
+                    fetchUsersData(messages = it)
                 }
         }
+    }
+
+    private fun fetchUsersData(messages: List<Message>) {
+        messages
+            .map { it.uId }
+            .filter { !uiState.usersData.containsKey(it) }
+            .forEach {userId ->
+                if (!usersAlreadyRequested.contains(userId)) {
+                    usersAlreadyRequested.add(userId)
+                    accountsService.getUser(
+                        userId = userId,
+                        onError = { onError(it) },
+                        onSuccess = {
+                            mutableUsersData[userId] = it
+                            uiState = uiState.copy(
+                                usersData = mutableUsersData.toMap()
+                            )
+                        }
+                    )
+                }
+            }
     }
 
     private fun observeAlarms() {
@@ -311,7 +337,8 @@ data class AlarmBrowserUIState(
     val error: String? = "",
     val selectedDestination: NavBarDestination = NavBarDestination.HOME,
     val me: User = User(),
-    val messages: List<Message> = emptyList()
+    val messages: List<Message> = emptyList(),
+    val usersData: Map<String, User> = emptyMap()
 )
 
 enum class DetailsScreenContent {

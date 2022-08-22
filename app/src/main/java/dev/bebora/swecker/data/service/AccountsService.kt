@@ -42,6 +42,7 @@ interface AccountsService {
     )
 
     fun removeFriend(me: User, friend: User, onResult: (Throwable?) -> Unit)
+    // fun getUsersAsFlow(): Flow<Map<String, User>>
 }
 
 class UsernameAlreadyTakenException() : Exception()

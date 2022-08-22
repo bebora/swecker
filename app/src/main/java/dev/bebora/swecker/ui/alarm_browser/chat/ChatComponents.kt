@@ -15,6 +15,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -28,10 +29,11 @@ fun MessageItem(
     modifier: Modifier = Modifier,
     body: String = "",
     propicUrl: String? = null,
-    author: String,
+    author: String?, // if null, show a loading animation or a default name
     showContactName: Boolean,
     isLastMessage: Boolean = false,
-    isOwnMessage: Boolean
+    isOwnMessage: Boolean,
+    time: Long? = 0
 ) {
     Row(
         modifier = modifier
@@ -51,6 +53,7 @@ fun MessageItem(
                 contentDescription = "Profile picture",
                 placeholder = painterResource(dev.bebora.swecker.R.drawable.temp_icon),
                 error = painterResource(dev.bebora.swecker.R.drawable.temp_icon),
+                contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .size(40.dp)
                     .clip(CircleShape)
@@ -62,11 +65,11 @@ fun MessageItem(
         Spacer(modifier = Modifier.width(8.dp))
 
         Surface(
-            modifier = if (!isOwnMessage) {
-                Modifier.weight(1f)
+            /*modifier = if (!isOwnMessage) {
+                Modifier.weight(1f) //TODO why expand other people text? temporarily commented out
             } else {
                 Modifier
-            },
+            },*/
             shape = if (isLastMessage) {
                 if (isOwnMessage) {
                     RoundedCornerShape(
@@ -97,7 +100,7 @@ fun MessageItem(
             ) {
                 if (showContactName) {
                     Text(
-                        text = author,
+                        text = author ?: "Loading", //TODO add animation instead of fixed name?
                         color = MaterialTheme.colorScheme.secondary,
                         style = MaterialTheme.typography.titleSmall,
                         textAlign = TextAlign.Center
@@ -114,7 +117,7 @@ fun MessageItem(
                     } else {
                         MaterialTheme.colorScheme.onTertiaryContainer
                     },
-                    style = MaterialTheme.typography.bodyMedium
+                    style = MaterialTheme.typography.bodyMedium,
                 )
             }
         }

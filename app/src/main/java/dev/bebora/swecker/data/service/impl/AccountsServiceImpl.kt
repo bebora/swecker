@@ -38,6 +38,73 @@ class AccountsServiceImpl : AccountsService {
         }
     }
 
+    /*private fun getUserAsFlow(userId: String): Flow<User> {
+        if (userId.isBlank()) {
+            return emptyFlow()
+        } else {
+            return callbackFlow {
+                val listener = Firebase.firestore
+                    .collection(USERS_COLLECTION)
+                    .document(userId)
+                    .addSnapshotListener { snapshot, e ->
+                        if (e != null) {
+                            Log.w("SWECKER-GET-USER", "Listen failed.", e)
+                            return@addSnapshotListener
+                        }
+                        if (snapshot != null && snapshot.exists()) {
+                            Log.d("SWECKER-GET-USER-EXISTS", "Current data: ${snapshot.data}")
+                            trySend(
+                                snapshot.toObject(UserWithFriends::class.java)?.toUser() ?: User()
+                            )
+                        } else {
+                            Log.d("SWECKER-GET-USER-NOPE", "Current data: null")
+                            trySend(User())
+                        }
+                    }
+                awaitClose {
+                    listener.remove()
+                }
+            }
+        }
+    }
+
+    override fun getUsersAsFlow(): Flow<Map<String, User>> {
+        val allUser = mutableMapOf<String, User>()
+        return callbackFlow {
+            val listener = Firebase.firestore
+                .collection(USERS_COLLECTION)
+                .addSnapshotListener { snapshots, e ->
+                    if (e != null) {
+                        Log.w("SWECKER-GLOBAL-ERR", "listen:error", e)
+                        return@addSnapshotListener
+                    }
+                    Log.d("SWECKER-GET-GLOBAL", "Something changed")
+                    for (dc in snapshots!!.documentChanges) {
+                        when (dc.type) {
+                            DocumentChange.Type.ADDED -> {
+                                val newUser = dc.document.toObject(UserWithFriends::class.java)
+                                allUser[newUser.id] = newUser.toUser()
+                            }
+                            DocumentChange.Type.MODIFIED -> {
+                                val newUser = dc.document.toObject(UserWithFriends::class.java)
+                                allUser.replace(newUser.id, newUser.toUser())
+                            }
+                            DocumentChange.Type.REMOVED -> {
+                                val newUser = dc.document.toObject(UserWithFriends::class.java)
+                                allUser.remove(newUser.id)
+                            }
+                        }
+                    }
+                    trySend(
+                        allUser
+                    )
+                }
+            awaitClose {
+                listener.remove()
+            }
+        }
+    }*/
+
     override fun addUserListener() {
         TODO("Not yet implemented")
     }
@@ -77,7 +144,8 @@ class AccountsServiceImpl : AccountsService {
                                 if (it == null) {
                                     updateOwnInfoInFriendsDocuments(
                                         newMe = requestedUser,
-                                    oldMe = oldUser) { updateInfoException ->
+                                        oldMe = oldUser
+                                    ) { updateInfoException ->
                                         onResult(updateInfoException)
                                     }
                                 }
@@ -295,7 +363,11 @@ class AccountsServiceImpl : AccountsService {
             }
     }
 
-    private fun updateOwnInfoInFriendsDocuments(newMe: User, oldMe: User, onResult: (Throwable?) -> Unit) {
+    private fun updateOwnInfoInFriendsDocuments(
+        newMe: User,
+        oldMe: User,
+        onResult: (Throwable?) -> Unit
+    ) {
         Log.d("SWECKER-UPD-FRIDATA", "Updating friends with new user data")
         if (newMe.id.isBlank()) {
             onResult(UserNotFoundException())
@@ -307,8 +379,16 @@ class AccountsServiceImpl : AccountsService {
                 val meInDb = transaction.get(meRef)
                 val friends = meInDb.toObject(UserWithFriends::class.java)?.friends ?: emptyList()
                 friends.forEach {
-                    transaction.update(usersRef.document(it.id), "friends", FieldValue.arrayRemove(oldMe))
-                    transaction.update(usersRef.document(it.id), "friends", FieldValue.arrayUnion(newMe))
+                    transaction.update(
+                        usersRef.document(it.id),
+                        "friends",
+                        FieldValue.arrayRemove(oldMe)
+                    )
+                    transaction.update(
+                        usersRef.document(it.id),
+                        "friends",
+                        FieldValue.arrayUnion(newMe)
+                    )
                 }
                 null
             }
@@ -325,10 +405,19 @@ data class UserWithFriends(
     val name: String = "",
     val username: String = "",
     val propicUrl: String = "",
-    val friends: List<User> = emptyList()
+    val friends: List<User> = emptyList(),
 )
 
 data class FriendshipRequest(
     val from: User = User(),
     val to: User = User()
 )
+
+fun UserWithFriends.toUser(): User {
+    return User(
+        id = id,
+        name = name,
+        username = username,
+        propicUrl = propicUrl
+    )
+}

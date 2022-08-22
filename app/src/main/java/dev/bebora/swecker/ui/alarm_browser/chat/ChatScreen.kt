@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import dev.bebora.swecker.data.Message
+import dev.bebora.swecker.data.User
 import dev.bebora.swecker.ui.theme.SweckerTheme
 import java.lang.System.currentTimeMillis
 
@@ -23,6 +24,7 @@ import java.lang.System.currentTimeMillis
 fun ChatScreenContent(
     modifier: Modifier,
     messages: List<Message>,
+    usersData: Map<String, User>,
     ownerId: String,
     onSendMessage: (String) -> Unit = {}
 ) {
@@ -52,14 +54,14 @@ fun ChatScreenContent(
 
                 //TODO get actual contact name and image
                 MessageItem(
-                    author = message.uId,
+                    author = usersData[message.uId]?.name,
                     body = message.text,
                     showContactName = isFirstMessage && !isOwnMessage,
                     isOwnMessage = isOwnMessage,
                     isLastMessage = isLastMessage,
+                    propicUrl = usersData[message.uId]?.propicUrl
                 )
             }
-
         }
 
         LaunchedEffect(messages.size) {
@@ -125,7 +127,8 @@ fun ChatScreenPreview() {
                             uId = "@me"
                         )
                     )
-                }
+                },
+                usersData = emptyMap()
             )
         }
     }
@@ -139,8 +142,10 @@ fun ChatScreenDynamicPreview() {
         Scaffold() {
             ChatScreenContent(
                 modifier = Modifier.padding(it),
-                messages = emptyList() ,
-                ownerId = "hello")
+                messages = emptyList(),
+                ownerId = "hello",
+                usersData = emptyMap()
+            )
         }
     }
 }

@@ -55,6 +55,7 @@ fun AlarmBrowserSinglePaneContent(
                             modifier = Modifier,
                             messages = uiState.messages,
                             ownerId = uiState.me.id,
+                            usersData = uiState.usersData,
                             onSendMessage = {
                                 onEvent(AlarmBrowserEvent.SendMessageTEMP(it))
                             }
@@ -82,6 +83,5 @@ fun AlarmBrowserSinglePaneContent(
                 Box(modifier = Modifier.fillMaxWidth(1f))
             }
         }
-
     }
 }
