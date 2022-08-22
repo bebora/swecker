@@ -4,7 +4,7 @@ import dev.bebora.swecker.data.ThinGroup
 import kotlinx.coroutines.flow.Flow
 
 interface AlarmProviderService {
-    fun getUserGroups(userId: String): Flow<List<String>>
+    fun getUserGroups(userId: String): Flow<List<ThinGroup>>
     fun createGroup(
         ownerId: String,
         userIds: List<String>,

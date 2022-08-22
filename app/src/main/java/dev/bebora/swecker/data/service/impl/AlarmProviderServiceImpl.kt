@@ -1,15 +1,47 @@
 package dev.bebora.swecker.data.service.impl
 
+import android.util.Log
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import dev.bebora.swecker.data.ThinGroup
 import dev.bebora.swecker.data.service.AlarmProviderService
 import dev.bebora.swecker.data.service.EmptyGroupException
+import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.emptyFlow
 
 class AlarmProviderServiceImpl : AlarmProviderService {
-    override fun getUserGroups(userId: String): Flow<List<String>> {
-        TODO("Not yet implemented")
+    override fun getUserGroups(userId: String): Flow<List<ThinGroup>> {
+        if (userId.isBlank()) {
+            Log.d("SWECKER-EMPTY-USER", "Empty user id")
+            return emptyFlow()
+        }
+        else {
+            return callbackFlow {
+                val listener = Firebase.firestore
+                    .collection(FirebaseConstants.GROUPS_COLLECTION)
+                    .whereArrayContains("members", userId)
+                    .addSnapshotListener { snapshot, error ->
+                        if (error != null) {
+                            Log.d("SWECKER-LISTEN-GRP", "Cannot retrieve groups", error)
+                            return@addSnapshotListener
+                        }
+                        if (snapshot != null) {
+                            Log.d("SWECKER-GET-GRP-EXISTS", "Current data: $snapshot")
+                            trySend(
+                                snapshot.toObjects(ThinGroup::class.java)
+                            )
+                        } else {
+                            Log.d("SWECKER-GET-CHAT-NOPE", "Current data: null")
+                            trySend(emptyList())
+                        }
+                    }
+                awaitClose {
+                    listener.remove()
+                }
+            }
+        }
     }
 
     override fun createGroup(
