@@ -13,6 +13,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.window.Dialog
@@ -121,7 +122,8 @@ fun CustomCalendarView(
 ) {
     // Adds view to Compose
     AndroidView(
-        modifier = Modifier.wrapContentSize(),
+        modifier = Modifier.fillMaxWidth()
+            .background(Color.White),
         factory = { context ->
             CalendarView(context)
         },
