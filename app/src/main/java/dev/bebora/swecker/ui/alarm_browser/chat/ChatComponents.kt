@@ -58,6 +58,8 @@ fun MessageItem(
                     .size(40.dp)
                     .clip(CircleShape)
             )
+        }else if(!isOwnMessage){
+            Spacer(modifier = Modifier.width(40.dp))
         }
 
         Spacer(modifier = Modifier.width(8.dp))

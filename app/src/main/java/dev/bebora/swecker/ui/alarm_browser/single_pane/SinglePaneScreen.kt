@@ -1,5 +1,6 @@
 package dev.bebora.swecker.ui.alarm_browser.single_pane
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -44,6 +45,9 @@ fun SinglePaneScreen(
             }
         }
         DetailsScreenContent.GROUP_DETAILS -> {
+            BackHandler {
+                onEvent(AlarmBrowserEvent.BackButtonPressed)
+            }
             AnimatedVisibility(
                 visibleState = uiState.mutableTransitionState,
                 enter = slideInHorizontally { it } + fadeIn(),
@@ -58,6 +62,9 @@ fun SinglePaneScreen(
             }
         }
         DetailsScreenContent.ALARM_DETAILS -> {
+            BackHandler {
+                onEvent(AlarmBrowserEvent.BackButtonPressed)
+            }
             AnimatedVisibility(
                 visibleState = uiState.mutableTransitionState,
                 enter = slideInHorizontally { it/2 } + fadeIn(),
@@ -72,6 +79,9 @@ fun SinglePaneScreen(
             }
         }
         DetailsScreenContent.GROUP_ALARM_LIST -> {
+            BackHandler {
+                onEvent(AlarmBrowserEvent.BackButtonPressed)
+            }
             AnimatedVisibility(
                 visibleState = uiState.mutableTransitionState,
                 enter = slideInHorizontally { -it/2 } + fadeIn(),
@@ -87,6 +97,9 @@ fun SinglePaneScreen(
             }
         }
         DetailsScreenContent.CHAT -> {
+            BackHandler {
+                onEvent(AlarmBrowserEvent.BackButtonPressed)
+            }
             AnimatedVisibility(
                 visibleState = uiState.mutableTransitionState,
                 enter = slideInHorizontally { it/2 } + fadeIn(),

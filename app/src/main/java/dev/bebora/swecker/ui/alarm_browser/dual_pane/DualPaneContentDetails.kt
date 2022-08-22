@@ -1,5 +1,6 @@
 package dev.bebora.swecker.ui.alarm_browser.dual_pane
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.*
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -38,6 +39,9 @@ fun DualPaneContentDetails(
             }
         }
     } else {
+        BackHandler {
+            onEvent(AlarmBrowserEvent.BackButtonPressed)
+        }
         AnimatedVisibility(
             visibleState = uiState.mutableTransitionState,
             enter = slideInHorizontally { it } + fadeIn(),

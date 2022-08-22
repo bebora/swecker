@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import dev.bebora.swecker.data.alarm_browser.AlarmRepositoryTestImpl
 import dev.bebora.swecker.data.service.impl.AccountsServiceImpl
+import dev.bebora.swecker.data.service.impl.AlarmProviderServiceImpl
 import dev.bebora.swecker.data.service.impl.AuthServiceImpl
 import dev.bebora.swecker.data.service.impl.ChatServiceImpl
 import dev.bebora.swecker.ui.alarm_browser.dual_pane.AlarmBrowserDualPaneContent
@@ -154,7 +155,6 @@ fun AlarmBrowserScreen(
         },
         content = {
             BoxWithConstraints() {
-
                 if (maxWidth < 840.dp) {
                     val density = LocalDensity.current
 
@@ -192,9 +192,6 @@ fun AlarmBrowserScreen(
                         )
                     }
                 } else {
-                    BackHandler() {
-                        viewModel.onEvent(AlarmBrowserEvent.BackButtonPressed)
-                    }
                     AlarmBrowserDualPaneContent(
                         onEvent = viewModel::onEvent,
                         uiState = uiState,
@@ -237,7 +234,8 @@ fun AlarmBrowserScreenPreview() {
         AlarmRepositoryTestImpl(),
         chatService = ChatServiceImpl(),
         accountsService = AccountsServiceImpl(),
-        authService = AuthServiceImpl()
+        authService = AuthServiceImpl(),
+        alarmProviderService = AlarmProviderServiceImpl()
     )
     AlarmBrowserScreen(viewModel = testViewModel)
 }
