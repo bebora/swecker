@@ -1,9 +1,8 @@
 package dev.bebora.swecker.ui.alarm_browser.dual_pane
 
+import androidx.compose.animation.*
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -23,53 +22,66 @@ fun DualPaneContentDetails(
     onEvent: (AlarmBrowserEvent) -> Unit,
     uiState: AlarmBrowserUIState
 ) {
-    Column(
-        modifier = modifier.fillMaxWidth(1f),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        when (uiState.detailsScreenContent) {
-            DetailsScreenContent.ALARM_DETAILS -> {
-                AlarmDetailsScreen(
-                    modifier = modifier,
-                    onEvent = onEvent,
-                    uiState = uiState,
-                    roundTopCorners = true
-                )
-            }
-            DetailsScreenContent.GROUP_ALARM_LIST -> {
-                GroupAlarmListScreen(
-                    modifier = modifier,
-                    onEvent = onEvent,
-                    uiState = uiState,
-                    roundTopCorners = true
-                )
-            }
-            DetailsScreenContent.GROUP_DETAILS -> {
-                GroupDetailsScreen(
-                    modifier = modifier,
-                    onEvent = onEvent,
-                    uiState = uiState,
-                    roundTopCorners = true
-                )
-            }
-            DetailsScreenContent.CHAT -> {
-                ChatScreen(
-                    modifier = modifier,
-                    onEvent = onEvent,
-                    uiState = uiState,
-                    roundTopCorners = true
-                )
-            }
-            DetailsScreenContent.NONE -> {
 
-                Box(modifier = Modifier.fillMaxSize(1f), contentAlignment = Alignment.Center) {
-                    Text(
-                        text = "Select something",
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        style = MaterialTheme.typography.displayMedium
+    if (uiState.animatedDetailsScreenContent == DetailsScreenContent.NONE) {
+        AnimatedVisibility(
+            visibleState = uiState.mutableTransitionState,
+            enter = slideInHorizontally { it } + fadeIn(),
+            exit = slideOutHorizontally { it } + fadeOut()
+        ) {
+            Box(modifier = Modifier.fillMaxSize(1f), contentAlignment = Alignment.Center) {
+                Text(
+                    text = "Select something",
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.displayMedium
+                )
+            }
+        }
+    } else {
+        AnimatedVisibility(
+            visibleState = uiState.mutableTransitionState,
+            enter = slideInHorizontally { it } + fadeIn(),
+            exit = slideOutHorizontally { it } + fadeOut()
+        ) {
+            when (uiState.animatedDetailsScreenContent) {
+                DetailsScreenContent.ALARM_DETAILS -> {
+                    AlarmDetailsScreen(
+                        modifier = modifier,
+                        onEvent = onEvent,
+                        uiState = uiState,
+                        roundTopCorners = true
                     )
+                }
+                DetailsScreenContent.GROUP_ALARM_LIST -> {
+                    GroupAlarmListScreen(
+                        modifier = modifier,
+                        onEvent = onEvent,
+                        uiState = uiState,
+                        roundTopCorners = true
+                    )
+                }
+                DetailsScreenContent.GROUP_DETAILS -> {
+                    GroupDetailsScreen(
+                        modifier = modifier,
+                        onEvent = onEvent,
+                        uiState = uiState,
+                        roundTopCorners = true
+                    )
+                }
+                DetailsScreenContent.CHAT -> {
+                    ChatScreen(
+                        modifier = modifier,
+                        onEvent = onEvent,
+                        uiState = uiState,
+                        roundTopCorners = true
+                    )
+                }
+                else -> {
                 }
             }
         }
+    }
+    if (uiState.mutableTransitionState.isIdle) {
+        onEvent(AlarmBrowserEvent.OnTransitionCompleted)
     }
 }

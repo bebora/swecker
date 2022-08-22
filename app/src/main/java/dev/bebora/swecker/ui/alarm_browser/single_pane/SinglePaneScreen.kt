@@ -1,5 +1,6 @@
 package dev.bebora.swecker.ui.alarm_browser.single_pane
 
+import androidx.compose.animation.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import dev.bebora.swecker.ui.alarm_browser.AlarmBrowserEvent
@@ -18,7 +19,7 @@ fun SinglePaneScreen(
     uiState: AlarmBrowserUIState,
     onOpenDrawer: () -> Unit,
 ) {
-    when (uiState.detailsScreenContent) {
+    when (uiState.animatedDetailsScreenContent) {
         DetailsScreenContent.NONE -> {
             when (uiState.selectedDestination) {
                 NavBarDestination.HOME -> HomeAlarmListScreen(
@@ -43,37 +44,66 @@ fun SinglePaneScreen(
             }
         }
         DetailsScreenContent.GROUP_DETAILS -> {
-            GroupDetailsScreen(
-                modifier = modifier,
-                onEvent = onEvent,
-                uiState = uiState,
-                roundTopCorners = false
-            )
+            AnimatedVisibility(
+                visibleState = uiState.mutableTransitionState,
+                enter = slideInHorizontally { it } + fadeIn(),
+                exit = slideOutHorizontally { -it } + fadeOut()
+            ) {
+                GroupDetailsScreen(
+                    modifier = modifier,
+                    onEvent = onEvent,
+                    uiState = uiState,
+                    roundTopCorners = false
+                )
+            }
         }
         DetailsScreenContent.ALARM_DETAILS -> {
-            AlarmDetailsScreen(
-                modifier = modifier,
-                onEvent = onEvent,
-                uiState = uiState,
-                roundTopCorners = false
-            )
+            AnimatedVisibility(
+                visibleState = uiState.mutableTransitionState,
+                enter = slideInHorizontally { it/2 } + fadeIn(),
+                exit = slideOutHorizontally { it/2 } + fadeOut()
+            ) {
+                AlarmDetailsScreen(
+                    modifier = modifier,
+                    onEvent = onEvent,
+                    uiState = uiState,
+                    roundTopCorners = false
+                )
+            }
         }
         DetailsScreenContent.GROUP_ALARM_LIST -> {
-            GroupAlarmListScreen(
-                modifier = modifier,
-                onEvent = onEvent,
-                uiState = uiState,
-                roundTopCorners = false
+            AnimatedVisibility(
+                visibleState = uiState.mutableTransitionState,
+                enter = slideInHorizontally { -it/2 } + fadeIn(),
+                exit = slideOutHorizontally { it/2 } + fadeOut()
+            ) {
+                GroupAlarmListScreen(
+                    modifier = modifier,
+                    onEvent = onEvent,
+                    uiState = uiState,
+                    roundTopCorners = false
 
-            )
+                )
+            }
         }
         DetailsScreenContent.CHAT -> {
-            ChatScreen(
-                modifier = modifier,
-                onEvent = onEvent,
-                uiState = uiState,
-                roundTopCorners = false
-            )
+            AnimatedVisibility(
+                visibleState = uiState.mutableTransitionState,
+                enter = slideInHorizontally { it/2 } + fadeIn(),
+                exit = slideOutHorizontally { -it/2 } + fadeOut()
+            ) {
+                ChatScreen(
+                    modifier = modifier,
+                    onEvent = onEvent,
+                    uiState = uiState,
+                    roundTopCorners = false
+                )
+            }
         }
     }
+
+    if(uiState.mutableTransitionState.isIdle){
+        onEvent(AlarmBrowserEvent.OnTransitionCompleted)
+    }
 }
+

@@ -2,6 +2,7 @@ package dev.bebora.swecker.ui.alarm_browser
 
 import android.app.Application
 import android.util.Log
+import androidx.compose.animation.core.MutableTransitionState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.outlined.Campaign
@@ -173,14 +174,22 @@ class AlarmBrowserViewModel @Inject constructor(
             is AlarmBrowserEvent.AlarmUpdated -> {
                 val selectedAlarm = uiState.selectedAlarm
                 var detailsScreenContent = uiState.detailsScreenContent
+                var mutableTransitionState = MutableTransitionState(false).apply {
+                    targetState = true
+                }
 
                 if (selectedAlarm?.id.equals(event.alarm.id)) {
                     detailsScreenContent = detailsScreenContentOnGoBack()
+                    mutableTransitionState = MutableTransitionState(true).apply {
+                        targetState = false
+                    }
                 }
 
                 uiState = uiState.copy(
                     selectedAlarm = selectedAlarm,
-                    detailsScreenContent = detailsScreenContent
+                    detailsScreenContent = detailsScreenContent,
+                    animatedDetailsScreenContent = detailsScreenContent,
+                    mutableTransitionState = mutableTransitionState
                 )
 
                 if (event.success) {
@@ -203,6 +212,14 @@ class AlarmBrowserViewModel @Inject constructor(
                         DetailsScreenContent.ALARM_DETAILS
                     } else {
                         DetailsScreenContent.CHAT
+                    },
+                    animatedDetailsScreenContent = if (event.alarm.alarmType == AlarmType.PERSONAL) {
+                        DetailsScreenContent.ALARM_DETAILS
+                    } else {
+                        DetailsScreenContent.CHAT
+                    },
+                    mutableTransitionState = MutableTransitionState(false).apply {
+                        targetState = true
                     }
                 )
             }
@@ -218,7 +235,11 @@ class AlarmBrowserViewModel @Inject constructor(
                         "",
                         event.group
                     ),
-                    detailsScreenContent = DetailsScreenContent.GROUP_ALARM_LIST
+                    detailsScreenContent = DetailsScreenContent.GROUP_ALARM_LIST,
+                    animatedDetailsScreenContent = DetailsScreenContent.GROUP_ALARM_LIST,
+                    mutableTransitionState = MutableTransitionState(false).apply {
+                        targetState = true
+                    }
                 )
             }
 
@@ -229,9 +250,13 @@ class AlarmBrowserViewModel @Inject constructor(
                     )
                 } else {
                     uiState = uiState.copy(
-                        detailsScreenContent = detailsScreenContentOnGoBack()
+                        detailsScreenContent = detailsScreenContentOnGoBack(),
+                        mutableTransitionState = MutableTransitionState(true).apply {
+                            targetState = false
+                        }
                     )
                 }
+
             }
 
             //TODO add group search
@@ -250,7 +275,10 @@ class AlarmBrowserViewModel @Inject constructor(
 
             is AlarmBrowserEvent.DetailsOpened -> {
                 uiState = uiState.copy(
-                    detailsScreenContent = event.type
+                    detailsScreenContent = event.type,
+                    mutableTransitionState = MutableTransitionState(true).apply {
+                        targetState = false
+                    }
                 )
             }
 
@@ -277,6 +305,18 @@ class AlarmBrowserViewModel @Inject constructor(
                         }
                     }
                 )
+            }
+
+            is AlarmBrowserEvent.OnTransitionCompleted -> {
+                val mutableTransitionState = uiState.mutableTransitionState
+                if(!mutableTransitionState.targetState){
+                    uiState = uiState.copy(
+                        mutableTransitionState = MutableTransitionState(false).apply {
+                            targetState = true
+                        },
+                        animatedDetailsScreenContent = uiState.detailsScreenContent
+                    )
+                }
             }
         }
     }
@@ -354,7 +394,9 @@ data class AlarmBrowserUIState(
     val selectedDestination: NavBarDestination = NavBarDestination.HOME,
     val me: User = User(),
     val messages: List<Message> = emptyList(),
-    val usersData: Map<String, User> = emptyMap()
+    val usersData: Map<String, User> = emptyMap(),
+    val mutableTransitionState: MutableTransitionState<Boolean> = MutableTransitionState(false),
+    val animatedDetailsScreenContent: DetailsScreenContent = DetailsScreenContent.NONE
 )
 
 enum class DetailsScreenContent {

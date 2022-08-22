@@ -24,5 +24,7 @@ sealed class AlarmBrowserEvent {
 
     object OpenChatTEMP : AlarmBrowserEvent() //Remove this
 
+     object OnTransitionCompleted : AlarmBrowserEvent()
+
     data class SendMessageTEMP(val text: String) : AlarmBrowserEvent()
 }
