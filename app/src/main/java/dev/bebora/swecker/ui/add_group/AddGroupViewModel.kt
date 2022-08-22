@@ -182,6 +182,29 @@ class AddGroupViewModel @Inject constructor(
             onComplete = onComplete
         )
     }
+
+    fun discardGroupCreation(onSuccess: () -> Unit) {
+        onSuccess() // Allow the popup to be closed instantly
+        if (uiState.tempGroupData.id.isNotBlank()) {
+            alarmProviderService.deleteGroup(
+                uiState.tempGroupData.id,
+                onComplete = { groupDeletionError ->
+                    if (groupDeletionError != null) {
+                        Log.d("SWECKER-DELG-ERR", "Can't delete group", groupDeletionError)
+                    }
+
+                    imageStorageService.deleteGroupPicture(
+                        groupId = uiState.tempGroupData.id,
+                        onComplete = {
+                            if (it != null) {
+                                Log.d("SWECKER-DELGI-ERR", "Can't delete group image", it)
+                            }
+                        }
+                    )
+                }
+            )
+        }
+    }
 }
 
 data class AddGroupUIState(

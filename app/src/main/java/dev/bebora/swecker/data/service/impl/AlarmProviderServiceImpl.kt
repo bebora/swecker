@@ -81,4 +81,14 @@ class AlarmProviderServiceImpl : AlarmProviderService {
                 onComplete(it.exception)
             }
     }
+
+    override fun deleteGroup(groupId: String, onComplete: (Throwable?) -> Unit) {
+        Firebase.firestore
+            .collection(FirebaseConstants.GROUPS_COLLECTION)
+            .document(groupId)
+            .delete()
+            .addOnCompleteListener {
+                onComplete(it.exception)
+            }
+    }
 }

@@ -68,4 +68,17 @@ class ImageStorageServiceImpl : ImageStorageService {
             }
         }
     }
+
+    override fun deleteGroupPicture(
+        groupId: String,
+        onComplete: (Throwable?) -> Unit
+    ) {
+        val storageRef = Firebase.storage.reference
+        val groupPicRef = storageRef.child("${FirebaseConstants.PICTURES_GROUPS}/${groupId}")
+        groupPicRef
+            .delete()
+            .addOnCompleteListener {
+                onComplete(it.exception)
+            }
+    }
 }

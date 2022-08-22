@@ -8,6 +8,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 
+//TODO display something when the profile picture is being uploaded (similar to what is done in AddGroupScreen)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddGroupDialog(
@@ -17,7 +18,9 @@ fun AddGroupDialog(
     val viewModel: AddGroupViewModel = hiltViewModel()
     val uiState = viewModel.uiState
 
-    Dialog(onDismissRequest = onGoBack) {
+    Dialog(onDismissRequest = {
+        viewModel.discardGroupCreation(onGoBack)
+    }) {
         Surface(
             modifier = modifier
                 .fillMaxHeight(0.9f)
@@ -66,7 +69,10 @@ fun AddGroupDialog(
                 ) {
                     if (uiState.content == AddGroupContent.GROUP_SELECT_CONTACTS) {
                         Spacer(modifier = Modifier.weight(1f))
-                        AssistChip(onClick = onGoBack,
+                        AssistChip(
+                            onClick = {
+                                viewModel.discardGroupCreation(onGoBack)
+                            },
                             label = { Text("Cancel") })
 
                         Spacer(modifier = Modifier.width(8.dp))
@@ -97,7 +103,6 @@ fun AddGroupDialog(
                     }
                 }
             }
-
         }
     }
 }

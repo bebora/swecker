@@ -20,4 +20,9 @@ interface ImageStorageService {
         onSuccess: (String) -> Unit,
         onFailure: (String) -> Unit
     )
+
+    fun deleteGroupPicture(
+        groupId: String,
+        onComplete: (Throwable?) -> Unit
+    )
 }

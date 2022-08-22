@@ -192,7 +192,9 @@ fun AddGroupScreen(
                 totalContacts = uiState.allContacts.size,
                 onGoBack = {
                     if (uiState.content == AddGroupContent.GROUP_SELECT_CONTACTS) {
-                        onGoBack()
+                        viewModel.discardGroupCreation {
+                            onGoBack()
+                        }
                     } else {
                         viewModel.previousScreen()
                     }

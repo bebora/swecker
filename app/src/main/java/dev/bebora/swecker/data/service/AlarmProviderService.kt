@@ -15,6 +15,10 @@ interface AlarmProviderService {
         newGroupData: ThinGroup,
         onComplete: (Throwable?) -> Unit
     )
+    fun deleteGroup(
+        groupId: String,
+        onComplete: (Throwable?) -> Unit
+    )
 }
 
 class EmptyGroupException : Exception()
