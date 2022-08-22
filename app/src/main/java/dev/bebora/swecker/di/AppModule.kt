@@ -9,14 +9,8 @@ import dagger.hilt.components.SingletonComponent
 import dev.bebora.swecker.data.SweckerDatabase
 import dev.bebora.swecker.data.alarm_browser.AlarmRepository
 import dev.bebora.swecker.data.alarm_browser.AlarmRepositoryImpl
-import dev.bebora.swecker.data.service.AuthService
-import dev.bebora.swecker.data.service.ImageStorageService
-import dev.bebora.swecker.data.service.AccountsService
-import dev.bebora.swecker.data.service.ChatService
-import dev.bebora.swecker.data.service.impl.AuthServiceImpl
-import dev.bebora.swecker.data.service.impl.ImageStorageServiceImpl
-import dev.bebora.swecker.data.service.impl.AccountsServiceImpl
-import dev.bebora.swecker.data.service.impl.ChatServiceImpl
+import dev.bebora.swecker.data.service.*
+import dev.bebora.swecker.data.service.impl.*
 import dev.bebora.swecker.data.settings.SettingsRepositoryInterface
 import dev.bebora.swecker.data.settings.DataStoreManager
 import javax.inject.Singleton
@@ -69,5 +63,11 @@ object AppModule {
     @Singleton
     fun provideChatService(): ChatService {
         return ChatServiceImpl()
+    }
+
+    @Provides
+    @Singleton
+    fun provideAlarmProviderService(): AlarmProviderService {
+        return AlarmProviderServiceImpl()
     }
 }

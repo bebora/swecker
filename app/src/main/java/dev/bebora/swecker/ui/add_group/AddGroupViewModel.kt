@@ -9,7 +9,9 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.bebora.swecker.data.User
 import dev.bebora.swecker.data.service.AccountsService
+import dev.bebora.swecker.data.service.AlarmProviderService
 import dev.bebora.swecker.data.service.AuthService
+import dev.bebora.swecker.data.service.ImageStorageService
 import dev.bebora.swecker.ui.utils.onError
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -18,6 +20,8 @@ import javax.inject.Inject
 class AddGroupViewModel @Inject constructor(
     private val authService: AuthService,
     private val accountsService: AccountsService,
+    private val imageStorageService: ImageStorageService,
+    private val alarmProviderService: AlarmProviderService,
 ) : ViewModel() {
     private val userInfoChanges = authService.getUserInfoChanges()
 
@@ -73,6 +77,26 @@ class AddGroupViewModel @Inject constructor(
     fun nextScreen() {
         if (uiState.content == AddGroupContent.GROUP_SELECT_CONTACTS) {
             uiState = uiState.copy(
+                waitingForServiceResponse = true
+            )
+            alarmProviderService.createGroup(
+                ownerId = uiState.me.id,
+                userIds = listOf(uiState.me.id) + uiState.selectedMembers.map { it.id },
+                onSuccess = {
+                    uiState = uiState.copy(
+                        groupId = it,
+                        waitingForServiceResponse = false,
+                        content = AddGroupContent.GROUP_SELECT_NAME
+                    )
+                },
+                onFailure = {
+                    uiState = uiState.copy(
+                        waitingForServiceResponse = false
+                    )
+                }
+
+            )
+            uiState = uiState.copy(
                 content = AddGroupContent.GROUP_SELECT_NAME
             )
         }
@@ -109,8 +133,10 @@ data class AddGroupUIState(
     val selectedMembers: List<User> = emptyList(),
     val groupPicUrl: String = "",
     val groupName: String = "",
+    val groupId: String = "",
     val content: AddGroupContent = AddGroupContent.GROUP_SELECT_CONTACTS,
     val me: User = User(),
+    val waitingForServiceResponse: Boolean = false,
     val accountStatusLoaded: Boolean = false
 )
 

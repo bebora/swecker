@@ -4,4 +4,7 @@ object FirebaseConstants {
     const val USERS_COLLECTION = "users"
     const val FRIENDSHIP_REQUESTS_COLLECTION = "friendrequests"
     const val CHATS = "chats"
+    const val GROUPS_COLLECTION = "groups"
+    const val PICTURES_USERS = "images"
+    const val PICTURES_GROUPS = "groups"
 }

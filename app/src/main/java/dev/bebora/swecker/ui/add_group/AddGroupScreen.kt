@@ -70,6 +70,7 @@ fun AddGroupTopBar(
     memberNum: Int,
     totalContacts: Int,
     content: AddGroupContent,
+    waitingForServiceResponse: Boolean,
     onGoBack: () -> Unit
 ) {
     SmallTopAppBar(
@@ -96,6 +97,11 @@ fun AddGroupTopBar(
                 }
             } else {
                 Text("New group")
+            }
+        },
+        actions = {
+            if (waitingForServiceResponse) {
+                CircularProgressIndicator()
             }
         }
     )
@@ -191,7 +197,8 @@ fun AddGroupScreen(
                         viewModel.previousScreen()
                     }
                 },
-                content = uiState.content
+                content = uiState.content,
+                waitingForServiceResponse = uiState.waitingForServiceResponse
             )
         },
         floatingActionButton = {

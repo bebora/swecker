@@ -54,8 +54,6 @@ fun ChatScreenContent(
                 val isLastMessage =
                     (index - 1 < 0) || message.uId != messages[index - 1].uId
 
-
-                //TODO get actual contact name and image
                 MessageItem(
                     author = usersData[message.uId]?.name,
                     body = message.text,

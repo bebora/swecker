@@ -12,3 +12,11 @@ data class Group(
     val members: List<User> = emptyList(),
     val owner: String,
 )
+
+data class ThinGroup(
+    val id: String = "",
+    val members: List<String> = emptyList(),
+    val name: String = "",
+    val owner: String = "",
+    val picture: String = "",
+)
