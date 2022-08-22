@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import dev.bebora.swecker.ui.alarm_browser.*
 import dev.bebora.swecker.ui.alarm_browser.alarm_details.AlarmDetails
 import dev.bebora.swecker.ui.alarm_browser.chat.ChatScreenPreview
+import dev.bebora.swecker.ui.alarm_browser.group_screen.GroupDetails
 
 @Composable
 fun DualPaneContentDetails(
@@ -48,6 +49,9 @@ fun DualPaneContentDetails(
                     onEvent = onEvent,
                     selectedAlarm = uiState.selectedAlarm
                 )
+            }
+            DetailsScreenContent.GROUP_DETAILS -> {
+                GroupDetails(group = uiState.selectedGroup!!)
             }
             DetailsScreenContent.CHAT -> {
                 ChatScreenPreview()
