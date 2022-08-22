@@ -20,3 +20,15 @@ data class ThinGroup(
     val owner: String = "",
     val picture: String = "",
 )
+
+fun ThinGroup.toGroup() : Group {
+    return Group(
+        id = id,
+        name = name,
+        groupPicUrl = picture,
+        firstAlarmName = "",
+        firstAlarmDateTime = null,
+        members = emptyList(), //TODO members in ThinGroup are string, these are User
+        owner = owner
+    )
+}

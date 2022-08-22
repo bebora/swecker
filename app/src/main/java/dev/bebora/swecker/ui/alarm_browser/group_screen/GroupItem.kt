@@ -1,6 +1,5 @@
 package dev.bebora.swecker.ui.alarm_browser.group_screen
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -17,6 +16,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import dev.bebora.swecker.data.Group
 import dev.bebora.swecker.ui.alarm_browser.AlarmBrowserEvent
 import dev.bebora.swecker.ui.theme.SweckerTheme
@@ -42,9 +42,11 @@ fun GroupItem(
         .clickable { onEvent(AlarmBrowserEvent.GroupSelected(group)) }
         .padding(all = 8.dp),
         verticalAlignment = Alignment.CenterVertically) {
-        Image(
-            painter = ColorPainter(MaterialTheme.colorScheme.tertiary),
-            contentDescription = null,
+        AsyncImage(
+            model = group.groupPicUrl,
+            contentDescription = "Group profile picture",
+            placeholder = ColorPainter(MaterialTheme.colorScheme.tertiary),
+            error = ColorPainter(MaterialTheme.colorScheme.tertiary),
             modifier = Modifier
                 .size(70.dp)
                 .clip(CircleShape)
@@ -76,7 +78,7 @@ fun GroupItem(
                     style = MaterialTheme.typography.titleMedium
                 )
                 Text(
-                    text = group.firstAlarmDateTime!!.format(DateTimeFormatter.ofPattern("eee\n dd MMM uuuu")),
+                    text = group.firstAlarmDateTime?.format(DateTimeFormatter.ofPattern("eee\n dd MMM uuuu")) ?: "Coming soon^tm",
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     textAlign = TextAlign.Center,
                     modifier = Modifier

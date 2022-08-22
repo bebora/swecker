@@ -19,12 +19,14 @@ import dev.bebora.swecker.data.*
 import dev.bebora.swecker.data.alarm_browser.AlarmRepository
 import dev.bebora.swecker.data.local.LocalAlarmDataProvider
 import dev.bebora.swecker.data.service.AccountsService
+import dev.bebora.swecker.data.service.AlarmProviderService
 import dev.bebora.swecker.data.service.AuthService
 import dev.bebora.swecker.data.service.ChatService
 import dev.bebora.swecker.ui.alarm_notification.scheduleExactAlarm
 import dev.bebora.swecker.ui.utils.onError
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 import java.time.OffsetDateTime
@@ -36,6 +38,7 @@ class AlarmBrowserViewModel @Inject constructor(
     private val chatService: ChatService,
     private val authService: AuthService,
     private val accountsService: AccountsService,
+    private val alarmProviderService: AlarmProviderService,
     private val application: Application? = null
 ) : ViewModel() {
     // UI state exposed to the UI
@@ -48,6 +51,8 @@ class AlarmBrowserViewModel @Inject constructor(
 
     private var mutableUsersData: MutableMap<String, User> = mutableMapOf()
 
+    private var groupsCollectorJob: Job? = null
+
     init {
         observeAlarms()
         viewModelScope.launch {
@@ -55,22 +60,28 @@ class AlarmBrowserViewModel @Inject constructor(
                 uiState = uiState.copy(
                     me = it,
                 )
-                Log.d("SWECKER-GET", "Preso user da storage, ed è $it")
             }
             userInfoChanges.collect {
-                /*uiState = uiState.copy(
-                    hasUser = authService.hasUser(),
-                    userId = authService.getUserId(),
-                )*/
                 accountsService.getUser(
                     userId = authService.getUserId(),
                     onSuccess = {
+                        Log.d("SWECKER-GET-COLLECT", "Preso user da auth, ed è $it")
                         uiState = uiState.copy(
                             me = it
                         )
                     },
                     onError = ::onError
                 )
+                groupsCollectorJob?.cancel() // Remove the current collector
+                groupsCollectorJob = viewModelScope.launch {
+                    alarmProviderService.getUserGroups(
+                        authService.getUserId()
+                    ).collect { groupsList ->
+                        uiState = uiState.copy(
+                            groups = groupsList.map { it.toGroup() }
+                        )
+                    }
+                }
             }
         }
         viewModelScope.launch {
