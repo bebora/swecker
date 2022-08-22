@@ -1,6 +1,7 @@
 package dev.bebora.swecker.ui.alarm_browser
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -10,6 +11,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -19,15 +21,12 @@ import dev.bebora.swecker.data.service.impl.AuthServiceImpl
 import dev.bebora.swecker.data.service.impl.ChatServiceImpl
 import dev.bebora.swecker.ui.alarm_browser.dual_pane.AlarmBrowserDualPaneContent
 import dev.bebora.swecker.ui.alarm_browser.dual_pane.DualPaneDialog
-import dev.bebora.swecker.ui.alarm_browser.single_pane.AlarmBrowserNavBar
-import dev.bebora.swecker.ui.alarm_browser.single_pane.AlarmBrowserSinglePaneContent
-import dev.bebora.swecker.ui.alarm_browser.single_pane.AlarmBrowserSinglePaneFab
-import dev.bebora.swecker.ui.alarm_browser.single_pane.SinglePaneDialog
+import dev.bebora.swecker.ui.alarm_browser.single_pane.*
 import dev.bebora.swecker.util.ADD_CONTACT
 import dev.bebora.swecker.util.SETTINGS
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class)
 @Composable
 fun AlarmBrowserScreen(
     modifier: Modifier = Modifier,
@@ -155,8 +154,21 @@ fun AlarmBrowserScreen(
         },
         content = {
             BoxWithConstraints() {
+
                 if (maxWidth < 840.dp) {
-                    if (uiState.dialogContent != DialogContent.NONE) {
+                    val density = LocalDensity.current
+
+                    AnimatedVisibility(
+                        visible = uiState.dialogContent != DialogContent.NONE,
+                        enter = slideInHorizontally {
+                            // Slide in from 40 dp from the top.
+                            with(density) { 40.dp.roundToPx() }
+                        } + fadeIn(
+                            // Fade in with the initial alpha of 0.3f.
+                            initialAlpha = 0.3f
+                        ),
+                        exit = slideOutHorizontally() + fadeOut()
+                    ) {
                         BackHandler {
                             viewModel.onEvent(AlarmBrowserEvent.BackButtonPressed)
                         }
@@ -166,42 +178,18 @@ fun AlarmBrowserScreen(
                             group = uiState.selectedGroup?.copy(),
                             onEvent = viewModel::onEvent
                         )
-                    } else {
-                        Scaffold(
-                            topBar = {
-                                SweckerTopAppBar(
-                                    modifier = modifier,
-                                    uiState = uiState,
-                                    onEvent = viewModel::onEvent,
-                                    colors = TopAppBarDefaults.smallTopAppBarColors(
-                                        containerColor = MaterialTheme.colorScheme.surfaceVariant
-                                    ),
-                                    onOpenDrawer = { scope.launch { drawerState.open() } }
-                                )
-                            },
-                            floatingActionButton = {
-                                AlarmBrowserSinglePaneFab(
-                                    destination = uiState.selectedDestination,
-                                    modifier = Modifier
-                                        .align(Alignment.BottomEnd)
-                                        .padding(32.dp),
-                                    detailsScreenContent = uiState.detailsScreenContent,
-                                    onEvent = viewModel::onEvent
-                                )
-                            },
-                            bottomBar = {
-                                AlarmBrowserNavBar(
-                                    alarmBrowserUIState = uiState,
-                                    onEvent = viewModel::onEvent,
-                                )
-                            }) {
-                            AlarmBrowserSinglePaneContent(
-                                modifier = Modifier.padding(it),
-                                onEvent = viewModel::onEvent,
-                                uiState = uiState,
-                            )
+                    }
 
-                        }
+
+                    if (uiState.dialogContent == DialogContent.NONE) {
+                        SinglePaneScreen(
+                            modifier = modifier,
+                            onEvent = viewModel::onEvent,
+                            uiState = uiState,
+                            onOpenDrawer = {
+                                scope.launch { drawerState.open() }
+                            },
+                        )
                     }
                 } else {
                     BackHandler() {
@@ -214,7 +202,22 @@ fun AlarmBrowserScreen(
                             scope.launch { drawerState.open() }
                         },
                     )
-                    if (uiState.dialogContent != DialogContent.NONE) {
+                    val density = LocalDensity.current
+
+                    AnimatedVisibility(
+                        visible = uiState.dialogContent != DialogContent.NONE,
+                        enter = slideInVertically {
+                            // Slide in from 40 dp from the top.
+                            with(density) { -40.dp.roundToPx() }
+                        } + expandVertically(
+                            // Expand from the top.
+                            expandFrom = Alignment.Top
+                        ) + fadeIn(
+                            // Fade in with the initial alpha of 0.3f.
+                            initialAlpha = 0.3f
+                        ),
+                        exit = slideOutVertically() + shrinkVertically() + fadeOut()
+                    ) {
                         DualPaneDialog(
                             dialogContent = uiState.dialogContent,
                             onNavigate = onNavigate,

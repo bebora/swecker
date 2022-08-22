@@ -3,6 +3,7 @@ package dev.bebora.swecker.ui.alarm_browser.alarm_details
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -11,6 +12,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
@@ -18,6 +20,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import dev.bebora.swecker.data.Alarm
 import dev.bebora.swecker.data.AlarmType
+import dev.bebora.swecker.ui.alarm_browser.AlarmBrowserEvent
+import dev.bebora.swecker.ui.alarm_browser.AlarmBrowserUIState
 import dev.bebora.swecker.ui.theme.SweckerTheme
 import java.time.*
 import java.time.format.DateTimeFormatter
@@ -364,4 +368,62 @@ fun AlarmDetailsPreview() {
             }
         }
     }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun AlarmDetailsScreen(
+    modifier: Modifier = Modifier,
+    onEvent: (AlarmBrowserEvent) -> Unit,
+    uiState: AlarmBrowserUIState,
+    roundTopCorners: Boolean
+) {
+    Scaffold(
+        topBar = {
+            Surface(
+                shape = if (roundTopCorners) {
+                    RoundedCornerShape(
+                        topEnd = 20.dp,
+                        topStart = 20.dp,
+                        bottomEnd = 0.dp,
+                        bottomStart = 0.dp
+                    )
+                } else {
+                    RectangleShape
+                }
+            ) {
+                SmallTopAppBar(
+                    colors = TopAppBarDefaults.smallTopAppBarColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceVariant
+                    ),
+                    modifier = modifier,
+                    title = { Text(text = "Alarm details", textAlign = TextAlign.Center) },
+                    navigationIcon = {
+                        IconButton(onClick = { onEvent(AlarmBrowserEvent.BackButtonPressed) }) {
+                            Icon(
+                                imageVector = Icons.Outlined.ArrowBack,
+                                contentDescription = "Go back"
+                            )
+                        }
+                    },
+                    actions = {
+                    })
+            }
+        }
+    ) {
+        AlarmDetails(
+            modifier = modifier.padding(it),
+            alarm = uiState.selectedAlarm!!,
+            isReadOnly = false,
+            onAlarmPartiallyUpdated = { al ->
+                onEvent(
+                    AlarmBrowserEvent.AlarmPartiallyUpdated(
+                        al
+                    )
+                )
+            },
+            onUpdateCompleted = { al, b -> onEvent(AlarmBrowserEvent.AlarmUpdated(al, b)) }
+        )
+    }
+
 }
