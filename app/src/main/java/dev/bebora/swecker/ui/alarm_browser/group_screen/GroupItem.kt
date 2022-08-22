@@ -97,7 +97,7 @@ fun GroupItemPreview() {
             "1",
             "Wanda the group",
             firstAlarmDateTime = OffsetDateTime.parse("2011-12-03T10:15:30+02:00"),
-            members = null,
+            members = emptyList(),
             owner = "@me"
         ),
             onEvent = {})

@@ -16,13 +16,13 @@ sealed class AlarmBrowserEvent {
 
     data class DialogOpened(val type: DialogContent) : AlarmBrowserEvent()
 
+    data class DetailsOpened(val type: DetailsScreenContent) : AlarmBrowserEvent()
+
     data class Search(val key: String) : AlarmBrowserEvent()
 
     object BackButtonPressed : AlarmBrowserEvent()
 
-    object ChatTopBarPressed : AlarmBrowserEvent()
+    object OpenChatTEMP : AlarmBrowserEvent() //Remove this
 
-    object OpenChatTEMP: AlarmBrowserEvent() //Remove this
-
-    data class SendMessageTEMP(val text: String): AlarmBrowserEvent()
+    data class SendMessageTEMP(val text: String) : AlarmBrowserEvent()
 }

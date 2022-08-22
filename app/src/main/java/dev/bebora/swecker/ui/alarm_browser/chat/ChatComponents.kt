@@ -1,7 +1,6 @@
 package dev.bebora.swecker.ui.alarm_browser.chat
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -22,6 +21,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import dev.bebora.swecker.ui.alarm_browser.AlarmBrowserEvent
+import dev.bebora.swecker.ui.alarm_browser.DetailsScreenContent
 import dev.bebora.swecker.ui.theme.SweckerTheme
 
 @Composable
@@ -282,7 +282,7 @@ fun ChatTopAppBar(
     SmallTopAppBar(
         colors = colors,
         modifier = modifier.clickable {
-            onEvent(AlarmBrowserEvent.ChatTopBarPressed)
+            onEvent(AlarmBrowserEvent.DetailsOpened(DetailsScreenContent.ALARM_DETAILS))
         },
         title = {
             Column() {

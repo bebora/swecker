@@ -79,12 +79,12 @@ fun SweckerDetailsAppBar(
                     actions = {
                     })
             }
-            DetailsScreenContent.GROUP_ALARM_LIST -> {
+            DetailsScreenContent.GROUP_ALARM_LIST, DetailsScreenContent.GROUP_DETAILS -> {
                 GroupTopAppBar(
                     colors = colors,
                     group = uiState.selectedGroup!!,
                     onEvent = onEvent,
-                ) {}
+                )
             }
             DetailsScreenContent.CHAT -> {
                 ChatTopAppBar(
@@ -92,7 +92,8 @@ fun SweckerDetailsAppBar(
                     colors = colors,
                     title = uiState.selectedAlarm?.name ?: "Hello world",
                     date = (uiState.selectedAlarm?.localDate ?: LocalDate.now()).format(
-                        DateTimeFormatter.ofPattern("eee, dd MMM uuuu"))
+                        DateTimeFormatter.ofPattern("eee, dd MMM uuuu")
+                    )
                         ?: "",
                     onEvent = onEvent,
                 )

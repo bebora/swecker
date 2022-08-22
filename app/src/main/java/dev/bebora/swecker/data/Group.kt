@@ -9,6 +9,6 @@ data class Group(
     val groupPicUrl: String = "",
     val firstAlarmName: String = "",
     val firstAlarmDateTime: OffsetDateTime? = null,
-    val members: List<User>? = emptyList(),
+    val members: List<User> = emptyList(),
     val owner: String,
 )

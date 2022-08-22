@@ -17,6 +17,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import dev.bebora.swecker.data.Group
 import dev.bebora.swecker.ui.alarm_browser.AlarmBrowserEvent
+import dev.bebora.swecker.ui.alarm_browser.DetailsScreenContent
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -25,11 +26,12 @@ fun GroupTopAppBar(
     group: Group,
     colors: TopAppBarColors,
     onEvent: (AlarmBrowserEvent) -> Unit,
-    onClick: () -> Unit
 ) {
     SmallTopAppBar(
         colors = colors,
-        modifier = modifier.clickable { onClick() },
+        modifier = modifier.clickable {
+            onEvent(AlarmBrowserEvent.DetailsOpened(type = DetailsScreenContent.GROUP_DETAILS))
+        },
         title =
         {
             Column(
@@ -38,7 +40,7 @@ fun GroupTopAppBar(
                 Text(text = group.name, textAlign = TextAlign.Left)
                 Text(
                     modifier = modifier.padding(horizontal = 10.dp),
-                    text = group.members?.size.toString().plus(" members"),
+                    text = group.members.size.toString().plus(" members"),
                     style = MaterialTheme.typography.labelSmall
                 )
 

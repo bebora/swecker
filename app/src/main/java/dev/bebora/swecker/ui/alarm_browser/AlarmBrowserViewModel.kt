@@ -88,7 +88,7 @@ class AlarmBrowserViewModel @Inject constructor(
         messages
             .map { it.uId }
             .filter { !uiState.usersData.containsKey(it) }
-            .forEach {userId ->
+            .forEach { userId ->
                 if (!usersAlreadyRequested.contains(userId)) {
                     usersAlreadyRequested.add(userId)
                     accountsService.getUser(
@@ -164,7 +164,7 @@ class AlarmBrowserViewModel @Inject constructor(
                 var detailsScreenContent = uiState.detailsScreenContent
 
                 if (selectedAlarm?.id.equals(event.alarm.id)) {
-                    detailsScreenContent = updateDetailsScreenContent()
+                    detailsScreenContent = detailsScreenContentOnGoBack()
                 }
 
                 uiState = uiState.copy(
@@ -218,7 +218,7 @@ class AlarmBrowserViewModel @Inject constructor(
                     )
                 } else {
                     uiState = uiState.copy(
-                        detailsScreenContent = updateDetailsScreenContent()
+                        detailsScreenContent = detailsScreenContentOnGoBack()
                     )
                 }
             }
@@ -237,9 +237,9 @@ class AlarmBrowserViewModel @Inject constructor(
                 )
             }
 
-            is AlarmBrowserEvent.ChatTopBarPressed -> {
+            is AlarmBrowserEvent.DetailsOpened -> {
                 uiState = uiState.copy(
-                    detailsScreenContent = DetailsScreenContent.ALARM_DETAILS
+                    detailsScreenContent = event.type
                 )
             }
 
@@ -296,7 +296,7 @@ class AlarmBrowserViewModel @Inject constructor(
         return res
     }
 
-    private fun updateDetailsScreenContent(): DetailsScreenContent {
+    private fun detailsScreenContentOnGoBack(): DetailsScreenContent {
         val curState = uiState
 
         return when (curState.detailsScreenContent) {
@@ -318,6 +318,11 @@ class AlarmBrowserViewModel @Inject constructor(
                     DetailsScreenContent.NONE
                 }
             }
+
+            DetailsScreenContent.GROUP_DETAILS -> {
+                DetailsScreenContent.GROUP_ALARM_LIST
+            }
+
             DetailsScreenContent.NONE ->
                 DetailsScreenContent.NONE
         }
@@ -345,6 +350,7 @@ enum class DetailsScreenContent {
     NONE,
     CHAT,
     GROUP_ALARM_LIST,
+    GROUP_DETAILS,
     ALARM_DETAILS
 }
 

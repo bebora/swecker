@@ -163,7 +163,7 @@ fun AlarmBrowserScreen(
                         SinglePaneDialog(
                             dialogContent = uiState.dialogContent,
                             onNavigate = onNavigate,
-                            group = uiState.selectedGroup,
+                            group = uiState.selectedGroup?.copy(),
                             onEvent = viewModel::onEvent
                         )
                     } else {
@@ -218,6 +218,7 @@ fun AlarmBrowserScreen(
                         DualPaneDialog(
                             dialogContent = uiState.dialogContent,
                             onNavigate = onNavigate,
+                            group = uiState.selectedGroup?.copy(),
                             onEvent = viewModel::onEvent
                         )
                     }

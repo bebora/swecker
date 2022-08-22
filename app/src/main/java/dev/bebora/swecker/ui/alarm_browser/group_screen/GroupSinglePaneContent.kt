@@ -25,6 +25,11 @@ fun GroupSinglePaneContent(
         DetailsScreenContent.CHAT -> {
             ChatScreenPreview()
         }
+
+        DetailsScreenContent.GROUP_DETAILS -> {
+            GroupDetails(group = uiState.selectedGroup!!)
+        }
+
         DetailsScreenContent.NONE -> {
             GroupList(
                 groups = uiState.groups,

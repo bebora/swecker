@@ -61,7 +61,7 @@ fun AlarmBrowserSinglePaneFab(
                 )
             }
         }
-        DetailsScreenContent.ALARM_DETAILS, DetailsScreenContent.CHAT -> {
+        else -> {
         }
     }
 }
