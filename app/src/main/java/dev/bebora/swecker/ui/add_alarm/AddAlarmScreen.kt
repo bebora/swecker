@@ -71,7 +71,10 @@ fun AddAlarmScreen(
         topBar = {
             AddAlarmAppBar(
                 colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
-                onBackPressed = onGoBack
+                onBackPressed = {
+                    addAlarmViewModel.OnUpdateCanceled()
+                    onGoBack()
+                }
             )
         }
     ) {

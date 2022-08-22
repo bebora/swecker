@@ -3,12 +3,16 @@ package dev.bebora.swecker.ui.alarm_browser.alarm_details
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -36,7 +40,9 @@ fun AlarmDetails(
     val enabledRepetition = alarm.enabledDays.reduceRight { a, b -> a || b }
     val firstEnabledDay = alarm.enabledDays.indexOfFirst { a -> a } + 1
 
-    Box {
+    val focusManager = LocalFocusManager.current
+
+    Box(modifier = Modifier.imePadding()) {
         Column(
             modifier = modifier.padding(4.dp),
             verticalArrangement = Arrangement.spacedBy(4.dp)
@@ -96,7 +102,11 @@ fun AlarmDetails(
                 readOnly = isReadOnly,
                 singleLine = true,
                 modifier = Modifier
-                    .fillMaxWidth(1f)
+                    .fillMaxWidth(1f),
+                keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    imeAction = ImeAction.Done,
+                ),
             )
 
             Spacer(modifier = Modifier.height(4.dp))

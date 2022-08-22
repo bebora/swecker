@@ -39,21 +39,34 @@ class AddAlarmViewModel @Inject constructor(
             _alarm.value = Alarm(
                 id = UUID.randomUUID().toString(),
                 name = "",
-                groupId = group?.id?:"",
                 localDate = LocalDate.now(),
                 localTime = LocalTime.now(),
                 dateTime = OffsetDateTime.now(),
-                alarmType = if (group != null) {
-                    AlarmType.GROUP
-                } else {
-                    AlarmType.PERSONAL
-                }
+                alarmType = AlarmType.PERSONAL
             )
 
             CoroutineScope(Dispatchers.IO).launch {
-                repository.insertAlarm(alarm)
+                repository.insertAlarm(alarm.copy(
+                    groupId = group?.id?:"",
+                    alarmType = if (group != null) {
+                        AlarmType.GROUP
+                    } else {
+                        AlarmType.PERSONAL
+                    }
+                ))
             }
         }
+    }
+
+    fun OnUpdateCanceled(){
+        _alarm.value = Alarm(
+            id = UUID.randomUUID().toString(),
+            name = "",
+            localDate = LocalDate.now(),
+            localTime = LocalTime.now(),
+            dateTime = OffsetDateTime.now(),
+            alarmType = AlarmType.PERSONAL
+        )
     }
 
     fun onAlarmPartiallyUpdate(alarm: Alarm) {
