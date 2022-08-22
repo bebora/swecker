@@ -77,9 +77,9 @@ class AlarmBrowserViewModel @Inject constructor(
             chatService.getMessages("testchat")
                 .collect {
                     uiState = uiState.copy(
-                        messages = it
+                        messages = it.reversed()
                     )
-                    fetchUsersData(messages = it)
+                    fetchUsersData(messages = it.reversed())
                 }
         }
     }

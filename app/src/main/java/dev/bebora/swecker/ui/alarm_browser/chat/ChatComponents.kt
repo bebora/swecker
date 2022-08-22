@@ -58,18 +58,16 @@ fun MessageItem(
                     .size(40.dp)
                     .clip(CircleShape)
             )
-        } else {
-            Spacer(modifier = Modifier.width(40.dp))
         }
 
         Spacer(modifier = Modifier.width(8.dp))
 
         Surface(
-            /*modifier = if (!isOwnMessage) {
-                Modifier.weight(1f) //TODO why expand other people text? temporarily commented out
+            modifier = if (!isOwnMessage) {
+                Modifier.padding(PaddingValues(0.dp, 0.dp, 40.dp, 0.dp))
             } else {
-                Modifier
-            },*/
+                Modifier.padding(PaddingValues(40.dp, 0.dp, 0.dp, 0.dp))
+            },
             shape = if (isLastMessage) {
                 if (isOwnMessage) {
                     RoundedCornerShape(
@@ -122,9 +120,6 @@ fun MessageItem(
             }
         }
 
-        if (!isOwnMessage) {
-            Spacer(modifier = Modifier.width(40.dp))
-        }
     }
 }
 

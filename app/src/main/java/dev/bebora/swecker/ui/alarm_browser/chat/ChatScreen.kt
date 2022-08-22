@@ -6,9 +6,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -28,7 +26,9 @@ fun ChatScreenContent(
     ownerId: String,
     onSendMessage: (String) -> Unit = {}
 ) {
-    val lazyListState = rememberLazyListState()
+    val lazyListState = rememberLazyListState(
+        initialFirstVisibleItemIndex = 0
+    )
     Column(
         modifier = modifier
             .fillMaxSize(1f)
@@ -42,15 +42,18 @@ fun ChatScreenContent(
                 .weight(1f),
             state = lazyListState,
             verticalArrangement = Arrangement.spacedBy(8.dp),
+            reverseLayout = true
         ) {
             itemsIndexed(
                 items = messages,
                 key = { idx, _ -> idx }) { index: Int, message ->
                 val isOwnMessage = message.uId == ownerId
                 val isFirstMessage =
-                    (index - 1 < 0) || message.uId != messages[index - 1].uId
-                val isLastMessage =
                     (index + 1 > messages.lastIndex) || message.uId != messages[index + 1].uId
+
+                val isLastMessage =
+                    (index - 1 < 0) || message.uId != messages[index - 1].uId
+
 
                 //TODO get actual contact name and image
                 MessageItem(
@@ -61,12 +64,6 @@ fun ChatScreenContent(
                     isLastMessage = isLastMessage,
                     propicUrl = usersData[message.uId]?.propicUrl
                 )
-            }
-        }
-
-        LaunchedEffect(messages.size) {
-            if (messages.isNotEmpty()) {
-                lazyListState.animateScrollToItem(messages.size - 1)
             }
         }
 
