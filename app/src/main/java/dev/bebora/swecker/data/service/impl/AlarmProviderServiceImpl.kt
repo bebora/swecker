@@ -15,7 +15,7 @@ class AlarmProviderServiceImpl : AlarmProviderService {
     override fun createGroup(
         ownerId: String,
         userIds: List<String>,
-        onSuccess: (String) -> Unit, // Id of created group
+        onSuccess: (ThinGroup) -> Unit, // Id of created group
         onFailure: (Throwable) -> Unit
     ) {
         if (userIds.isEmpty()) {
@@ -24,18 +24,29 @@ class AlarmProviderServiceImpl : AlarmProviderService {
             val newDocRef = Firebase.firestore
                 .collection(FirebaseConstants.GROUPS_COLLECTION)
                 .document()
+            val newGroup = ThinGroup(
+                id = newDocRef.id,
+                members = userIds,
+                name = "Group name",
+                owner = ownerId,
+                picture = ""
+            )
             newDocRef.set(
-                ThinGroup(
-                    id = newDocRef.id,
-                    members = userIds,
-                    name = "Group name",
-                    owner = ownerId,
-                    picture = ""
-                )
+                newGroup
             ).addOnFailureListener(onFailure)
                 .addOnSuccessListener {
-                    onSuccess(newDocRef.id)
+                    onSuccess(newGroup)
                 }
         }
+    }
+
+    override fun updateGroup(newGroupData: ThinGroup, onComplete: (Throwable?) -> Unit) {
+        Firebase.firestore
+            .collection(FirebaseConstants.GROUPS_COLLECTION)
+            .document(newGroupData.id)
+            .set(newGroupData)
+            .addOnCompleteListener {
+                onComplete(it.exception)
+            }
     }
 }

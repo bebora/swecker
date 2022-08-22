@@ -1,6 +1,7 @@
 package dev.bebora.swecker.ui.add_group
 
 import android.annotation.SuppressLint
+import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -29,12 +30,12 @@ fun AddGroupSelectNameScreen(
     groupPicUrl: String,
     groupName: String,
     setGroupName: (String) -> Unit = {},
-    setGroupPicUrl: (String) -> Unit = {},
+    setGroupPicUrl: (Uri) -> Unit = {},
 ) {
     val photoPicker = rememberLauncherForActivityResult(PhotoPicker()) { uris ->
         if (uris.isNotEmpty()) {
             val imageUri = uris[0]
-            setGroupPicUrl(imageUri.toString())
+            setGroupPicUrl(imageUri)
         }
     }
 

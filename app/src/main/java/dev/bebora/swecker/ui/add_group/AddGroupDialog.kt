@@ -51,7 +51,7 @@ fun AddGroupDialog(
                     AddGroupSelectNameScreen(
                         selectedMembers = uiState.selectedMembers,
                         groupName = uiState.groupName,
-                        groupPicUrl = uiState.groupPicUrl,
+                        groupPicUrl = uiState.tempGroupData.picture,
                         setGroupName = viewModel::setGroupName,
                         setGroupPicUrl = viewModel::setGroupPic,
                     )

@@ -1,5 +1,6 @@
 package dev.bebora.swecker.ui.add_group
 
+import android.net.Uri
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -7,6 +8,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dev.bebora.swecker.data.ThinGroup
 import dev.bebora.swecker.data.User
 import dev.bebora.swecker.data.service.AccountsService
 import dev.bebora.swecker.data.service.AlarmProviderService
@@ -30,7 +32,7 @@ class AddGroupViewModel @Inject constructor(
 
     private var friends =
         accountsService.getFriends(authService.getUserId())
-    
+
     init {
         viewModelScope.launch {
             friends.collect {
@@ -84,7 +86,7 @@ class AddGroupViewModel @Inject constructor(
                 userIds = listOf(uiState.me.id) + uiState.selectedMembers.map { it.id },
                 onSuccess = {
                     uiState = uiState.copy(
-                        groupId = it,
+                        tempGroupData = it,
                         waitingForServiceResponse = false,
                         content = AddGroupContent.GROUP_SELECT_NAME
                     )
@@ -116,9 +118,39 @@ class AddGroupViewModel @Inject constructor(
         )
     }
 
-    fun setGroupPic(groupPicUrl: String) {
+    fun setGroupPic(groupPicUrl: Uri) {
         uiState = uiState.copy(
-            groupPicUrl = groupPicUrl
+            waitingForServiceResponse = true
+        )
+        imageStorageService.setGroupPicture(
+            groupId = uiState.tempGroupData.id,
+            imageUri = groupPicUrl,
+            onSuccess = { pictureUrl ->
+                val newGroupData = uiState.tempGroupData.copy(
+                    picture = pictureUrl
+                )
+                updateGroup(
+                    newGroupData = newGroupData,
+                    onComplete = {
+                        uiState = uiState.copy(
+                            waitingForServiceResponse = false
+                        )
+                        if (it != null) {
+                            Log.d("SWECKER-UPD-GRP", "Error updating group with new picture")
+                        } else {
+                            uiState = uiState.copy(
+                                tempGroupData = newGroupData
+                            )
+                        }
+                    }
+                )
+            },
+            onFailure = {
+                Log.d("SWECKER-SET-PROPIC", it)
+                uiState = uiState.copy(
+                    waitingForServiceResponse = false
+                )
+            }
         )
     }
 
@@ -126,18 +158,24 @@ class AddGroupViewModel @Inject constructor(
         //TODO add actual group creation
         uiState = AddGroupUIState()
     }
+
+    private fun updateGroup(newGroupData: ThinGroup, onComplete: (Throwable?) -> Unit) {
+        alarmProviderService.updateGroup(
+            newGroupData = newGroupData,
+            onComplete = onComplete
+        )
+    }
 }
 
 data class AddGroupUIState(
     val allContacts: List<User> = emptyList(),
     val selectedMembers: List<User> = emptyList(),
-    val groupPicUrl: String = "",
     val groupName: String = "",
-    val groupId: String = "",
     val content: AddGroupContent = AddGroupContent.GROUP_SELECT_CONTACTS,
     val me: User = User(),
     val waitingForServiceResponse: Boolean = false,
-    val accountStatusLoaded: Boolean = false
+    val accountStatusLoaded: Boolean = false,
+    val tempGroupData: ThinGroup = ThinGroup()
 )
 
 enum class AddGroupContent {
