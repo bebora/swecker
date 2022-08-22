@@ -154,9 +154,26 @@ class AddGroupViewModel @Inject constructor(
         )
     }
 
-    fun createGroup() {
-        //TODO add actual group creation
-        uiState = AddGroupUIState()
+    fun confirmGroupCreation(onSuccess: () -> Unit) {
+        uiState = uiState.copy(
+            waitingForServiceResponse = true
+        )
+        updateGroup(
+            newGroupData = uiState.tempGroupData.copy(
+                name = uiState.groupName
+            ),
+            onComplete = {
+                uiState = uiState.copy(
+                    waitingForServiceResponse = false
+                )
+                if (it != null) {
+                    Log.d("SWECKER-UPD-GRP-N", "Error updating group with new name")
+                } else {
+                    uiState = AddGroupUIState()
+                    onSuccess()
+                }
+            }
+        )
     }
 
     private fun updateGroup(newGroupData: ThinGroup, onComplete: (Throwable?) -> Unit) {

@@ -85,8 +85,11 @@ fun AddGroupDialog(
 
                         AssistChip(
                             onClick = {
-                                viewModel.createGroup()
-                                onGoBack()
+                                viewModel.confirmGroupCreation(
+                                    onSuccess = {
+                                        onGoBack()
+                                    }
+                                )
                             },
                             label = { Text("Ok") },
                             enabled = uiState.groupName.isNotEmpty()

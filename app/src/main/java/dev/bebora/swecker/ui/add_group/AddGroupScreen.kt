@@ -215,7 +215,14 @@ fun AddGroupScreen(
                 }
                 AddGroupContent.GROUP_SELECT_NAME -> {
                     if (uiState.groupName.isNotEmpty()) {
-                        FloatingActionButton(onClick = { viewModel.createGroup() }) {
+                        FloatingActionButton(
+                            onClick = {
+                                viewModel.confirmGroupCreation(
+                                    onSuccess = {
+                                        onGoBack()
+                                    }
+                                )
+                            }) {
                             Icon(
                                 imageVector = Icons.Outlined.Check,
                                 contentDescription = "Finish group creation"
