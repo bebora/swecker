@@ -12,8 +12,10 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.google.firebase.firestore.PropertyName
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.OffsetDateTime
+import java.time.format.DateTimeFormatter
 
 /**
  * Represents an Alarm
@@ -56,8 +58,17 @@ fun AlarmType.toStoredString() : String {
     }
 }
 
+fun String.toAlarmType() : AlarmType {
+    return when (this) {
+        "group" -> AlarmType.GROUP
+        "channel" -> AlarmType.CHANNEL
+        else -> AlarmType.PERSONAL
+    }
+}
+
 data class StoredAlarm(
     val id: String = "",
+    val enabled: Boolean = true,
     @get:PropertyName("userId")
     val userId: String? = null,
     @get:PropertyName("groupId")
@@ -69,18 +80,36 @@ data class StoredAlarm(
     val enabledDays: String = "0000000",
     @get:PropertyName("alarmType")
     val alarmType: String = "personal",
-    val timestamp: String? = null
+    val timestamp: String? = null, //Choose precision of timestamp
+    @get:PropertyName("dateTime")
+    val dateTime: String = "2022-08-25T16:05:00+01:00"
 )
 
 fun Alarm.toStoredAlarm() : StoredAlarm {
     return StoredAlarm(
         id = id,
+        enabled = enabled,
         groupId = groupId,
         name = name,
         enableChat = enableChat,
         enabledDays = enabledDaysToString(enabledDays),
         alarmType = alarmType.toStoredString(),
-        timestamp = timeStamp
+        timestamp = timeStamp,
+        dateTime = dateTime?.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME) ?: "2022-08-25T16:05:00+01:00"
+    )
+}
+
+fun StoredAlarm.toAlarm() : Alarm {
+    return Alarm(
+        id = id,
+        enabled = enabled,
+        groupId = groupId,
+        name = name,
+        enableChat = enableChat,
+        enabledDays = enabledDaysToList(enabledDays),
+        alarmType = alarmType.toAlarmType(),
+        timeStamp = timestamp,
+        dateTime = OffsetDateTime.parse(dateTime)
     )
 }
 
@@ -88,6 +117,6 @@ fun enabledDaysToString(daysAsList: List<Boolean>) : String {
     return daysAsList.joinToString(separator = "") { if (it) "1" else "0" }
 }
 
-fun enabledDaysToInt(daysAsString: String) : List<Boolean> {
+fun enabledDaysToList(daysAsString: String) : List<Boolean> {
     return daysAsString.map { it == '1' }
 }

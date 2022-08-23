@@ -30,6 +30,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
+import java.time.Clock
 import java.time.OffsetDateTime
 import javax.inject.Inject
 
@@ -53,6 +54,8 @@ class AlarmBrowserViewModel @Inject constructor(
     private var mutableUsersData: MutableMap<String, User> = mutableMapOf()
 
     private var groupsCollectorJob: Job? = null
+
+    private var alarmsCollectorJob: Job? = null
 
     init {
         observeAlarms()
@@ -80,6 +83,16 @@ class AlarmBrowserViewModel @Inject constructor(
                     ).collect { groupsList ->
                         uiState = uiState.copy(
                             groups = groupsList.map { it.toGroup() }
+                        )
+                    }
+                }
+                alarmsCollectorJob?.cancel() // Remove the current collector
+                alarmsCollectorJob = viewModelScope.launch {
+                    alarmProviderService.getUserAlarms(
+                        authService.getUserId()
+                    ).collect { alarmList ->
+                        uiState = uiState.copy(
+                            onlineAlarms = alarmList
                         )
                     }
                 }
@@ -324,6 +337,23 @@ class AlarmBrowserViewModel @Inject constructor(
                     )
                 }
             }
+
+            is AlarmBrowserEvent.CreateGroupAlarmTEMP -> {
+                alarmProviderService.createAlarm(
+                    alarm = StoredAlarm(
+                        id = "fakeid",
+                        groupId = "testgroup",
+                        name = "Firebase alarm",
+                        alarmType = AlarmType.GROUP.toStoredString(),
+                        timestamp = Clock.systemUTC().instant().epochSecond.toString()
+                    ),
+                    onComplete = {
+                        if (it != null) {
+                            onError(it)
+                        }
+                    }
+                )
+            }
         }
     }
 
@@ -389,6 +419,7 @@ class AlarmBrowserViewModel @Inject constructor(
 
 data class AlarmBrowserUIState(
     val alarms: List<Alarm> = emptyList(),
+    val onlineAlarms: List<StoredAlarm> = emptyList(),
     val filteredAlarms: List<Alarm>? = null,
     val groups: List<Group> = LocalAlarmDataProvider.allGroups,
     val selectedAlarm: Alarm? = null,

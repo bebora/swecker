@@ -29,4 +29,6 @@ sealed class AlarmBrowserEvent {
     object OnTransitionCompleted : AlarmBrowserEvent()
 
     data class SendMessageTEMP(val text: String) : AlarmBrowserEvent()
+
+    object CreateGroupAlarmTEMP : AlarmBrowserEvent()
 }
