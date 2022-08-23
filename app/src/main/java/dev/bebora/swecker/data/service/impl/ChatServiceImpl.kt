@@ -5,7 +5,6 @@ import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import dev.bebora.swecker.data.Message
-import dev.bebora.swecker.data.User
 import dev.bebora.swecker.data.service.ChatService
 import dev.bebora.swecker.data.service.InvalidChatException
 import dev.bebora.swecker.data.service.InvalidSenderException
@@ -20,7 +19,7 @@ class ChatServiceImpl : ChatService {
         } else {
             return callbackFlow {
                 val listener = Firebase.firestore
-                    .collection(FirebaseConstants.CHATS)
+                    .collection(FirebaseConstants.CHATS_COLLECTION)
                     .document(chatId)
                     .addSnapshotListener { snapshot, e ->
                         if (e != null) {
@@ -67,7 +66,7 @@ class ChatServiceImpl : ChatService {
                 ))}'")
 
             Firebase.firestore
-                .collection(FirebaseConstants.CHATS)
+                .collection(FirebaseConstants.CHATS_COLLECTION)
                 .document(chatId)
                 .update("messages", FieldValue.arrayUnion(
                     Message(

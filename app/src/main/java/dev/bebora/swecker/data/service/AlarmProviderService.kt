@@ -29,6 +29,12 @@ interface AlarmProviderService {
     )
 
     fun getUserAlarms(userId: String): Flow<List<StoredAlarm>>
+
+    fun updateAlarm(
+        alarm: StoredAlarm,
+        onComplete: (Throwable?) -> Unit
+    )
+    // TODO add a way to set chat enabled/disabled
 }
 
 class EmptyGroupException : Exception()

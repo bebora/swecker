@@ -36,4 +36,8 @@ class AlarmProviderServiceTestImpl : AlarmProviderService {
     override fun getUserAlarms(userId: String): Flow<List<StoredAlarm>> {
         return MutableStateFlow(emptyList<StoredAlarm>()).asStateFlow()
     }
+
+    override fun updateAlarm(alarm: StoredAlarm, onComplete: (Throwable?) -> Unit) {
+        TODO("Not yet implemented")
+    }
 }

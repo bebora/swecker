@@ -101,6 +101,7 @@ class AlarmBrowserViewModel @Inject constructor(
         viewModelScope.launch {
             chatService.getMessages("testchat")
                 .collect {
+                    Log.d("SWECKER-CHAT-DEBUG", "Got from firebase: $it")
                     uiState = uiState.copy(
                         messages = it.reversed()
                     )

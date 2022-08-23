@@ -67,8 +67,8 @@ fun String.toAlarmType() : AlarmType {
 }
 
 data class StoredAlarm(
-    val id: String = "",
-    val enabled: Boolean = true,
+    val id: String = "", // Original id. In groups, multiple documents will have the same id field (but a unique document id)
+    val enabled: Boolean = true, // Note that if false, user will not receive future updates from groups
     @get:PropertyName("userId")
     val userId: String? = null,
     @get:PropertyName("groupId")
@@ -82,7 +82,9 @@ data class StoredAlarm(
     val alarmType: String = "personal",
     val timestamp: String? = null, //Choose precision of timestamp
     @get:PropertyName("dateTime")
-    val dateTime: String = "2022-08-25T16:05:00+01:00"
+    val dateTime: String = "2022-08-25T16:05:00+01:00",
+    @get:PropertyName("receiveUpdates")
+    val receiveUpdates: Boolean = true // If true get updates from original alarm (unless the alarm has been disabled)
 )
 
 fun Alarm.toStoredAlarm() : StoredAlarm {

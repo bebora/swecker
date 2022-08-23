@@ -90,22 +90,22 @@ class AlarmProviderServiceImpl : AlarmProviderService {
             }
     }
 
-    override fun createAlarm(alarm: StoredAlarm, onComplete: (Throwable?) -> Unit) { //TODO handle alarm id when not provided
+    override fun createAlarm(alarm: StoredAlarm, onComplete: (Throwable?) -> Unit) {
         if (alarm.groupId == null) { // Create an alarm just for me
             Firebase.firestore
-                .collection(FirebaseConstants.ALARMS)
+                .collection(FirebaseConstants.ALARMS_COLLECTION)
                 .add(alarm)
                 .addOnCompleteListener { onComplete(it.exception) }
         } else { // Create alarm in group and for everyone in the group
             val store = Firebase.firestore
-            val alarmsRef = store.collection(FirebaseConstants.ALARMS)
+            val alarmsRef = store.collection(FirebaseConstants.ALARMS_COLLECTION)
             val groupsRef = store.collection(FirebaseConstants.GROUPS_COLLECTION)
             val groupRef = groupsRef.document(alarm.groupId)
             store.runTransaction { transaction ->
                 val groupInDb = transaction.get(groupRef)
                 val members = groupInDb.toObject(ThinGroup::class.java)?.members ?: emptyList()
                 transaction.set(
-                    alarmsRef.document(),
+                    alarmsRef.document(alarm.id), // In the original alarm the id field and the document id are the same
                     alarm
                 )
                 members.forEach { memberId ->
@@ -129,7 +129,7 @@ class AlarmProviderServiceImpl : AlarmProviderService {
         } else {
             return callbackFlow {
                 val listener = Firebase.firestore
-                    .collection(FirebaseConstants.ALARMS)
+                    .collection(FirebaseConstants.ALARMS_COLLECTION)
                     .whereEqualTo("userId", userId)
                     .addSnapshotListener { snapshot, error ->
                         if (error != null) {
@@ -150,6 +150,58 @@ class AlarmProviderServiceImpl : AlarmProviderService {
                     listener.remove()
                 }
             }
+        }
+    }
+
+    override fun updateAlarm(alarm: StoredAlarm, onComplete: (Throwable?) -> Unit) {
+        if (alarm.userId != null) { // Update just my version
+            Firebase.firestore
+                .collection(FirebaseConstants.ALARMS_COLLECTION)
+                .whereEqualTo("userId", alarm.userId)
+                .whereEqualTo("id", alarm.id)
+                .get() //Get the actual document, my id is not real
+                .addOnFailureListener(onComplete)
+                .addOnSuccessListener { querySnapshot ->
+                    val documentId = querySnapshot.documents[0].id
+                    Firebase.firestore
+                        .collection(FirebaseConstants.ALARMS_COLLECTION)
+                        .document(documentId)
+                        .set(alarm)
+                        .addOnCompleteListener {
+                            onComplete(it.exception)
+                        }
+                }
+        } else { // I need to update all the subscribers that are receiving updates on this alarm with the same "id" field
+            val store = Firebase.firestore
+            val alarmsRef = Firebase.firestore
+                .collection(FirebaseConstants.ALARMS_COLLECTION)
+            alarmsRef
+                .whereEqualTo("id", alarm.id)
+                .whereEqualTo("receiveUpdates", true)
+                .whereEqualTo("enabled", true)
+                .get()
+                .addOnFailureListener(onComplete)
+                .addOnSuccessListener { querySnapshot ->
+                    val docIdAndUserId: List<Pair<String, String>> = querySnapshot.documents.map {
+                        Pair(
+                            it.id,
+                            (it.data?.get("userId") ?: "error!") as String
+                        )
+                    }
+                    store.runTransaction { transaction ->
+                        docIdAndUserId.forEach { docIdUserId ->
+                            transaction.set(
+                                alarmsRef.document(docIdUserId.first),
+                                alarm.copy(
+                                    userId = docIdUserId.second
+                                )
+                            )
+                        }
+                        null
+                    }.addOnCompleteListener {
+                        onComplete(it.exception)
+                    }
+                }
         }
     }
 }
