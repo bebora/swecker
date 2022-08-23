@@ -23,6 +23,23 @@ interface AlarmProviderService {
         onComplete: (Throwable?) -> Unit
     )
 
+    fun createChannel(
+        ownerId: String,
+        userIds: List<String>,
+        onSuccess: (ThinGroup) -> Unit,
+        onFailure: (Throwable) -> Unit
+    )
+
+    fun updateChannel(
+        newChannelData: ThinGroup,
+        onComplete: (Throwable?) -> Unit
+    )
+
+    fun deleteChannel(
+        channelId: String,
+        onComplete: (Throwable?) -> Unit
+    )
+
     fun createAlarm(
         alarm: StoredAlarm,
         onComplete: (Throwable?) -> Unit

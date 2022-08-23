@@ -29,6 +29,23 @@ class AlarmProviderServiceTestImpl : AlarmProviderService {
         onComplete(null)
     }
 
+    override fun createChannel(
+        ownerId: String,
+        userIds: List<String>,
+        onSuccess: (ThinGroup) -> Unit,
+        onFailure: (Throwable) -> Unit
+    ) {
+        TODO("Not yet implemented")
+    }
+
+    override fun updateChannel(newChannelData: ThinGroup, onComplete: (Throwable?) -> Unit) {
+        TODO("Not yet implemented")
+    }
+
+    override fun deleteChannel(channelId: String, onComplete: (Throwable?) -> Unit) {
+        TODO("Not yet implemented")
+    }
+
     override fun createAlarm(alarm: StoredAlarm, onComplete: (Throwable?) -> Unit) {
         TODO("Not yet implemented")
     }

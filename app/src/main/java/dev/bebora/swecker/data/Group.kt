@@ -13,7 +13,7 @@ data class Group(
     val owner: String,
 )
 
-data class ThinGroup(
+data class ThinGroup( //Used for channels as well
     val id: String = "",
     val members: List<String> = emptyList(),
     val name: String = "",

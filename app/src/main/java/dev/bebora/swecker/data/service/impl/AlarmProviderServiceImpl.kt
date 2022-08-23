@@ -44,8 +44,8 @@ class AlarmProviderServiceImpl : AlarmProviderService {
 
     override fun createGroup(
         ownerId: String,
-        userIds: List<String>,
-        onSuccess: (ThinGroup) -> Unit, // Id of created group
+        userIds: List<String>, // The list should already include the owner
+        onSuccess: (ThinGroup) -> Unit, // Contains id of created group
         onFailure: (Throwable) -> Unit
     ) {
         if (userIds.isEmpty()) {
@@ -80,10 +80,60 @@ class AlarmProviderServiceImpl : AlarmProviderService {
             }
     }
 
+    //TODO should the alarms be removed after group deletion? And the chats?
     override fun deleteGroup(groupId: String, onComplete: (Throwable?) -> Unit) {
         Firebase.firestore
             .collection(FirebaseConstants.GROUPS_COLLECTION)
             .document(groupId)
+            .delete()
+            .addOnCompleteListener {
+                onComplete(it.exception)
+            }
+    }
+
+    override fun createChannel(
+        ownerId: String,
+        userIds: List<String>, // The list should already include the owner
+        onSuccess: (ThinGroup) -> Unit, // Contains id of created channel
+        onFailure: (Throwable) -> Unit
+    ) {
+        if (userIds.isEmpty()) {
+            onFailure(EmptyGroupException())
+        } else {
+            val newDocRef = Firebase.firestore
+                .collection(FirebaseConstants.CHANNELS_COLLECTION)
+                .document()
+            val newGroup = ThinGroup(
+                id = newDocRef.id,
+                members = userIds,
+                name = "Channel name",
+                owner = ownerId,
+                picture = ""
+            )
+            newDocRef.set(
+                newGroup
+            ).addOnFailureListener(onFailure)
+                .addOnSuccessListener {
+                    onSuccess(newGroup)
+                }
+        }
+    }
+
+    override fun updateChannel(newChannelData: ThinGroup, onComplete: (Throwable?) -> Unit) {
+        Firebase.firestore
+            .collection(FirebaseConstants.CHANNELS_COLLECTION)
+            .document(newChannelData.id)
+            .set(newChannelData)
+            .addOnCompleteListener {
+                onComplete(it.exception)
+            }
+    }
+
+    //TODO should the alarms be removed after group deletion? And the chats?
+    override fun deleteChannel(channelId: String, onComplete: (Throwable?) -> Unit) {
+        Firebase.firestore
+            .collection(FirebaseConstants.CHANNELS_COLLECTION)
+            .document(channelId)
             .delete()
             .addOnCompleteListener {
                 onComplete(it.exception)

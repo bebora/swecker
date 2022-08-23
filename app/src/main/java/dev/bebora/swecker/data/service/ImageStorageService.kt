@@ -25,4 +25,16 @@ interface ImageStorageService {
         groupId: String,
         onComplete: (Throwable?) -> Unit
     )
+
+    fun setChannelPicture(
+        channelId: String,
+        imageUri: Uri,
+        onSuccess: (String) -> Unit,
+        onFailure: (String) -> Unit
+    )
+
+    fun deleteChannelPicture(
+        channelId: String,
+        onComplete: (Throwable?) -> Unit
+    )
 }
