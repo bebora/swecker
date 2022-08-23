@@ -87,7 +87,7 @@ fun AccountDummyScreen(
                 },
                 scrollBehavior = scrollBehavior,
                 actions = {
-                    if (ui.accontLoading || ui.me.id.isBlank()) {
+                    if (ui.accountLoading) {
                         CircularProgressIndicator()
                     }
                     if (ui.userId.isNotBlank()) {
@@ -110,7 +110,7 @@ fun AccountDummyScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top
         ) {
-            if (!ui.hasUser) {
+            if (ui.me.id.isBlank()) {
                 SuggestLogin(onNavigate = onNavigate)
             } else {
                 val sections = listOf(
@@ -401,7 +401,6 @@ fun AccountLoggedDummyScreenPreview() {
     SweckerTheme {
         AccountDummyScreen(
             ui = SettingsUiState(
-                hasUser = true,
                 userId = "fakeuser",
                 me = User(
                     id = "hello",

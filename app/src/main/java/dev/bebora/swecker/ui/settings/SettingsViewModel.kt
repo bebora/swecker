@@ -9,7 +9,6 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.bebora.swecker.R
-import dev.bebora.swecker.data.User
 import dev.bebora.swecker.data.service.*
 import dev.bebora.swecker.data.settings.SettingsRepositoryInterface
 import dev.bebora.swecker.ui.utils.UiText
@@ -50,7 +49,6 @@ class SettingsViewModel @Inject constructor(
             }
             userInfoChanges.collect {
                 uiState = uiState.copy(
-                    hasUser = authService.hasUser(),
                     userId = authService.getUserId(),
                 )
                 accountsService.getUser(
@@ -254,7 +252,6 @@ class SettingsViewModel @Inject constructor(
                     openAccountSettings = true,
                     openSoundsSettings = false,
                     openThemeSettings = false,
-                    hasUser = authService.hasUser(),
                     userId = authService.getUserId(),
                 )
             }
@@ -282,11 +279,11 @@ class SettingsViewModel @Inject constructor(
                 uiState = uiState.copy(
                     showEditNamePopup = false,
                     showEditUsernamePopup = false,
-                    accontLoading = true
+                    accountLoading = true
                 )
                 accountsService.saveUser(event.user, oldUser = uiState.me) { error ->
                     uiState = uiState.copy(
-                        accontLoading = false
+                        accountLoading = false
                     )
                     if (error == null) {
                         uiState = uiState.copy(
@@ -315,7 +312,7 @@ class SettingsViewModel @Inject constructor(
             }
             is SettingsEvent.SetProfilePicture -> {
                 uiState = uiState.copy(
-                    accontLoading = true
+                    accountLoading = true
                 )
                 imageStorageService.setProfilePicture(
                     uiState.userId,
@@ -332,7 +329,7 @@ class SettingsViewModel @Inject constructor(
                     onFailure = {
                         Log.d("SWECKER-SET-PROPIC", it)
                         uiState = uiState.copy(
-                            accontLoading = false
+                            accountLoading = false
                         )
                     }
                 )
