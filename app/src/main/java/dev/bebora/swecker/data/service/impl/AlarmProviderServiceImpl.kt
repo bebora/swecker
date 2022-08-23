@@ -8,15 +8,13 @@ import dev.bebora.swecker.data.ThinGroup
 import dev.bebora.swecker.data.service.AlarmProviderService
 import dev.bebora.swecker.data.service.EmptyGroupException
 import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.coroutines.flow.*
 
 class AlarmProviderServiceImpl : AlarmProviderService {
     override fun getUserGroups(userId: String): Flow<List<ThinGroup>> {
         if (userId.isBlank()) {
             Log.d("SWECKER-EMPTY-USER", "Empty user id")
-            return emptyFlow()
+            return MutableStateFlow(emptyList<ThinGroup>()).asStateFlow()
         } else {
             return callbackFlow {
                 val listener = Firebase.firestore
@@ -127,7 +125,7 @@ class AlarmProviderServiceImpl : AlarmProviderService {
     override fun getUserAlarms(userId: String): Flow<List<StoredAlarm>> {
         if (userId.isBlank()) {
             Log.d("SWECKER-EMPTY-USER", "Empty user id")
-            return emptyFlow()
+            return MutableStateFlow(emptyList<StoredAlarm>()).asStateFlow()
         } else {
             return callbackFlow {
                 val listener = Firebase.firestore

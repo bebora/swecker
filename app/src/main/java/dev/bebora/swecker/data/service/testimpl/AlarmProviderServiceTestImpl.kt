@@ -4,11 +4,12 @@ import dev.bebora.swecker.data.StoredAlarm
 import dev.bebora.swecker.data.ThinGroup
 import dev.bebora.swecker.data.service.AlarmProviderService
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
 class AlarmProviderServiceTestImpl : AlarmProviderService {
     override fun getUserGroups(userId: String): Flow<List<ThinGroup>> {
-        return emptyFlow()
+        return MutableStateFlow(emptyList<ThinGroup>()).asStateFlow()
     }
 
     override fun createGroup(
@@ -33,6 +34,6 @@ class AlarmProviderServiceTestImpl : AlarmProviderService {
     }
 
     override fun getUserAlarms(userId: String): Flow<List<StoredAlarm>> {
-        return emptyFlow()
+        return MutableStateFlow(emptyList<StoredAlarm>()).asStateFlow()
     }
 }

@@ -10,9 +10,7 @@ import dev.bebora.swecker.data.service.*
 import dev.bebora.swecker.data.service.impl.FirebaseConstants.FRIENDSHIP_REQUESTS_COLLECTION
 import dev.bebora.swecker.data.service.impl.FirebaseConstants.USERS_COLLECTION
 import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.coroutines.flow.*
 
 class AccountsServiceImpl : AccountsService {
     override fun getUser(
@@ -164,7 +162,8 @@ class AccountsServiceImpl : AccountsService {
 
     override fun getFriends(userId: String): Flow<List<User>> {
         if (userId.isBlank()) {
-            return emptyFlow()
+            Log.d("SWECKER-NOID", "Can't get friends without id")
+            return MutableStateFlow(emptyList<User>()).asStateFlow()
         }
         return callbackFlow {
             val listener = Firebase.firestore
@@ -255,7 +254,8 @@ class AccountsServiceImpl : AccountsService {
 
     override fun getFriendshipRequests(userId: String): Flow<List<User>> {
         if (userId.isBlank()) {
-            return emptyFlow()
+            Log.d("SWECKER-NOID", "Can't get friend requests without id")
+            return MutableStateFlow(emptyList<User>()).asStateFlow()
         }
         return callbackFlow {
             val listener = Firebase.firestore
