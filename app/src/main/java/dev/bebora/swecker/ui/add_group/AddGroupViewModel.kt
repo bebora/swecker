@@ -15,6 +15,7 @@ import dev.bebora.swecker.data.service.AlarmProviderService
 import dev.bebora.swecker.data.service.AuthService
 import dev.bebora.swecker.data.service.ImageStorageService
 import dev.bebora.swecker.ui.utils.onError
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -27,20 +28,12 @@ class AddGroupViewModel @Inject constructor(
 ) : ViewModel() {
     private val userInfoChanges = authService.getUserInfoChanges()
 
+    private var friendsCollectorJob: Job? = null
+
     var uiState by mutableStateOf(AddGroupUIState())
         private set
 
-    private var friends =
-        accountsService.getFriends(authService.getUserId())
-
     init {
-        viewModelScope.launch {
-            friends.collect {
-                uiState = uiState.copy(
-                    allContacts = it
-                )
-            }
-        }
         viewModelScope.launch {
             userInfoChanges.collect {
                 Log.d("SWECKER-CHANGE-AUTH", "Rilevato cambio utente")
@@ -59,6 +52,16 @@ class AddGroupViewModel @Inject constructor(
                         onError(it)
                     }
                 )
+                friendsCollectorJob?.cancel()
+                friendsCollectorJob = viewModelScope.launch {
+                    accountsService.getFriends(
+                        authService.getUserId()
+                    ).collect {
+                        uiState = uiState.copy(
+                            allContacts = it
+                        )
+                    }
+                }
             }
         }
     }

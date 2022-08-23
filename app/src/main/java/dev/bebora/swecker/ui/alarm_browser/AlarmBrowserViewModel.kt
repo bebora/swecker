@@ -58,13 +58,8 @@ class AlarmBrowserViewModel @Inject constructor(
     private var alarmsCollectorJob: Job? = null
 
     init {
-        observeAlarms()
+        observeAlarms() // TODO Observe alarms may need to be updated after login/logout!
         viewModelScope.launch {
-            accountsService.getUser(authService.getUserId(), ::onError) {
-                uiState = uiState.copy(
-                    me = it,
-                )
-            }
             userInfoChanges.collect {
                 accountsService.getUser(
                     userId = authService.getUserId(),
@@ -98,7 +93,7 @@ class AlarmBrowserViewModel @Inject constructor(
                 }
             }
         }
-        viewModelScope.launch {
+        viewModelScope.launch { // TODO remove this or use a collector job to retrieve messages
             chatService.getMessages("testchat")
                 .collect {
                     Log.d("SWECKER-CHAT-DEBUG", "Got from firebase: $it")

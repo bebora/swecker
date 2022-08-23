@@ -12,6 +12,7 @@ import dev.bebora.swecker.data.service.*
 import dev.bebora.swecker.ui.utils.UiText
 import dev.bebora.swecker.ui.utils.onError
 import dev.bebora.swecker.util.UiEvent
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
@@ -29,29 +30,11 @@ class ContactsBrowserViewModel @Inject constructor(
     private val _contactsUiEvent = Channel<UiEvent>()
     val contactsUiEvent = _contactsUiEvent.receiveAsFlow()
 
-    private var friends =
-        accountsService.getFriends(authService.getUserId())
+    private var friendsCollectorJob: Job? = null
 
-    private var friendshipRequests =
-        accountsService.getFriendshipRequests(authService.getUserId())
-
-
+    private var friendshipsCollectorJob: Job? = null
 
     init {
-        viewModelScope.launch {
-            friends.collect {
-                uiState = uiState.copy(
-                    friends = it
-                )
-            }
-        }
-        viewModelScope.launch {
-            friendshipRequests.collect {
-                uiState = uiState.copy(
-                    friendshipRequests = it
-                )
-            }
-        }
         viewModelScope.launch {
             userInfoChanges.collect {
                 Log.d("SWECKER-CHANGE-AUTH", "Rilevato cambio utente")
@@ -70,6 +53,26 @@ class ContactsBrowserViewModel @Inject constructor(
                         onError(it)
                     }
                 )
+                friendsCollectorJob?.cancel()
+                friendsCollectorJob = viewModelScope.launch {
+                    accountsService.getFriends(
+                        authService.getUserId()
+                    ).collect {
+                        uiState = uiState.copy(
+                            friends = it
+                        )
+                    }
+                }
+                friendshipsCollectorJob?.cancel()
+                friendshipsCollectorJob = viewModelScope.launch {
+                    accountsService.getFriendshipRequests(
+                        authService.getUserId()
+                    ).collect {
+                        uiState = uiState.copy(
+                            friendshipRequests = it
+                        )
+                    }
+                }
             }
         }
     }

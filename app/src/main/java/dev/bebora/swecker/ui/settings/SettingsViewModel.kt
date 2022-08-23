@@ -41,12 +41,6 @@ class SettingsViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            accountsService.getUser(authService.getUserId(), ::onError) {
-                uiState = uiState.copy(
-                    me = it,
-                )
-                Log.d("SWECKER-GET", "Preso user da storage, ed è $it")
-            }
             userInfoChanges.collect {
                 uiState = uiState.copy(
                     userId = authService.getUserId(),

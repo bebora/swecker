@@ -33,8 +33,7 @@ class AddContactViewModel @Inject constructor(
     var uiState by mutableStateOf(AddContactUiState())
         private set
 
-    private var friends =
-        accountsService.getFriends(authService.getUserId())
+    private var friendsIdsCollectorJob: Job? = null
 
     private val _addContactUiEvent = Channel<UiEvent>()
     val addContactUiEvent = _addContactUiEvent.receiveAsFlow()
@@ -58,13 +57,16 @@ class AddContactViewModel @Inject constructor(
                         onError(it)
                     }
                 )
-            }
-        }
-        viewModelScope.launch {
-            friends.collect { updatedFriends ->
-                uiState = uiState.copy(
-                    friendsIds = updatedFriends.map { it.id }.toSet()
-                )
+                friendsIdsCollectorJob?.cancel()
+                friendsIdsCollectorJob = viewModelScope.launch {
+                    accountsService.getFriends(
+                        authService.getUserId()
+                    ).collect {updatedFriends ->
+                        uiState = uiState.copy(
+                            friendsIds = updatedFriends.map { it.id }.toSet()
+                        )
+                    }
+                }
             }
         }
     }
