@@ -22,8 +22,12 @@ class AlarmRepositoryTestImpl : AlarmRepository {
         TODO("Not yet implemented")
     }
 
-    override suspend fun insertAlarm(alarm: Alarm) {
+    override suspend fun insertAlarm(alarm: Alarm, userId: String?) {
         LocalAlarmDataProvider.updateAlarm(alarm = alarm)
+    }
+
+    override suspend fun updateAlarm(alarm: Alarm) {
+        TODO("Not yet implemented")
     }
 
     override fun getAllAlarms(): Flow<List<Alarm>> = flow {

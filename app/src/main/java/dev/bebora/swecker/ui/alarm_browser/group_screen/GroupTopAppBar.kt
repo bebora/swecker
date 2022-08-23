@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import dev.bebora.swecker.data.Group
 import dev.bebora.swecker.ui.alarm_browser.AlarmBrowserEvent
@@ -37,7 +38,13 @@ fun GroupTopAppBar(
             Column(
                 horizontalAlignment = Alignment.Start
             ) {
-                Text(text = group.name, textAlign = TextAlign.Left)
+                Text(
+                    text = group.name,
+                    textAlign = TextAlign.Left,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    softWrap = true
+                )
                 Text(
                     modifier = modifier.padding(horizontal = 10.dp),
                     text = group.members.size.toString().plus(" members"),

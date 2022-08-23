@@ -23,6 +23,7 @@ import dev.bebora.swecker.data.service.AccountsService
 import dev.bebora.swecker.data.service.AlarmProviderService
 import dev.bebora.swecker.data.service.AuthService
 import dev.bebora.swecker.data.service.ChatService
+import dev.bebora.swecker.ui.alarm_notification.cancelAlarm
 import dev.bebora.swecker.ui.alarm_notification.scheduleExactAlarm
 import dev.bebora.swecker.ui.utils.onError
 import kotlinx.coroutines.CoroutineScope
@@ -32,6 +33,7 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 import java.time.Clock
 import java.time.OffsetDateTime
+import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 @HiltViewModel
@@ -136,6 +138,7 @@ class AlarmBrowserViewModel @Inject constructor(
                     val sortedAlarms = alarms.sortedBy {
                         it.dateTime
                     }
+
                     if (application != null) {
                         val alarmToSchedule = sortedAlarms.find { al ->
                             (al.dateTime!! > OffsetDateTime.now()) && al.enabled
@@ -146,6 +149,8 @@ class AlarmBrowserViewModel @Inject constructor(
                                 dateTime = alarmToSchedule.dateTime!!,
                                 name = alarmToSchedule.name
                             )
+                        }else{
+                            cancelAlarm(context = application.baseContext)
                         }
                     }
                     val curState = uiState
@@ -203,7 +208,9 @@ class AlarmBrowserViewModel @Inject constructor(
 
                 if (event.success) {
                     CoroutineScope(Dispatchers.IO).launch {
-                        repository.insertAlarm(event.alarm)
+                        repository.updateAlarm(event.alarm.copy(
+                            timeStamp = OffsetDateTime.now().format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)
+                        ))
                     }
                 }
             }

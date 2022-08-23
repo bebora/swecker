@@ -173,9 +173,8 @@ fun AlarmBrowserScreen(
                             viewModel.onEvent(AlarmBrowserEvent.BackButtonPressed)
                         }
                         SinglePaneDialog(
-                            dialogContent = uiState.dialogContent,
                             onNavigate = onNavigate,
-                            group = uiState.selectedGroup?.copy(),
+                            uiState = uiState,
                             onEvent = viewModel::onEvent
                         )
                     }
@@ -216,9 +215,8 @@ fun AlarmBrowserScreen(
                         exit = slideOutVertically() + shrinkVertically() + fadeOut()
                     ) {
                         DualPaneDialog(
-                            dialogContent = uiState.dialogContent,
                             onNavigate = onNavigate,
-                            group = uiState.selectedGroup?.copy(),
+                            uiState = uiState,
                             onEvent = viewModel::onEvent
                         )
                     }

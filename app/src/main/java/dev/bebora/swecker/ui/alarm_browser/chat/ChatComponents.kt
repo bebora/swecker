@@ -17,6 +17,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
@@ -58,7 +59,7 @@ fun MessageItem(
                     .size(40.dp)
                     .clip(CircleShape)
             )
-        }else if(!isOwnMessage){
+        } else if (!isOwnMessage) {
             Spacer(modifier = Modifier.width(40.dp))
         }
 
@@ -283,7 +284,14 @@ fun ChatTopAppBar(
         },
         title = {
             Column() {
-                Text(text = title, textAlign = TextAlign.Center)
+                Text(
+                    modifier = Modifier.padding(0.dp,0.dp,8.dp,0.dp),
+                    text = title,
+                    textAlign = TextAlign.Left,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    softWrap = true
+                )
                 Text(
                     text = date,
                     textAlign = TextAlign.Center,

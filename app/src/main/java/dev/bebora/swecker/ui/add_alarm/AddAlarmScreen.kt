@@ -20,7 +20,8 @@ fun AddAlarmContent(
     modifier: Modifier = Modifier,
     viewModel: AddAlarmViewModel,
     group: Group?,
-    onBackPressed: () -> Unit
+    onBackPressed: () -> Unit,
+    userId: String?
 ) {
     val alarm = viewModel.alarm.collectAsState()
     AlarmDetails(
@@ -29,7 +30,7 @@ fun AddAlarmContent(
         isReadOnly = false,
         onAlarmPartiallyUpdated = viewModel::onAlarmPartiallyUpdate,
         onUpdateCompleted = { al, b ->
-            viewModel.onUpdateCompleted(al, b, group)
+            viewModel.onUpdateCompleted(al, b, group, userId)
             onBackPressed()
         }
     )
@@ -65,6 +66,7 @@ fun AddAlarmScreen(
     modifier: Modifier = Modifier,
     onGoBack: () -> Unit,
     group: Group? = null,
+    userId: String? = null,
     addAlarmViewModel: AddAlarmViewModel = hiltViewModel()
 ) {
     Scaffold(
@@ -82,8 +84,9 @@ fun AddAlarmScreen(
             modifier = modifier.padding(it),
             viewModel = addAlarmViewModel,
             onBackPressed = onGoBack,
-            group = group
-        )
+            group = group,
+            userId= userId,
+            )
     }
 }
 
@@ -92,6 +95,7 @@ fun AddAlarmDialog(
     modifier: Modifier = Modifier,
     onGoBack: () -> Unit,
     group: Group? = null,
+    userId: String? = null,
     addAlarmViewModel: AddAlarmViewModel = hiltViewModel()
 ) {
     Dialog(
@@ -105,7 +109,8 @@ fun AddAlarmDialog(
                 modifier = modifier.padding(16.dp),
                 viewModel = addAlarmViewModel,
                 onBackPressed = onGoBack,
-                group = group
+                group = group,
+                userId= userId,
             )
         }
 

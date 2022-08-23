@@ -15,6 +15,7 @@ import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.OffsetDateTime
+import java.time.format.DateTimeFormatter
 import java.util.UUID
 import javax.inject.Inject
 
@@ -34,7 +35,7 @@ class AddAlarmViewModel @Inject constructor(
     )
     val alarm: StateFlow<Alarm> = _alarm
 
-    fun onUpdateCompleted(alarm: Alarm, success: Boolean, group: Group?) {
+    fun onUpdateCompleted(alarm: Alarm, success: Boolean, group: Group?, userId: String?) {
         if (success) {
             _alarm.value = Alarm(
                 id = UUID.randomUUID().toString(),
@@ -46,19 +47,28 @@ class AddAlarmViewModel @Inject constructor(
             )
 
             CoroutineScope(Dispatchers.IO).launch {
-                repository.insertAlarm(alarm.copy(
-                    groupId = group?.id?:"",
-                    alarmType = if (group != null) {
-                        AlarmType.GROUP
+                repository.insertAlarm(
+                    alarm.copy(
+                        groupId = group?.id,
+                        alarmType = if (group != null) {
+                            AlarmType.GROUP
+                        } else {
+                            AlarmType.PERSONAL
+                        },
+                        timeStamp = OffsetDateTime.now()
+                            .format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)
+                    ),
+                    userId = if (group != null) {
+                        null
                     } else {
-                        AlarmType.PERSONAL
+                        userId
                     }
-                ))
+                )
             }
         }
     }
 
-    fun OnUpdateCanceled(){
+    fun OnUpdateCanceled() {
         _alarm.value = Alarm(
             id = UUID.randomUUID().toString(),
             name = "",

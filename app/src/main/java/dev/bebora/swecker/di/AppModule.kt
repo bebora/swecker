@@ -28,7 +28,7 @@ object AppModule {
     @Provides
     @Singleton
     fun provideAlarmRepository(db: SweckerDatabase): AlarmRepository {
-        return AlarmRepositoryImpl(db.alarmDao)
+        return AlarmRepositoryImpl(db.alarmDao, provideAccountService() ,provideAlarmProviderService())
     }
 
     @Provides
