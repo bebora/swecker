@@ -20,9 +20,10 @@ fun DualPaneContentList(
             .padding(8.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        AlarmBrowserSearchBar(searchKey = uiState.searchKey, modifier = modifier, onEvent = onEvent)
         when (uiState.selectedDestination) {
             NavBarDestination.HOME, NavBarDestination.PERSONAL -> {
+                AlarmBrowserSearchBar(searchKey = uiState.searchKey, modifier = modifier,
+                    onValueChange = { onEvent(AlarmBrowserEvent.SearchAlarms(it)) })
                 AlarmList(
                     modifier = Modifier.widthIn(200.dp, 350.dp),
                     alarms = uiState.filteredAlarms ?: uiState.alarms,
@@ -31,7 +32,11 @@ fun DualPaneContentList(
                 )
             }
             NavBarDestination.GROUPS -> {
-                GroupList(groups = uiState.groups, onEvent = onEvent)
+                AlarmBrowserSearchBar(searchKey = uiState.searchKey, modifier = modifier,
+                    onValueChange = { newValue -> onEvent(AlarmBrowserEvent.SearchGroups(newValue)) })
+                GroupList(groups = uiState.groups.filter { group ->
+                    group.name.contains(uiState.searchKey)
+                }, onEvent = onEvent)
             }
             NavBarDestination.CHANNELS -> {
                 Box(modifier = Modifier.fillMaxWidth(1f))

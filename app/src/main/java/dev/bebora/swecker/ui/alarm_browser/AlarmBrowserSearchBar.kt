@@ -18,7 +18,7 @@ fun AlarmBrowserSearchBar(
     modifier: Modifier = Modifier,
     searchKey: String,
     placeHolderString: String = "",
-    onEvent: (AlarmBrowserEvent) -> Unit
+    onValueChange: (String) -> Unit
 ) {
     val focusManager = LocalFocusManager.current
 
@@ -27,7 +27,7 @@ fun AlarmBrowserSearchBar(
             .wrapContentHeight()
             .fillMaxWidth(1f),
         value = searchKey,
-        onValueChange = { searchValue -> onEvent(AlarmBrowserEvent.Search(searchValue)) },
+        onValueChange = { searchValue -> onValueChange(searchValue) },
         placeholder = { Text(placeHolderString) },
         leadingIcon = { Icon(imageVector = Icons.Outlined.Search, contentDescription = null) },
         shape = ShapeDefaults.ExtraLarge,

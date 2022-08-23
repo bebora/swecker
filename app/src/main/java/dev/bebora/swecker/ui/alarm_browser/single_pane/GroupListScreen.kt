@@ -6,11 +6,12 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Menu
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import dev.bebora.swecker.ui.alarm_browser.AlarmBrowserEvent
+import dev.bebora.swecker.ui.alarm_browser.AlarmBrowserSearchBar
 import dev.bebora.swecker.ui.alarm_browser.AlarmBrowserUIState
 import dev.bebora.swecker.ui.alarm_browser.NavBarDestination
 import dev.bebora.swecker.ui.alarm_browser.group_screen.GroupList
@@ -23,6 +24,9 @@ fun GroupListScreen(
     uiState: AlarmBrowserUIState,
     navigationAction: () -> Unit,
 ) {
+    var showSearchBar by remember {
+        mutableStateOf(false)
+    }
     Scaffold(
         topBar = {
             SmallTopAppBar(
@@ -40,7 +44,9 @@ fun GroupListScreen(
                     }
                 },
                 actions = {
-                    IconButton(onClick = { }) {
+                    IconButton(onClick = {
+                        showSearchBar = !showSearchBar
+                    }) {
                         Icon(
                             imageVector = Icons.Outlined.Search,
                             contentDescription = "Search content"
@@ -67,8 +73,16 @@ fun GroupListScreen(
         Column(
             modifier = Modifier.padding(it)
         ) {
+            if (showSearchBar || uiState.searchKey.isNotEmpty()) {
+                AlarmBrowserSearchBar(
+                    modifier = Modifier.padding(4.dp),
+                    searchKey = uiState.searchKey,
+                    onValueChange = { newValue -> onEvent(AlarmBrowserEvent.SearchGroups(newValue)) })
+            }
             GroupList(
-                groups = uiState.groups,
+                groups = uiState.groups.filter { group ->
+                    group.name.contains(uiState.searchKey)
+                },
                 onEvent = onEvent,
                 selectedGroupId = uiState.selectedGroup?.id
             )

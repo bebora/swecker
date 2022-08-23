@@ -260,7 +260,7 @@ class AlarmBrowserViewModel @Inject constructor(
             }
 
             //TODO add group search
-            is AlarmBrowserEvent.Search -> {
+            is AlarmBrowserEvent.SearchAlarms -> {
                 val curState = uiState
                 uiState = uiState.copy(
                     searchKey = event.key,
@@ -270,6 +270,12 @@ class AlarmBrowserViewModel @Inject constructor(
                         searchKey = event.key,
                         selectedGroup = curState.selectedGroup
                     )
+                )
+            }
+
+            is AlarmBrowserEvent.SearchGroups -> {
+                uiState = uiState.copy(
+                    searchKey = event.key,
                 )
             }
 
@@ -309,7 +315,7 @@ class AlarmBrowserViewModel @Inject constructor(
 
             is AlarmBrowserEvent.OnTransitionCompleted -> {
                 val mutableTransitionState = uiState.mutableTransitionState
-                if(!mutableTransitionState.targetState){
+                if (!mutableTransitionState.targetState) {
                     uiState = uiState.copy(
                         mutableTransitionState = MutableTransitionState(false).apply {
                             targetState = true
