@@ -3,6 +3,7 @@ package dev.bebora.swecker.data.service.impl
 import android.util.Log
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import dev.bebora.swecker.data.StoredAlarm
 import dev.bebora.swecker.data.ThinGroup
 import dev.bebora.swecker.data.service.AlarmProviderService
 import dev.bebora.swecker.data.service.EmptyGroupException
@@ -16,8 +17,7 @@ class AlarmProviderServiceImpl : AlarmProviderService {
         if (userId.isBlank()) {
             Log.d("SWECKER-EMPTY-USER", "Empty user id")
             return emptyFlow()
-        }
-        else {
+        } else {
             return callbackFlow {
                 val listener = Firebase.firestore
                     .collection(FirebaseConstants.GROUPS_COLLECTION)
@@ -33,7 +33,7 @@ class AlarmProviderServiceImpl : AlarmProviderService {
                                 snapshot.toObjects(ThinGroup::class.java)
                             )
                         } else {
-                            Log.d("SWECKER-GET-CHAT-NOPE", "Current data: null")
+                            Log.d("SWECKER-GET-GRP-NOPE", "Current data: null")
                             trySend(emptyList())
                         }
                     }
@@ -90,5 +90,68 @@ class AlarmProviderServiceImpl : AlarmProviderService {
             .addOnCompleteListener {
                 onComplete(it.exception)
             }
+    }
+
+    override fun createAlarm(alarm: StoredAlarm, onComplete: (Throwable?) -> Unit) { //TODO handle alarm id when not provided
+        if (alarm.groupId == null) { // Create an alarm just for me
+            Firebase.firestore
+                .collection(FirebaseConstants.ALARMS)
+                .add(alarm)
+                .addOnCompleteListener { onComplete(it.exception) }
+        } else { // Create alarm in group and for everyone in the group
+            val store = Firebase.firestore
+            val alarmsRef = store.collection(FirebaseConstants.ALARMS)
+            val groupsRef = store.collection(FirebaseConstants.GROUPS_COLLECTION)
+            val groupRef = groupsRef.document(alarm.groupId)
+            store.runTransaction { transaction ->
+                val groupInDb = transaction.get(groupRef)
+                val members = groupInDb.toObject(ThinGroup::class.java)?.members ?: emptyList()
+                transaction.set(
+                    alarmsRef.document(),
+                    alarm
+                )
+                members.forEach { memberId ->
+                    transaction.set(
+                        alarmsRef.document(),
+                        alarm.copy(userId = memberId)
+                    )
+                }
+                null
+            }
+                .addOnCompleteListener {
+                    onComplete(it.exception)
+                }
+        }
+    }
+
+    override fun getUserAlarms(userId: String): Flow<List<StoredAlarm>> {
+        if (userId.isBlank()) {
+            Log.d("SWECKER-EMPTY-USER", "Empty user id")
+            return emptyFlow()
+        } else {
+            return callbackFlow {
+                val listener = Firebase.firestore
+                    .collection(FirebaseConstants.ALARMS)
+                    .whereEqualTo("userId", userId)
+                    .addSnapshotListener { snapshot, error ->
+                        if (error != null) {
+                            Log.d("SWECKER-LISTEN-ALARM", "Cannot retrieve alarms", error)
+                            return@addSnapshotListener
+                        }
+                        if (snapshot != null) {
+                            Log.d("SWECKER-GET-ALR-EXISTS", "Current data: $snapshot")
+                            trySend(
+                                snapshot.toObjects(StoredAlarm::class.java)
+                            )
+                        } else {
+                            Log.d("SWECKER-GET-ALR-NOPE", "Current data: null")
+                            trySend(emptyList())
+                        }
+                    }
+                awaitClose {
+                    listener.remove()
+                }
+            }
+        }
     }
 }
