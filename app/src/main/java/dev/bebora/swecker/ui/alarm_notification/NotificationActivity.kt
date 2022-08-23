@@ -1,7 +1,6 @@
 package dev.bebora.swecker.ui.alarm_notification
 
-import android.os.Build
-import android.os.Bundle
+import android.os.*
 import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent

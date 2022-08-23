@@ -12,22 +12,42 @@ import java.time.format.DateTimeFormatter
 fun scheduleExactAlarm(context: Context, dateTime: OffsetDateTime, name: String) {
     val alarmMgr = context.getSystemService(Context.ALARM_SERVICE) as? AlarmManager
     val alarmIntent = Intent(context, AlarmNotificationReceiver::class.java).let { intent ->
-        intent.action = "ACTION_SCHEDULE_EXACT_ALARM_PERMISSION_STATE_CHANGED"
         intent.putExtra("DateTime", dateTime.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))
         intent.putExtra("Name", name)
-        PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+        PendingIntent.getBroadcast(
+            context,
+            0,
+            intent,
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+        )
     }
     alarmMgr!!.cancel(alarmIntent)
 
     if ((Build.VERSION.SDK_INT >= 31
                 && alarmMgr.canScheduleExactAlarms())
     ) {
-        alarmMgr.setExact(
+        alarmMgr.setExactAndAllowWhileIdle(
             AlarmManager.RTC_WAKEUP, dateTime.toInstant().toEpochMilli(), alarmIntent
         )
-    } else {
-        alarmMgr.setExact(
+    } else if (Build.VERSION.SDK_INT <= 31) {
+        alarmMgr.setExactAndAllowWhileIdle(
             AlarmManager.RTC_WAKEUP, dateTime.toInstant().toEpochMilli(), alarmIntent
         )
+    }
+}
+
+fun cancelAlarm(context: Context) {
+    val alarmManager =
+        context.getSystemService(Context.ALARM_SERVICE) as? AlarmManager
+    val alarmIntent = Intent(context, AlarmNotificationReceiver::class.java).let { intent ->
+        PendingIntent.getBroadcast(
+            context,
+            0,
+            intent,
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_NO_CREATE
+        )
+    }
+    if (alarmIntent != null && alarmManager != null) {
+        alarmManager.cancel(alarmIntent)
     }
 }

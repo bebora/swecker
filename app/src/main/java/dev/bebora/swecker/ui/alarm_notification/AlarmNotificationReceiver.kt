@@ -19,19 +19,6 @@ class AlarmNotificationReceiver : BroadcastReceiver() {
                 }
             }
 
-        if (Build.VERSION.SDK_INT >= 31) {
-            val vibrator =
-                context.getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as VibratorManager
-            vibrator.vibrate(
-                CombinedVibration.createParallel(
-                    VibrationEffect.createOneShot(
-                        2000,
-                        5
-                    )
-                )
-            )
-        }
-
         /*StringBuilder().apply {
             append("Action: ${intent.action}\n")
             append("URI: ${intent.toUri(Intent.URI_INTENT_SCHEME)}\n")
