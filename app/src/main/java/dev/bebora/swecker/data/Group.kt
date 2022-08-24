@@ -1,5 +1,6 @@
 package dev.bebora.swecker.data
 
+import com.google.firebase.firestore.PropertyName
 import java.time.OffsetDateTime
 
 //TODO complete model for group
@@ -19,6 +20,9 @@ data class ThinGroup( //Used for channels as well
     val name: String = "",
     val owner: String = "",
     val picture: String = "",
+    @get:PropertyName("lowerName")
+    val lowerName: String? = null, // Only for channels
+    val handle: String? = null // Only for channels
 )
 
 fun ThinGroup.toGroup() : Group {

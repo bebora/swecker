@@ -108,7 +108,9 @@ class AlarmProviderServiceImpl : AlarmProviderService {
                 members = userIds,
                 name = "Channel name",
                 owner = ownerId,
-                picture = ""
+                picture = "",
+                lowerName = "channel name",
+                handle = ""
             )
             newDocRef.set(
                 newGroup
@@ -123,7 +125,7 @@ class AlarmProviderServiceImpl : AlarmProviderService {
         Firebase.firestore
             .collection(FirebaseConstants.CHANNELS_COLLECTION)
             .document(newChannelData.id)
-            .set(newChannelData)
+            .set(newChannelData.copy(lowerName = newChannelData.name.lowercase()))
             .addOnCompleteListener {
                 onComplete(it.exception)
             }
