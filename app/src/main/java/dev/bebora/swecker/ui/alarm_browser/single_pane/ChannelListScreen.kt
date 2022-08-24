@@ -81,8 +81,8 @@ fun ChannelListScreen(
             }
             GroupList(
                 groups = uiState.channels.filter { channel ->
-                    channel.name.contains(uiState.searchKey)
-                },
+                    channel.name.contains(uiState.searchKey, ignoreCase = true)
+                } + uiState.extraChannels,
                 onEvent = { channel -> onEvent(AlarmBrowserEvent.ChannelSelected(channel)) },
                 selectedGroupId = uiState.selectedChannel?.id
             )

@@ -28,7 +28,8 @@ fun AddGroupContactsList(
     onContactPressed: (User) -> Unit,
 ) {
     val filteredContacts = contacts.filter { contact ->
-        contact.username.contains(searchKey) || contact.name.contains(searchKey)
+        contact.username.contains(searchKey, ignoreCase = true) ||
+                contact.name.contains(searchKey, ignoreCase = true)
     }
 
     Divider()

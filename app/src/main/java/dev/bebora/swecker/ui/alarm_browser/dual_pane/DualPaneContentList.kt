@@ -34,16 +34,22 @@ fun DualPaneContentList(
             NavBarDestination.GROUPS -> {
                 AlarmBrowserSearchBar(searchKey = uiState.searchKey, modifier = modifier,
                     onValueChange = { newValue -> onEvent(AlarmBrowserEvent.SearchGroups(newValue)) })
-                GroupList(groups = uiState.groups.filter { group ->
-                    group.name.contains(uiState.searchKey)
-                }, onEvent = {group -> onEvent(AlarmBrowserEvent.ChannelSelected(group))},)
+                GroupList(
+                    groups = uiState.groups.filter { group ->
+                        group.name.contains(uiState.searchKey, ignoreCase = true)
+                    },
+                    onEvent = { group -> onEvent(AlarmBrowserEvent.ChannelSelected(group)) },
+                )
             }
             NavBarDestination.CHANNELS -> {
                 AlarmBrowserSearchBar(searchKey = uiState.searchKey, modifier = modifier,
                     onValueChange = { newValue -> onEvent(AlarmBrowserEvent.SearchGroups(newValue)) })
-                GroupList(groups = uiState.channels.filter { channel ->
-                    channel.name.contains(uiState.searchKey)
-                }, onEvent = {channel -> onEvent(AlarmBrowserEvent.ChannelSelected(channel))},)
+                GroupList(
+                    groups = uiState.channels.filter { channel ->
+                        channel.name.contains(uiState.searchKey, ignoreCase = true)
+                    } + uiState.extraChannels,
+                    onEvent = { channel -> onEvent(AlarmBrowserEvent.ChannelSelected(channel)) },
+                )
             }
         }
     }

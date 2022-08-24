@@ -26,11 +26,8 @@ import dev.bebora.swecker.data.service.ChatService
 import dev.bebora.swecker.ui.alarm_notification.cancelAlarm
 import dev.bebora.swecker.ui.alarm_notification.scheduleExactAlarm
 import dev.bebora.swecker.ui.utils.onError
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.launch
 import java.time.Clock
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
@@ -60,6 +57,8 @@ class AlarmBrowserViewModel @Inject constructor(
     private var channelsCollectorJob: Job? = null
 
     private var alarmsCollectorJob: Job? = null
+
+    private var searchChannelsJob: Job? = null
 
     init {
         observeAlarms() // TODO Observe alarms may need to be updated after login/logout!
@@ -326,6 +325,7 @@ class AlarmBrowserViewModel @Inject constructor(
                 uiState = uiState.copy(
                     searchKey = event.key,
                 )
+                searchDebounced(event.key)
             }
 
             is AlarmBrowserEvent.DetailsOpened -> {
@@ -454,6 +454,31 @@ class AlarmBrowserViewModel @Inject constructor(
                 DetailsScreenContent.NONE
         }
     }
+
+    private fun searchDebounced(searchText: String) {
+        if (uiState.me.id.isBlank()) {
+            Log.d("SWECKER-", "id vuoto")
+            return
+        }
+        /*uiState = uiState.copy(
+            processingQuery = true
+        )*/
+        searchChannelsJob?.cancel()
+        searchChannelsJob = viewModelScope.launch {
+            delay(250)
+            alarmProviderService.searchNewChannels(
+                from = uiState.me,
+                query = searchText,
+                onError = { Log.e("SWECKER-SEARCH-CH-ERR", it.message ?: "Generic search error") },
+                onSuccess = { channelsList ->
+                    uiState = uiState.copy(
+                        extraChannels = channelsList.map { it.toGroup() },
+                        // processingQuery = false
+                    )
+                }
+            )
+        }
+    }
 }
 
 
@@ -469,6 +494,7 @@ data class AlarmBrowserUIState(
     val detailsScreenContent: DetailsScreenContent = DetailsScreenContent.NONE,
     val dialogContent: DialogContent = DialogContent.NONE,
     val searchKey: String = String(),
+    val extraChannels: List<Group> = emptyList(),
     val error: String? = "",
     val selectedDestination: NavBarDestination = NavBarDestination.HOME,
     val me: User = User(),
