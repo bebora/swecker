@@ -38,8 +38,8 @@ import com.google.modernstorage.photopicker.PhotoPicker
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AccountDummyScreen(
-    ui: SettingsUiState,
     modifier: Modifier = Modifier,
+    ui: SettingsUiState,
     onEvent: (SettingsEvent) -> Unit,
     uiEvent: Flow<UiEvent> = emptyFlow(),
     onNavigate: (String) -> Unit = {}
@@ -295,9 +295,9 @@ fun AccountDummyScreen(
 
 @Composable
 fun FeatureDescription(
+    modifier: Modifier = Modifier,
     @StringRes textRes: Int,
-    icon: ImageVector,
-    modifier: Modifier = Modifier
+    icon: ImageVector
 ) {
     Row(
         modifier = modifier

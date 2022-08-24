@@ -24,6 +24,7 @@ import dev.bebora.swecker.ui.theme.SweckerTheme
 
 @Composable
 fun SettingsScreen(
+    modifier: Modifier = Modifier,
     viewModel: SettingsViewModel = hiltViewModel(),
     onGoBack: () -> Unit = {},
     onNavigate: (String) -> Unit = {}
@@ -31,7 +32,7 @@ fun SettingsScreen(
     val settingsState by viewModel.settings.collectAsState(initial = Settings())
     //TODO find a way to prevent wrong UI settings from appearing (look at collectAsState with wrong initial value)
 
-    BoxWithConstraints(modifier = Modifier.fillMaxWidth()) {
+    BoxWithConstraints(modifier = modifier.fillMaxWidth()) {
         if (maxWidth < 840.dp) {
             if (viewModel.uiState.openAccountSettings) {
                 BackHandler {
@@ -40,9 +41,8 @@ fun SettingsScreen(
                 AccountDummyScreen(
                     ui = viewModel.uiState,
                     onEvent = viewModel::onEvent,
-                    uiEvent = viewModel.accountUiEvent,
-                    onNavigate = { onNavigate(it) }
-                )
+                    uiEvent = viewModel.accountUiEvent
+                ) { onNavigate(it) }
             } else if (viewModel.uiState.openSoundsSettings) {
                 BackHandler {
                     viewModel.onEvent(SettingsEvent.CloseSettingsSubsection)
@@ -77,10 +77,10 @@ fun SettingsScreen(
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 SettingsDummyScreen(
+                    modifier = Modifier.weight(1f),
                     settings = settingsState,
                     ui = viewModel.uiState,
                     onEvent = viewModel::onEvent,
-                    modifier = Modifier.weight(1f),
                     onGoBack = onGoBack,
                     onNavigate = onNavigate
                 )
@@ -92,9 +92,8 @@ fun SettingsScreen(
                         AccountDummyScreen(
                             ui = viewModel.uiState,
                             onEvent = viewModel::onEvent,
-                            uiEvent = viewModel.accountUiEvent,
-                            onNavigate = { onNavigate(it) }
-                        )
+                            uiEvent = viewModel.accountUiEvent
+                        ) { onNavigate(it) }
                     } else if (viewModel.uiState.openSoundsSettings) {
                         BackHandler {
                             viewModel.onEvent(SettingsEvent.CloseSettingsSubsection)
@@ -126,6 +125,7 @@ fun SettingsScreen(
 fun SettingsScreenPreview() {
     SweckerTheme {
         SettingsScreen(
+            modifier = Modifier,
             viewModel = SettingsViewModel(
                 repository = DataStoreManager(
                     LocalContext.current

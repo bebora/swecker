@@ -39,9 +39,9 @@ import java.time.LocalTime
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ThemeDummyScreen(
+    modifier: Modifier = Modifier,
     settings: Settings,
     ui: SettingsUiState,
-    modifier: Modifier = Modifier,
     onEvent: (SettingsEvent) -> Unit
 ) {
     val darkModeEnabled = useDarkPalette(type = settings.darkModeType)
@@ -108,11 +108,11 @@ fun ThemeDummyScreen(
                 palettes.forEach { palette ->
                     val schemesWrapper = paletteToColorSchemes(palette = palette)
                     PaletteBox(
-                        colorScheme = if (darkModeEnabled) schemesWrapper.darkColorScheme else schemesWrapper.lightColorScheme,
                         modifier = Modifier
                             .width(80.dp)
                             .height(80.dp)
                             .clickable { },
+                        colorScheme = if (darkModeEnabled) schemesWrapper.darkColorScheme else schemesWrapper.lightColorScheme,
                         selected = settings.palette == palette,
                         showMagicIcon = palette == Palette.SYSTEM
                     ) { onEvent(SettingsEvent.SetPalette(palette = palette)) }
@@ -177,8 +177,7 @@ fun ThemeDummyScreenPreview() {
     SweckerTheme {
         ThemeDummyScreen(
             settings = Settings(),
-            ui = SettingsUiState(),
-            onEvent = {}
-        )
+            ui = SettingsUiState()
+        ) {}
     }
 }

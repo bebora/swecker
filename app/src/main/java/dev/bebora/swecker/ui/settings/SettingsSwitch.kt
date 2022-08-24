@@ -20,10 +20,10 @@ import dev.bebora.swecker.ui.theme.SweckerTheme
 
 @Composable
 fun SettingsSwitch(
+    modifier: Modifier = Modifier,
     title: String,
     icon: ImageVector,
     checked: Boolean,
-    modifier: Modifier = Modifier,
     onToggle: () -> Unit
 ) {
     Row(

@@ -19,10 +19,10 @@ import dev.bebora.swecker.ui.theme.SweckerTheme
 
 @Composable
 fun SettingsItem(
+    modifier: Modifier = Modifier,
     title: String,
     description: String,
     icon: ImageVector,
-    modifier: Modifier = Modifier,
     onClick: () -> Unit
 ) {
     Row(modifier = modifier

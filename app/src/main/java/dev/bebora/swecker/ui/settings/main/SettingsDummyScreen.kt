@@ -1,6 +1,5 @@
 package dev.bebora.swecker.ui.settings.main
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -13,7 +12,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import dev.bebora.swecker.R
 import dev.bebora.swecker.data.settings.Settings
 import dev.bebora.swecker.ui.settings.*
@@ -25,9 +23,9 @@ import dev.bebora.swecker.ui.theme.SweckerTheme
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsDummyScreen(
+    modifier: Modifier = Modifier,
     settings: Settings,
     ui: SettingsUiState,
-    modifier: Modifier = Modifier,
     onEvent: (SettingsEvent) -> Unit,
     onGoBack: () -> Unit = {},
     onNavigate: (String) -> Unit
@@ -98,10 +96,9 @@ fun SettingsDummyScreen(
 fun SettingsDummyScreenPreview() {
     SweckerTheme {
         SettingsDummyScreen(
-            ui = SettingsUiState(),
             settings = Settings(),
-            onEvent = {},
-            onNavigate = {}
-        )
+            ui = SettingsUiState(),
+            onEvent = {}
+        ) {}
     }
 }

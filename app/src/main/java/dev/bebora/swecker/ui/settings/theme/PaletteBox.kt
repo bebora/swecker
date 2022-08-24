@@ -24,9 +24,9 @@ import dev.bebora.swecker.ui.theme.SweckerTheme
 
 @Composable
 fun PaletteBox(
+    modifier: Modifier = Modifier,
     colorScheme: ColorScheme,
     selected: Boolean,
-    modifier: Modifier = Modifier,
     showMagicIcon: Boolean = false,
     onEvent: () -> Unit
 ) {
