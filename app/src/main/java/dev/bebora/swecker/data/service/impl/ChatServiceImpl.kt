@@ -52,28 +52,42 @@ class ChatServiceImpl : ChatService {
     ) {
         if (chatId.isBlank()) {
             onResult(InvalidChatException())
-        }
-        else if (senderId.isBlank()) {
+        } else if (senderId.isBlank()) {
             onResult(InvalidSenderException())
-        }
-        else {
+        } else {
             Log.d("SWECKER-SEND-MSG-FIRE", "Sender is is '$senderId'")
-            Log.d("SWECKER-SEND-MSG-BUG", "Coso + '${FieldValue.arrayUnion(
-                Message(
-                    text = text,
-                    time = System.currentTimeMillis(),
-                    uId = senderId,
-                ))}'")
-
-            Firebase.firestore
+            val store = Firebase.firestore
+            val chatRef = store
                 .collection(FirebaseConstants.CHATS_COLLECTION)
                 .document(chatId)
-                .update("messages", FieldValue.arrayUnion(
-                    Message(
-                        text = text,
-                        time = System.currentTimeMillis(),
-                        uId = senderId,
-                    )))
+            store.runTransaction { transaction ->
+                val chat = transaction.get(chatRef)
+                if (chat.exists()) {
+                    transaction.update(
+                        chatRef, "messages", FieldValue.arrayUnion(
+                            Message(
+                                text = text,
+                                time = System.currentTimeMillis(),
+                                uId = senderId,
+                            )
+                        )
+                    )
+                } else { // Create chat, doesn't actually check if chat is enabled
+                    transaction.set(
+                        chatRef, ChatDocument(
+                            id = chatId,
+                            messages = listOf(
+                                Message(
+                                    text = text,
+                                    time = System.currentTimeMillis(),
+                                    uId = senderId,
+                                )
+                            )
+                        )
+                    )
+                }
+                null
+            }
                 .addOnCompleteListener {
                     onResult(it.exception)
                 }
