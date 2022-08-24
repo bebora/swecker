@@ -131,9 +131,8 @@ class AlarmBrowserViewModel @Inject constructor(
     }
 
 
-    private fun fetchUsersData(messages: List<Message>) {
-        messages
-            .map { it.uId }
+    private fun fetchUsersData(usersIds: List<String>) {
+        usersIds
             .filter { !uiState.usersData.containsKey(it) }
             .forEach { userId ->
                 if (!usersAlreadyRequested.contains(userId)) {
@@ -283,7 +282,7 @@ class AlarmBrowserViewModel @Inject constructor(
                             uiState = uiState.copy(
                                 messages = it.reversed()
                             )
-                            fetchUsersData(messages = it.reversed())
+                            fetchUsersData(usersIds = it.reversed().map { msg -> msg.uId })
                         }
                 }
             }
