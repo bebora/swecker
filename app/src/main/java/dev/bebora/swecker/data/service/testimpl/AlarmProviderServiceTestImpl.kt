@@ -60,6 +60,18 @@ class AlarmProviderServiceTestImpl : AlarmProviderService {
         TODO("Not yet implemented")
     }
 
+    override fun joinChannel(userId: String, channelId: String, onComplete: (Throwable?) -> Unit) {
+        TODO("Not yet implemented")
+    }
+
+    override fun leaveChannel(userId: String, channelId: String, onComplete: (Throwable?) -> Unit) {
+        TODO("Not yet implemented")
+    }
+
+    override fun leaveGroup(userId: String, groupId: String, onComplete: (Throwable?) -> Unit) {
+        TODO("Not yet implemented")
+    }
+
     override fun createAlarm(alarm: StoredAlarm, onComplete: (Throwable?) -> Unit) {
         TODO("Not yet implemented")
     }

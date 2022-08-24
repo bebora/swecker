@@ -1,13 +1,16 @@
 package dev.bebora.swecker.data.service.impl
 
 import android.util.Log
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import dev.bebora.swecker.data.StoredAlarm
 import dev.bebora.swecker.data.ThinGroup
 import dev.bebora.swecker.data.User
 import dev.bebora.swecker.data.service.AlarmProviderService
+import dev.bebora.swecker.data.service.EmptyChannelException
 import dev.bebora.swecker.data.service.EmptyGroupException
+import dev.bebora.swecker.data.service.EmptyUserException
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.*
 
@@ -202,14 +205,72 @@ class AlarmProviderServiceImpl : AlarmProviderService {
                         .get()
                         .addOnFailureListener(onError)
                         .addOnSuccessListener { namesQuerySnapshot ->
-                            val handleResults = handlesQuerySnapshot.toObjects(ThinGroup::class.java).filter { !it.members.contains(from.id) }
-                            val nameResults = namesQuerySnapshot.toObjects(ThinGroup::class.java).filter { !it.members.contains(from.id) }
+                            val handleResults =
+                                handlesQuerySnapshot.toObjects(ThinGroup::class.java)
+                                    .filter { !it.members.contains(from.id) }
+                            val nameResults = namesQuerySnapshot.toObjects(ThinGroup::class.java)
+                                .filter { !it.members.contains(from.id) }
                             val handleResultSet = handleResults.map { it.id }.toSet()
-                            val mergedResults = handleResults + nameResults.filter { !handleResultSet.contains(it.id) }
+                            val mergedResults =
+                                handleResults + nameResults.filter { !handleResultSet.contains(it.id) }
                             onSuccess(
                                 mergedResults
                             )
                         }
+                }
+        }
+    }
+
+    override fun joinChannel(userId: String, channelId: String, onComplete: (Throwable?) -> Unit) {
+        if (userId.isBlank()) {
+            onComplete(EmptyUserException())
+        }
+        else if (channelId.isBlank()) {
+            onComplete(EmptyChannelException())
+        }
+        else {
+            Firebase.firestore
+                .collection(FirebaseConstants.CHANNELS_COLLECTION)
+                .document(channelId)
+                .update("members", FieldValue.arrayUnion(userId))
+                .addOnCompleteListener {
+                    onComplete(it.exception)
+                }
+        }
+    }
+
+    override fun leaveChannel(userId: String, channelId: String, onComplete: (Throwable?) -> Unit) {
+        if (userId.isBlank()) {
+            onComplete(EmptyUserException())
+        }
+        else if (channelId.isBlank()) {
+            onComplete(EmptyChannelException())
+        }
+        else {
+            Firebase.firestore
+                .collection(FirebaseConstants.CHANNELS_COLLECTION)
+                .document(channelId)
+                .update("members", FieldValue.arrayRemove(userId))
+                .addOnCompleteListener {
+                    onComplete(it.exception)
+                }
+        }
+    }
+
+    override fun leaveGroup(userId: String, groupId: String, onComplete: (Throwable?) -> Unit) {
+        if (userId.isBlank()) {
+            onComplete(EmptyUserException())
+        }
+        else if (groupId.isBlank()) {
+            onComplete(EmptyChannelException())
+        }
+        else {
+            Firebase.firestore
+                .collection(FirebaseConstants.GROUPS_COLLECTION)
+                .document(groupId)
+                .update("members", FieldValue.arrayRemove(userId))
+                .addOnCompleteListener {
+                    onComplete(it.exception)
                 }
         }
     }

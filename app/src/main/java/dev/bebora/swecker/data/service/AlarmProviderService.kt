@@ -49,6 +49,24 @@ interface AlarmProviderService {
         onSuccess: (List<ThinGroup>) -> Unit
     )
 
+    fun joinChannel(
+        userId: String,
+        channelId: String,
+        onComplete: (Throwable?) -> Unit,
+    )
+
+    fun leaveChannel(
+        userId: String,
+        channelId: String,
+        onComplete: (Throwable?) -> Unit
+    )
+
+    fun leaveGroup(
+        userId: String,
+        groupId: String,
+        onComplete: (Throwable?) -> Unit
+    )
+
     fun createAlarm(
         alarm: StoredAlarm,
         onComplete: (Throwable?) -> Unit
@@ -64,3 +82,5 @@ interface AlarmProviderService {
 }
 
 class EmptyGroupException : Exception()
+class EmptyUserException : Exception()
+class EmptyChannelException : Exception()
