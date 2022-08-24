@@ -50,6 +50,7 @@ fun SettingsScreen(
                 SoundsDummyScreen(
                     settings = settingsState,
                     ui = viewModel.uiState,
+                    uiEvent = viewModel.soundsUiEvent,
                     onEvent = viewModel::onEvent
                 )
             } else if (viewModel.uiState.openThemeSettings) {
@@ -101,6 +102,7 @@ fun SettingsScreen(
                         SoundsDummyScreen(
                             settings = settingsState,
                             ui = viewModel.uiState,
+                            uiEvent = viewModel.soundsUiEvent,
                             onEvent = viewModel::onEvent
                         )
                     } else if (viewModel.uiState.openThemeSettings) {

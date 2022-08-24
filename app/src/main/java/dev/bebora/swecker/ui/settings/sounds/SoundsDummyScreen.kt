@@ -11,9 +11,11 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import dev.bebora.swecker.R
@@ -22,8 +24,12 @@ import dev.bebora.swecker.data.settings.RingtoneDuration
 import dev.bebora.swecker.data.settings.Settings
 import dev.bebora.swecker.ui.settings.*
 import dev.bebora.swecker.ui.theme.SweckerTheme
+import dev.bebora.swecker.ui.utils.feedbackVibrationEnabled
 import dev.bebora.swecker.ui.utils.ringtoneDurationToString
 import dev.bebora.swecker.ui.utils.ringtoneToString
+import dev.bebora.swecker.util.UiEvent
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emptyFlow
 import kotlin.math.roundToInt
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -32,6 +38,7 @@ fun SoundsDummyScreen(
     modifier: Modifier = Modifier,
     settings: Settings,
     ui: SettingsUiState,
+    uiEvent: Flow<UiEvent> = emptyFlow(),
     onEvent: (SettingsEvent) -> Unit
 ) {
     val sections = listOf(
@@ -54,6 +61,18 @@ fun SoundsDummyScreen(
             onClick = { onEvent(SettingsEvent.OpenEditRingtoneVolume) }
         )
     )
+    val context = LocalContext.current
+
+    LaunchedEffect(key1 = true) {
+        uiEvent.collect { event ->
+            when (event) {
+                is UiEvent.VibrationFeedback -> {
+                    feedbackVibrationEnabled(context)
+                }
+                else -> Unit
+            }
+        }
+    }
 
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
 

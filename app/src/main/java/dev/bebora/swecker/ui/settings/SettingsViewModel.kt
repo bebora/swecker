@@ -5,14 +5,13 @@ import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.bebora.swecker.R
 import dev.bebora.swecker.data.service.*
 import dev.bebora.swecker.data.settings.SettingsRepositoryInterface
 import dev.bebora.swecker.ui.utils.UiText
-import dev.bebora.swecker.ui.utils.feedbackVibrationEnabled
 import dev.bebora.swecker.ui.utils.onError
 import dev.bebora.swecker.util.UiEvent
 import kotlinx.coroutines.channels.Channel
@@ -28,7 +27,7 @@ class SettingsViewModel @Inject constructor(
     private val authService: AuthService,
     private val imageStorageService: ImageStorageService,
     private val accountsService: AccountsService
-) : AndroidViewModel(application) {
+) : ViewModel() {
     val settings = repository.getSettings()
 
     var uiState by mutableStateOf(SettingsUiState())
@@ -36,6 +35,9 @@ class SettingsViewModel @Inject constructor(
 
     private val _accountUiEvent = Channel<UiEvent>()
     val accountUiEvent = _accountUiEvent.receiveAsFlow()
+
+    private val _soundsUiEvent = Channel<UiEvent>()
+    val soundsUiEvent = _soundsUiEvent.receiveAsFlow()
 
     private var userInfoChanges = authService.getUserInfoChanges()
 
@@ -229,9 +231,9 @@ class SettingsViewModel @Inject constructor(
                     repository.setVibration(event.enabled)
                 }
                 if (event.enabled) {
-                    feedbackVibrationEnabled(
-                        getApplication<Application>().applicationContext
-                    )
+                    viewModelScope.launch {
+                        _soundsUiEvent.send(UiEvent.VibrationFeedback)
+                    }
                 }
             }
             SettingsEvent.CloseSettingsSubsection -> {
