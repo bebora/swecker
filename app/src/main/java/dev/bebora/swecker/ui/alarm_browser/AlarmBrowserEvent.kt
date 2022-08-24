@@ -26,11 +26,9 @@ sealed class AlarmBrowserEvent {
 
     object BackButtonPressed : AlarmBrowserEvent()
 
-    object OpenChatTEMP : AlarmBrowserEvent() //Remove this
-
     object OnTransitionCompleted : AlarmBrowserEvent()
 
-    data class SendMessageTEMP(val text: String) : AlarmBrowserEvent()
+    data class SendMessage(val text: String) : AlarmBrowserEvent()
 
     object CreateGroupAlarmTEMP : AlarmBrowserEvent()
 }

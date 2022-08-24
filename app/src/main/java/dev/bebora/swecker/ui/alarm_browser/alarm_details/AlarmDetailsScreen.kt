@@ -60,7 +60,7 @@ fun AlarmDetails(
                         .weight(0.5f),
                     label = "Time",
                     placeHolder = "Select time",
-                    value = alarm.localTime!!.format(DateTimeFormatter.ofPattern("HH:mm a")),
+                    value = alarm.localTime!!.format(DateTimeFormatter.ofPattern("hh:mm a")),
                     leadingIcon = {
                         Icon(
                             imageVector = Icons.Outlined.Schedule,

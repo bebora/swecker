@@ -60,6 +60,8 @@ class AlarmBrowserViewModel @Inject constructor(
 
     private var searchChannelsJob: Job? = null
 
+    private var messagesCollectorJob: Job? = null
+
     init {
         observeAlarms() // TODO Observe alarms may need to be updated after login/logout!
         viewModelScope.launch {
@@ -80,16 +82,15 @@ class AlarmBrowserViewModel @Inject constructor(
                         authService.getUserId()
                     ).collect { groupsList ->
                         uiState = uiState.copy(
-                            groups = groupsList.map {thinGroup ->
+                            groups = groupsList.map { thinGroup ->
                                 thinGroup.toGroup()
-                            }.map{group ->
-                                val firstGroupAlarm = uiState.alarms.firstOrNull{
-                                        alarm ->
+                            }.map { group ->
+                                val firstGroupAlarm = uiState.alarms.firstOrNull { alarm ->
                                     alarm.groupId == group.id
                                 }
                                 group.copy(
                                     firstAlarmDateTime = firstGroupAlarm?.dateTime,
-                                    firstAlarmName = firstGroupAlarm?.name?:""
+                                    firstAlarmName = firstGroupAlarm?.name ?: ""
                                 )
                             }
                         )
@@ -103,14 +104,13 @@ class AlarmBrowserViewModel @Inject constructor(
                         uiState = uiState.copy(
                             channels = channelsList.map {
                                 it.toGroup()
-                            }.map{channel ->
-                                val firstChannelAlarm = uiState.alarms.firstOrNull{
-                                        alarm ->
+                            }.map { channel ->
+                                val firstChannelAlarm = uiState.alarms.firstOrNull { alarm ->
                                     alarm.groupId == channel.id
                                 }
                                 channel.copy(
                                     firstAlarmDateTime = firstChannelAlarm?.dateTime,
-                                    firstAlarmName = firstChannelAlarm?.name?:""
+                                    firstAlarmName = firstChannelAlarm?.name ?: ""
                                 )
                             }
                         )
@@ -128,17 +128,8 @@ class AlarmBrowserViewModel @Inject constructor(
                 }
             }
         }
-        viewModelScope.launch { // TODO remove this or use a collector job to retrieve messages
-            chatService.getMessages("testchat")
-                .collect {
-                    Log.d("SWECKER-CHAT-DEBUG", "Got from firebase: $it")
-                    uiState = uiState.copy(
-                        messages = it.reversed()
-                    )
-                    fetchUsersData(messages = it.reversed())
-                }
-        }
     }
+
 
     private fun fetchUsersData(messages: List<Message>) {
         messages
@@ -182,7 +173,7 @@ class AlarmBrowserViewModel @Inject constructor(
                                 dateTime = alarmToSchedule.dateTime!!,
                                 name = alarmToSchedule.name
                             )
-                        }else{
+                        } else {
                             cancelAlarm(context = application.baseContext)
                         }
                     }
@@ -243,9 +234,12 @@ class AlarmBrowserViewModel @Inject constructor(
 
                 if (event.success) {
                     CoroutineScope(Dispatchers.IO).launch {
-                        repository.updateAlarm(event.alarm.copy(
-                            timeStamp = OffsetDateTime.now().format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)
-                        ))
+                        repository.updateAlarm(
+                            event.alarm.copy(
+                                timeStamp = OffsetDateTime.now()
+                                    .format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)
+                            )
+                        )
                     }
                 }
             }
@@ -259,12 +253,12 @@ class AlarmBrowserViewModel @Inject constructor(
             is AlarmBrowserEvent.AlarmSelected -> {
                 uiState = uiState.copy(
                     selectedAlarm = event.alarm,
-                    detailsScreenContent = if (event.alarm.alarmType == AlarmType.PERSONAL) {
+                    detailsScreenContent = if (event.alarm.alarmType == AlarmType.PERSONAL || !event.alarm.enableChat) {
                         DetailsScreenContent.ALARM_DETAILS
                     } else {
                         DetailsScreenContent.CHAT
                     },
-                    animatedDetailsScreenContent = if (event.alarm.alarmType == AlarmType.PERSONAL) {
+                    animatedDetailsScreenContent = if (event.alarm.alarmType == AlarmType.PERSONAL || !event.alarm.enableChat) {
                         DetailsScreenContent.ALARM_DETAILS
                     } else {
                         DetailsScreenContent.CHAT
@@ -273,6 +267,17 @@ class AlarmBrowserViewModel @Inject constructor(
                         targetState = true
                     }
                 )
+                messagesCollectorJob?.cancel()
+                messagesCollectorJob = viewModelScope.launch {
+                    chatService.getMessages(event.alarm.id)
+                        .collect {
+                            Log.d("SWECKER-CHAT-DEBUG", "Got from firebase: $it")
+                            uiState = uiState.copy(
+                                messages = it.reversed()
+                            )
+                            fetchUsersData(messages = it.reversed())
+                        }
+                }
             }
 
             is AlarmBrowserEvent.GroupSelected -> {
@@ -337,7 +342,7 @@ class AlarmBrowserViewModel @Inject constructor(
                         alarms = curState.alarms,
                         selectedDestination = curState.selectedDestination,
                         searchKey = event.key,
-                        selectedGroup = curState.selectedGroup?:curState.selectedChannel
+                        selectedGroup = curState.selectedGroup ?: curState.selectedChannel
                     )
                 )
             }
@@ -364,15 +369,10 @@ class AlarmBrowserViewModel @Inject constructor(
                 )
             }
 
-            is AlarmBrowserEvent.OpenChatTEMP -> {
-                uiState = uiState.copy(
-                    detailsScreenContent = DetailsScreenContent.CHAT
-                )
-            }
 
-            is AlarmBrowserEvent.SendMessageTEMP -> {
+            is AlarmBrowserEvent.SendMessage -> {
                 chatService.sendMessage(
-                    chatId = "testchat",
+                    chatId = uiState.selectedAlarm?.id ?: "",
                     senderId = uiState.me.id,
                     text = event.text,
                     onResult = {
@@ -458,9 +458,9 @@ class AlarmBrowserViewModel @Inject constructor(
             DetailsScreenContent.CHAT -> {
                 if (curState.selectedGroup != null) {
                     DetailsScreenContent.GROUP_ALARM_LIST
-                } else if(curState.selectedChannel != null){
+                } else if (curState.selectedChannel != null) {
                     DetailsScreenContent.CHANNEL_ALARM_LIST
-                }else{
+                } else {
                     DetailsScreenContent.NONE
                 }
             }

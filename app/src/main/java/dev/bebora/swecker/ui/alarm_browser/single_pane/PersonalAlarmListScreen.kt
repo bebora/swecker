@@ -10,10 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import dev.bebora.swecker.ui.alarm_browser.AlarmBrowserEvent
-import dev.bebora.swecker.ui.alarm_browser.AlarmBrowserUIState
-import dev.bebora.swecker.ui.alarm_browser.AlarmList
-import dev.bebora.swecker.ui.alarm_browser.NavBarDestination
+import dev.bebora.swecker.ui.alarm_browser.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -72,7 +69,7 @@ fun PersonalAlarmListScreen(
                 onEvent = onEvent,
                 selectedAlarm = uiState.selectedAlarm
             )
-            TextButton(onClick = { onEvent(AlarmBrowserEvent.OpenChatTEMP) }) {
+            TextButton(onClick = { onEvent(AlarmBrowserEvent.DetailsOpened(DetailsScreenContent.CHAT)) }) {
                 Text(text = "Open test chat")
             }
         }

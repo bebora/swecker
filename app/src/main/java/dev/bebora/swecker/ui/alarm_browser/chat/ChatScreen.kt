@@ -194,8 +194,8 @@ fun ChatScreen(
                 messages = uiState.messages,
                 ownerId = uiState.me.id,
                 usersData = uiState.usersData,
-                onSendMessage = {
-                    onEvent(AlarmBrowserEvent.SendMessageTEMP(it))
+                onSendMessage = {message ->
+                    onEvent(AlarmBrowserEvent.SendMessage(message))
                 }
             )
         }
