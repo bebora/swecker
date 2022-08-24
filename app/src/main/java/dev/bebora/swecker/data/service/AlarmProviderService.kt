@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface AlarmProviderService {
     fun getUserGroups(userId: String): Flow<List<ThinGroup>>
+    fun getUserChannels(userId: String): Flow<List<ThinGroup>>
     fun createGroup(
         ownerId: String,
         userIds: List<String>,

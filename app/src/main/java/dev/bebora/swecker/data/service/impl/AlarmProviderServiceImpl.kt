@@ -42,6 +42,37 @@ class AlarmProviderServiceImpl : AlarmProviderService {
         }
     }
 
+    override fun getUserChannels(userId: String): Flow<List<ThinGroup>> {
+        if (userId.isBlank()) {
+            Log.d("SWECKER-EMPTY-USER", "Empty user id")
+            return MutableStateFlow(emptyList<ThinGroup>()).asStateFlow()
+        } else {
+            return callbackFlow {
+                val listener = Firebase.firestore
+                    .collection(FirebaseConstants.CHANNELS_COLLECTION)
+                    .whereArrayContains("members", userId)
+                    .addSnapshotListener { snapshot, error ->
+                        if (error != null) {
+                            Log.d("SWECKER-LISTEN-CH", "Cannot retrieve channels", error)
+                            return@addSnapshotListener
+                        }
+                        if (snapshot != null) {
+                            Log.d("SWECKER-GET-CH-EXISTS", "Current data: $snapshot")
+                            trySend(
+                                snapshot.toObjects(ThinGroup::class.java)
+                            )
+                        } else {
+                            Log.d("SWECKER-GET-CH-NOPE", "Current data: null")
+                            trySend(emptyList())
+                        }
+                    }
+                awaitClose {
+                    listener.remove()
+                }
+            }
+        }
+    }
+
     override fun createGroup(
         ownerId: String,
         userIds: List<String>, // The list should already include the owner

@@ -12,6 +12,10 @@ class AlarmProviderServiceTestImpl : AlarmProviderService {
         return MutableStateFlow(emptyList<ThinGroup>()).asStateFlow()
     }
 
+    override fun getUserChannels(userId: String): Flow<List<ThinGroup>> {
+        return MutableStateFlow(emptyList<ThinGroup>()).asStateFlow()
+    }
+
     override fun createGroup(
         ownerId: String,
         userIds: List<String>,
