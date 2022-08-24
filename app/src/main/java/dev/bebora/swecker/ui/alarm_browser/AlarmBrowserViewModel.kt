@@ -379,8 +379,8 @@ class AlarmBrowserViewModel @Inject constructor(
             res = alarms.filter { al -> al.groupId == selectedGroup.id }
         }
 
-        if (searchKey.isNotEmpty()) {
-            res = res?.filter { al -> al.name.contains(searchKey) }
+        if (searchKey.isNotBlank()) {
+            res = res?.filter { al -> al.name.contains(searchKey, ignoreCase = true) }
         }
 
         return res
