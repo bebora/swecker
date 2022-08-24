@@ -5,6 +5,7 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import dev.bebora.swecker.data.StoredAlarm
 import dev.bebora.swecker.data.ThinGroup
+import dev.bebora.swecker.data.User
 import dev.bebora.swecker.data.service.AlarmProviderService
 import dev.bebora.swecker.data.service.EmptyGroupException
 import kotlinx.coroutines.channels.awaitClose
@@ -171,6 +172,46 @@ class AlarmProviderServiceImpl : AlarmProviderService {
             .addOnCompleteListener {
                 onComplete(it.exception)
             }
+    }
+
+    override fun searchNewChannels(
+        from: User,
+        query: String,
+        onError: (Throwable) -> Unit,
+        onSuccess: (List<ThinGroup>) -> Unit
+    ) {
+        Log.d("SWECKER-SEARCH-CH", "Searching for new channels starting with '$query'")
+        if (query.isEmpty()) {
+            onSuccess(emptyList())
+        } else {
+            val channelsRef = Firebase.firestore
+                .collection(FirebaseConstants.CHANNELS_COLLECTION)
+
+            channelsRef
+                .whereGreaterThanOrEqualTo("handle", query)
+                .whereLessThanOrEqualTo(
+                    "handle",
+                    "${query}~"
+                ) // https://stackoverflow.com/questions/46568142/google-firestore-query-on-substring-of-a-property-value-text-search
+                .get()
+                .addOnFailureListener(onError)
+                .addOnSuccessListener { handlesQuerySnapshot ->
+                    channelsRef
+                        .whereGreaterThanOrEqualTo("lowerName", query)
+                        .whereLessThanOrEqualTo("lowerName", "${query}~")
+                        .get()
+                        .addOnFailureListener(onError)
+                        .addOnSuccessListener { namesQuerySnapshot ->
+                            val handleResults = handlesQuerySnapshot.toObjects(ThinGroup::class.java).filter { !it.members.contains(from.id) }
+                            val nameResults = namesQuerySnapshot.toObjects(ThinGroup::class.java).filter { !it.members.contains(from.id) }
+                            val handleResultSet = handleResults.map { it.id }.toSet()
+                            val mergedResults = handleResults + nameResults.filter { !handleResultSet.contains(it.id) }
+                            onSuccess(
+                                mergedResults
+                            )
+                        }
+                }
+        }
     }
 
     override fun createAlarm(alarm: StoredAlarm, onComplete: (Throwable?) -> Unit) {

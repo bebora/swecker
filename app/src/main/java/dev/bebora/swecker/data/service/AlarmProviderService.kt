@@ -2,6 +2,7 @@ package dev.bebora.swecker.data.service
 
 import dev.bebora.swecker.data.StoredAlarm
 import dev.bebora.swecker.data.ThinGroup
+import dev.bebora.swecker.data.User
 import kotlinx.coroutines.flow.Flow
 
 interface AlarmProviderService {
@@ -39,6 +40,13 @@ interface AlarmProviderService {
     fun deleteChannel(
         channelId: String,
         onComplete: (Throwable?) -> Unit
+    )
+
+    fun searchNewChannels(
+        from: User,
+        query: String,
+        onError: (Throwable) -> Unit,
+        onSuccess: (List<ThinGroup>) -> Unit
     )
 
     fun createAlarm(

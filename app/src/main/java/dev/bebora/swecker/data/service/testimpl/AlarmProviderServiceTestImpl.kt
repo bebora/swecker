@@ -2,6 +2,7 @@ package dev.bebora.swecker.data.service.testimpl
 
 import dev.bebora.swecker.data.StoredAlarm
 import dev.bebora.swecker.data.ThinGroup
+import dev.bebora.swecker.data.User
 import dev.bebora.swecker.data.service.AlarmProviderService
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -47,6 +48,15 @@ class AlarmProviderServiceTestImpl : AlarmProviderService {
     }
 
     override fun deleteChannel(channelId: String, onComplete: (Throwable?) -> Unit) {
+        TODO("Not yet implemented")
+    }
+
+    override fun searchNewChannels(
+        from: User,
+        query: String,
+        onError: (Throwable) -> Unit,
+        onSuccess: (List<ThinGroup>) -> Unit
+    ) {
         TODO("Not yet implemented")
     }
 
