@@ -61,6 +61,16 @@ fun AlarmBrowserSinglePaneFab(
                 )
             }
         }
+        DetailsScreenContent.CHANNEL_ALARM_LIST -> {
+            FloatingActionButton(onClick = {
+                onEvent(AlarmBrowserEvent.DialogOpened(DialogContent.ADD_ALARM))
+            }) {
+                Icon(
+                    imageVector = Icons.Outlined.AddAlarm,
+                    contentDescription = null
+                )
+            }
+        }
         else -> {
         }
     }

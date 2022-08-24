@@ -36,10 +36,14 @@ fun DualPaneContentList(
                     onValueChange = { newValue -> onEvent(AlarmBrowserEvent.SearchGroups(newValue)) })
                 GroupList(groups = uiState.groups.filter { group ->
                     group.name.contains(uiState.searchKey)
-                }, onEvent = onEvent)
+                }, onEvent = {group -> onEvent(AlarmBrowserEvent.ChannelSelected(group))},)
             }
             NavBarDestination.CHANNELS -> {
-                Box(modifier = Modifier.fillMaxWidth(1f))
+                AlarmBrowserSearchBar(searchKey = uiState.searchKey, modifier = modifier,
+                    onValueChange = { newValue -> onEvent(AlarmBrowserEvent.SearchGroups(newValue)) })
+                GroupList(groups = uiState.channels.filter { channel ->
+                    channel.name.contains(uiState.searchKey)
+                }, onEvent = {channel -> onEvent(AlarmBrowserEvent.ChannelSelected(channel))},)
             }
         }
     }

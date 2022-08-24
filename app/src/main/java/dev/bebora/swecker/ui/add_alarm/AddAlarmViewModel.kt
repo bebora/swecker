@@ -35,7 +35,7 @@ class AddAlarmViewModel @Inject constructor(
     )
     val alarm: StateFlow<Alarm> = _alarm
 
-    fun onUpdateCompleted(alarm: Alarm, success: Boolean, group: Group?, userId: String?) {
+    fun onUpdateCompleted(alarm: Alarm, success: Boolean, group: Group?, userId: String?, alarmType: AlarmType) {
         if (success) {
             _alarm.value = Alarm(
                 id = UUID.randomUUID().toString(),
@@ -50,11 +50,7 @@ class AddAlarmViewModel @Inject constructor(
                 repository.insertAlarm(
                     alarm.copy(
                         groupId = group?.id,
-                        alarmType = if (group != null) {
-                            AlarmType.GROUP
-                        } else {
-                            AlarmType.PERSONAL
-                        },
+                        alarmType = alarmType,
                         timeStamp = OffsetDateTime.now()
                             .format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)
                     ),

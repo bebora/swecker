@@ -10,7 +10,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import dev.bebora.swecker.data.Group
 import dev.bebora.swecker.data.User
-import dev.bebora.swecker.ui.alarm_browser.AlarmBrowserEvent
 import dev.bebora.swecker.ui.theme.SweckerTheme
 import java.time.OffsetDateTime
 
@@ -19,7 +18,7 @@ fun GroupList(
     modifier: Modifier = Modifier,
     groups: List<Group>,
     selectedGroupId: String? = null,
-    onEvent: (AlarmBrowserEvent) -> Unit,
+    onEvent: (Group) -> Unit,
 ) {
     LazyColumn() {
         items(groups) { group ->

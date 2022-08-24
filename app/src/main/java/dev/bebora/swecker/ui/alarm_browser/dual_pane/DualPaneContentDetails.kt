@@ -13,6 +13,8 @@ import dev.bebora.swecker.ui.alarm_browser.AlarmBrowserEvent
 import dev.bebora.swecker.ui.alarm_browser.AlarmBrowserUIState
 import dev.bebora.swecker.ui.alarm_browser.DetailsScreenContent
 import dev.bebora.swecker.ui.alarm_browser.alarm_details.AlarmDetailsScreen
+import dev.bebora.swecker.ui.alarm_browser.channel_screen.ChannelAlarmListScreen
+import dev.bebora.swecker.ui.alarm_browser.channel_screen.ChannelDetailsScreen
 import dev.bebora.swecker.ui.alarm_browser.chat.ChatScreen
 import dev.bebora.swecker.ui.alarm_browser.group_screen.GroupAlarmListScreen
 import dev.bebora.swecker.ui.alarm_browser.group_screen.GroupDetailsScreen
@@ -74,6 +76,22 @@ fun DualPaneContentDetails(
                 }
                 DetailsScreenContent.CHAT -> {
                     ChatScreen(
+                        modifier = modifier,
+                        onEvent = onEvent,
+                        uiState = uiState,
+                        roundTopCorners = true
+                    )
+                }
+                DetailsScreenContent.CHANNEL_DETAILS -> {
+                    ChannelDetailsScreen(
+                        modifier = modifier,
+                        onEvent = onEvent,
+                        uiState = uiState,
+                        roundTopCorners = true
+                    )
+                }
+                DetailsScreenContent.CHANNEL_ALARM_LIST -> {
+                    ChannelAlarmListScreen(
                         modifier = modifier,
                         onEvent = onEvent,
                         uiState = uiState,

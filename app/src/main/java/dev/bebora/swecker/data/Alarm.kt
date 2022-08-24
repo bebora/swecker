@@ -11,8 +11,8 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.google.firebase.firestore.PropertyName
+import dev.bebora.swecker.ui.alarm_browser.NavBarDestination
 import java.time.LocalDate
-import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
@@ -48,6 +48,14 @@ enum class AlarmType {
     PERSONAL,
     GROUP,
     CHANNEL
+}
+
+fun alarmTypeFromNavbarDestination(destination: NavBarDestination):AlarmType{
+    return when (destination){
+        NavBarDestination.PERSONAL,NavBarDestination.HOME -> AlarmType.PERSONAL
+        NavBarDestination.CHANNELS -> AlarmType.CHANNEL
+        NavBarDestination.GROUPS -> AlarmType.GROUP
+    }
 }
 
 fun AlarmType.toStoredString() : String {

@@ -18,7 +18,7 @@ import dev.bebora.swecker.ui.alarm_browser.group_screen.GroupList
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun GroupListScreen(
+fun ChannelListScreen(
     modifier: Modifier = Modifier,
     onEvent: (AlarmBrowserEvent) -> Unit,
     uiState: AlarmBrowserUIState,
@@ -34,7 +34,7 @@ fun GroupListScreen(
                     containerColor = MaterialTheme.colorScheme.surfaceVariant
                 ),
                 modifier = modifier,
-                title = { Text(text = "Groups", textAlign = TextAlign.Center) },
+                title = { Text(text = "Channels", textAlign = TextAlign.Center) },
                 navigationIcon = {
                     IconButton(onClick = { navigationAction() }) {
                         Icon(
@@ -49,14 +49,14 @@ fun GroupListScreen(
                     }) {
                         Icon(
                             imageVector = Icons.Outlined.Search,
-                            contentDescription = "Search content"
+                            contentDescription = "Search channels"
                         )
                     }
                 })
         },
         floatingActionButton = {
             AlarmBrowserSinglePaneFab(
-                destination = NavBarDestination.GROUPS,
+                destination = NavBarDestination.CHANNELS,
                 modifier = Modifier
                     .padding(32.dp),
                 detailsScreenContent = uiState.detailsScreenContent,
@@ -80,14 +80,12 @@ fun GroupListScreen(
                     onValueChange = { newValue -> onEvent(AlarmBrowserEvent.SearchGroups(newValue)) })
             }
             GroupList(
-                groups = uiState.groups.filter { group ->
-                    group.name.contains(uiState.searchKey)
+                groups = uiState.channels.filter { channel ->
+                    channel.name.contains(uiState.searchKey)
                 },
-                onEvent = { group -> onEvent(AlarmBrowserEvent.ChannelSelected(group)) },
-                selectedGroupId = uiState.selectedGroup?.id
+                onEvent = { channel -> onEvent(AlarmBrowserEvent.ChannelSelected(channel)) },
+                selectedGroupId = uiState.selectedChannel?.id
             )
         }
     }
 }
-
-

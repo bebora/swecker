@@ -185,8 +185,10 @@ class AlarmBrowserViewModel @Inject constructor(
                 uiState = uiState.copy(
                     selectedDestination = event.destination,
                     detailsScreenContent = DetailsScreenContent.NONE,
+                    animatedDetailsScreenContent = DetailsScreenContent.NONE,
                     selectedAlarm = null,
                     selectedGroup = null,
+                    selectedChannel = null,
                     filteredAlarms = filterAlarms(
                         alarms = uiState.alarms,
                         selectedGroup = null,
@@ -271,6 +273,25 @@ class AlarmBrowserViewModel @Inject constructor(
                 )
             }
 
+            is AlarmBrowserEvent.ChannelSelected -> {
+                uiState = uiState.copy(
+                    selectedChannel = event.channel,
+                    selectedAlarm = null,
+                    selectedGroup = null,
+                    filteredAlarms = filterAlarms(
+                        uiState.alarms,
+                        NavBarDestination.GROUPS,
+                        "",
+                        event.channel
+                    ),
+                    detailsScreenContent = DetailsScreenContent.CHANNEL_ALARM_LIST,
+                    animatedDetailsScreenContent = DetailsScreenContent.CHANNEL_ALARM_LIST,
+                    mutableTransitionState = MutableTransitionState(false).apply {
+                        targetState = true
+                    }
+                )
+            }
+
             is AlarmBrowserEvent.BackButtonPressed -> {
                 if (uiState.dialogContent != DialogContent.NONE) {
                     uiState = uiState.copy(
@@ -296,7 +317,7 @@ class AlarmBrowserViewModel @Inject constructor(
                         alarms = curState.alarms,
                         selectedDestination = curState.selectedDestination,
                         searchKey = event.key,
-                        selectedGroup = curState.selectedGroup
+                        selectedGroup = curState.selectedGroup?:curState.selectedChannel
                     )
                 )
             }
@@ -409,7 +430,7 @@ class AlarmBrowserViewModel @Inject constructor(
                     DetailsScreenContent.NONE
                 }
             }
-            DetailsScreenContent.GROUP_ALARM_LIST -> {
+            DetailsScreenContent.GROUP_ALARM_LIST, DetailsScreenContent.CHANNEL_ALARM_LIST -> {
                 DetailsScreenContent.NONE
             }
 
@@ -423,6 +444,10 @@ class AlarmBrowserViewModel @Inject constructor(
 
             DetailsScreenContent.GROUP_DETAILS -> {
                 DetailsScreenContent.GROUP_ALARM_LIST
+            }
+
+            DetailsScreenContent.CHANNEL_DETAILS -> {
+                DetailsScreenContent.CHANNEL_ALARM_LIST
             }
 
             DetailsScreenContent.NONE ->
@@ -440,6 +465,7 @@ data class AlarmBrowserUIState(
     val channels: List<Group> = LocalAlarmDataProvider.allChannels,
     val selectedAlarm: Alarm? = null,
     val selectedGroup: Group? = null,
+    val selectedChannel: Group? = null,
     val detailsScreenContent: DetailsScreenContent = DetailsScreenContent.NONE,
     val dialogContent: DialogContent = DialogContent.NONE,
     val searchKey: String = String(),
@@ -457,6 +483,8 @@ enum class DetailsScreenContent {
     CHAT,
     GROUP_ALARM_LIST,
     GROUP_DETAILS,
+    CHANNEL_DETAILS,
+    CHANNEL_ALARM_LIST,
     ALARM_DETAILS
 }
 
@@ -466,7 +494,7 @@ enum class DialogContent {
     ADD_GROUP,
     ADD_CHANNEL,
     ADD_CONTACT,
-    CONTACT_BROWSER
+    CONTACT_BROWSER,
 }
 
 enum class NavBarDestination {

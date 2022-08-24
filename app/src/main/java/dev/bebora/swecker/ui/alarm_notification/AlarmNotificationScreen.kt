@@ -190,9 +190,10 @@ fun AlarmNotificationFullScreen(
                                 onAlarmSnooze()
                             } else if (isStopSelected) {
                                 onAlarmDismiss()
+                            }else {
+                                dragOffset.value = 0f
+                                isDragging = false
                             }
-                            dragOffset.value = 0f
-                            isDragging = false
                         },
                         onDragStart = {
                             isDragging = true

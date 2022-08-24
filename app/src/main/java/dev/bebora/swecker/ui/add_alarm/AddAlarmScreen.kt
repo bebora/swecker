@@ -12,6 +12,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
+import dev.bebora.swecker.data.AlarmType
 import dev.bebora.swecker.data.Group
 import dev.bebora.swecker.ui.alarm_browser.alarm_details.AlarmDetails
 
@@ -21,8 +22,9 @@ fun AddAlarmContent(
     viewModel: AddAlarmViewModel,
     group: Group?,
     onBackPressed: () -> Unit,
-    userId: String?
-) {
+    userId: String?,
+    alarmType: AlarmType,
+    ) {
     val alarm = viewModel.alarm.collectAsState()
     AlarmDetails(
         modifier = modifier,
@@ -30,7 +32,7 @@ fun AddAlarmContent(
         isReadOnly = false,
         onAlarmPartiallyUpdated = viewModel::onAlarmPartiallyUpdate,
         onUpdateCompleted = { al, b ->
-            viewModel.onUpdateCompleted(al, b, group, userId)
+            viewModel.onUpdateCompleted(al, b, group, userId, alarmType)
             onBackPressed()
         }
     )
@@ -67,6 +69,7 @@ fun AddAlarmScreen(
     onGoBack: () -> Unit,
     group: Group? = null,
     userId: String? = null,
+    alarmType: AlarmType,
     addAlarmViewModel: AddAlarmViewModel = hiltViewModel()
 ) {
     Scaffold(
@@ -86,7 +89,7 @@ fun AddAlarmScreen(
             onBackPressed = onGoBack,
             group = group,
             userId= userId,
-            )
+            alarmType = alarmType)
     }
 }
 
@@ -96,6 +99,7 @@ fun AddAlarmDialog(
     onGoBack: () -> Unit,
     group: Group? = null,
     userId: String? = null,
+    alarmType: AlarmType,
     addAlarmViewModel: AddAlarmViewModel = hiltViewModel()
 ) {
     Dialog(
@@ -111,6 +115,7 @@ fun AddAlarmDialog(
                 onBackPressed = onGoBack,
                 group = group,
                 userId= userId,
+                alarmType = alarmType
             )
         }
 

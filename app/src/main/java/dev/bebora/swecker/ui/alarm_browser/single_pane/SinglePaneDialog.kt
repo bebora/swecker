@@ -3,6 +3,7 @@ package dev.bebora.swecker.ui.alarm_browser.single_pane
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import dev.bebora.swecker.data.alarmTypeFromNavbarDestination
 import dev.bebora.swecker.ui.add_alarm.AddAlarmScreen
 import dev.bebora.swecker.ui.add_group.AddGroupScreen
 import dev.bebora.swecker.ui.alarm_browser.AlarmBrowserEvent
@@ -19,9 +20,11 @@ fun SinglePaneDialog(
 ) {
     when (uiState.dialogContent) {
         DialogContent.ADD_ALARM -> AddAlarmScreen(modifier = modifier.fillMaxSize(1f),
-            group = uiState.selectedGroup,
+            group = uiState.selectedGroup?:uiState.selectedChannel,
             userId = uiState.me.id,
-            onGoBack = { onEvent(AlarmBrowserEvent.BackButtonPressed) })
+            onGoBack = { onEvent(AlarmBrowserEvent.BackButtonPressed) },
+            alarmType = alarmTypeFromNavbarDestination(uiState.selectedDestination)
+        )
         DialogContent.CONTACT_BROWSER -> ContactBrowserScreen(
             onGoBack = { onEvent(AlarmBrowserEvent.BackButtonPressed) },
             onNavigate = onNavigate

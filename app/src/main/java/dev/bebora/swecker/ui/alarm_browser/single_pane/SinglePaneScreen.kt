@@ -9,6 +9,8 @@ import dev.bebora.swecker.ui.alarm_browser.AlarmBrowserUIState
 import dev.bebora.swecker.ui.alarm_browser.DetailsScreenContent
 import dev.bebora.swecker.ui.alarm_browser.NavBarDestination
 import dev.bebora.swecker.ui.alarm_browser.alarm_details.AlarmDetailsScreen
+import dev.bebora.swecker.ui.alarm_browser.channel_screen.ChannelAlarmListScreen
+import dev.bebora.swecker.ui.alarm_browser.channel_screen.ChannelDetailsScreen
 import dev.bebora.swecker.ui.alarm_browser.chat.ChatScreen
 import dev.bebora.swecker.ui.alarm_browser.group_screen.GroupAlarmListScreen
 import dev.bebora.swecker.ui.alarm_browser.group_screen.GroupDetailsScreen
@@ -41,7 +43,12 @@ fun SinglePaneScreen(
                     uiState = uiState,
                     navigationAction = onOpenDrawer
                 )
-                else -> {}
+                NavBarDestination.CHANNELS -> ChannelListScreen(
+                    modifier = modifier,
+                    onEvent = onEvent,
+                    uiState = uiState,
+                    navigationAction = onOpenDrawer
+                )
             }
         }
         DetailsScreenContent.GROUP_DETAILS -> {
@@ -54,6 +61,23 @@ fun SinglePaneScreen(
                 exit = slideOutHorizontally { -it } + fadeOut()
             ) {
                 GroupDetailsScreen(
+                    modifier = modifier,
+                    onEvent = onEvent,
+                    uiState = uiState,
+                    roundTopCorners = false
+                )
+            }
+        }
+        DetailsScreenContent.CHANNEL_DETAILS -> {
+            BackHandler {
+                onEvent(AlarmBrowserEvent.BackButtonPressed)
+            }
+            AnimatedVisibility(
+                visibleState = uiState.mutableTransitionState,
+                enter = slideInHorizontally { it } + fadeIn(),
+                exit = slideOutHorizontally { -it } + fadeOut()
+            ) {
+                ChannelDetailsScreen(
                     modifier = modifier,
                     onEvent = onEvent,
                     uiState = uiState,
@@ -88,6 +112,24 @@ fun SinglePaneScreen(
                 exit = slideOutHorizontally { it/2 } + fadeOut()
             ) {
                 GroupAlarmListScreen(
+                    modifier = modifier,
+                    onEvent = onEvent,
+                    uiState = uiState,
+                    roundTopCorners = false
+
+                )
+            }
+        }
+        DetailsScreenContent.CHANNEL_ALARM_LIST -> {
+            BackHandler {
+                onEvent(AlarmBrowserEvent.BackButtonPressed)
+            }
+            AnimatedVisibility(
+                visibleState = uiState.mutableTransitionState,
+                enter = slideInHorizontally { -it/2 } + fadeIn(),
+                exit = slideOutHorizontally { it/2 } + fadeOut()
+            ) {
+                ChannelAlarmListScreen(
                     modifier = modifier,
                     onEvent = onEvent,
                     uiState = uiState,

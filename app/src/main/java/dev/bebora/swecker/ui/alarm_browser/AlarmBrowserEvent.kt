@@ -10,6 +10,8 @@ sealed class AlarmBrowserEvent {
 
     data class AlarmSelected(val alarm: Alarm) : AlarmBrowserEvent()
 
+    data class ChannelSelected(val channel: Group) : AlarmBrowserEvent()
+
     data class AlarmUpdated(val alarm: Alarm, val success: Boolean) : AlarmBrowserEvent()
 
     data class AlarmPartiallyUpdated(val alarm: Alarm) : AlarmBrowserEvent()

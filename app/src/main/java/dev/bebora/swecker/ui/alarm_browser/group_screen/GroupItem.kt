@@ -18,7 +18,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import dev.bebora.swecker.data.Group
-import dev.bebora.swecker.ui.alarm_browser.AlarmBrowserEvent
 import dev.bebora.swecker.ui.theme.SweckerTheme
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
@@ -28,7 +27,7 @@ fun GroupItem(
     modifier: Modifier = Modifier,
     group: Group,
     selected: Boolean = false,
-    onEvent: (AlarmBrowserEvent) -> Unit
+    onEvent: (Group) -> Unit
 ) {
     Row(modifier = modifier
         .fillMaxWidth(1f)
@@ -39,7 +38,7 @@ fun GroupItem(
                 MaterialTheme.colorScheme.surfaceVariant
             }
         )
-        .clickable { onEvent(AlarmBrowserEvent.GroupSelected(group)) }
+        .clickable { onEvent(group) }
         .padding(all = 8.dp),
         verticalAlignment = Alignment.CenterVertically) {
         AsyncImage(
