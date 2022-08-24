@@ -3,7 +3,6 @@ package dev.bebora.swecker.ui.alarm_notification
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.os.*
 
 
 private const val TAG = "AlarmNotificationReceiver"
@@ -11,14 +10,6 @@ private const val TAG = "AlarmNotificationReceiver"
 class AlarmNotificationReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
-        //TODO add actual music and vibration
-        val wakeLock: PowerManager.WakeLock =
-            (context.getSystemService(Context.POWER_SERVICE) as PowerManager).run {
-                newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "MyApp::MyWakelockTag").apply {
-                    acquire(10 * 60 * 1000L /*10 minutes*/)
-                }
-            }
-
         /*StringBuilder().apply {
             append("Action: ${intent.action}\n")
             append("URI: ${intent.toUri(Intent.URI_INTENT_SCHEME)}\n")
@@ -33,8 +24,5 @@ class AlarmNotificationReceiver : BroadcastReceiver() {
             .putExtra("DateTime", intent.getStringExtra("DateTime"))
             .putExtra("Name", intent.getStringExtra("Name"))
         context.startActivity(notificationIntent)
-
-
-        wakeLock.release()
     }
 }
