@@ -26,7 +26,7 @@ class AlarmRepositoryTestImpl : AlarmRepository {
         LocalAlarmDataProvider.updateAlarm(alarm = alarm)
     }
 
-    override suspend fun updateAlarm(alarm: Alarm) {
+    override suspend fun updateAlarm(alarm: Alarm, userId: String?) {
         TODO("Not yet implemented")
     }
 

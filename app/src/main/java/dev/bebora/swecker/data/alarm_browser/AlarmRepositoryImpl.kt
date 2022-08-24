@@ -91,10 +91,12 @@ class AlarmRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun updateAlarm(alarm: Alarm) {
+    override suspend fun updateAlarm(alarm: Alarm, userId: String?) {
         alarmDao.insert(alarm = alarm)
         if (authService.getUserId().isNotEmpty()) {
-            alarmProviderService.updateAlarm(alarm = alarm.toStoredAlarm()) {
+            alarmProviderService.updateAlarm(alarm = alarm.toStoredAlarm().copy(
+                userId = userId
+            )) {
                 if (it != null) {
                     onError(it)
                 }

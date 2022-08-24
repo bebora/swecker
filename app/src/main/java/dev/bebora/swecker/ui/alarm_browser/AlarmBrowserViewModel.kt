@@ -214,21 +214,22 @@ class AlarmBrowserViewModel @Inject constructor(
             is AlarmBrowserEvent.AlarmUpdated -> {
                 val selectedAlarm = uiState.selectedAlarm
                 var detailsScreenContent = uiState.detailsScreenContent
-                var mutableTransitionState = MutableTransitionState(false).apply {
+                var mutableTransitionState = MutableTransitionState(true).apply {
                     targetState = true
                 }
 
                 if (selectedAlarm?.id.equals(event.alarm.id)) {
                     detailsScreenContent = detailsScreenContentOnGoBack()
-                    mutableTransitionState = MutableTransitionState(true).apply {
-                        targetState = false
+                    if (uiState.detailsScreenContent != DetailsScreenContent.NONE) {
+                        mutableTransitionState = MutableTransitionState(true).apply {
+                            targetState = false
+                        }
                     }
                 }
 
                 uiState = uiState.copy(
                     selectedAlarm = selectedAlarm,
                     detailsScreenContent = detailsScreenContent,
-                    animatedDetailsScreenContent = detailsScreenContent,
                     mutableTransitionState = mutableTransitionState
                 )
 
@@ -238,7 +239,14 @@ class AlarmBrowserViewModel @Inject constructor(
                             event.alarm.copy(
                                 timeStamp = OffsetDateTime.now()
                                     .format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)
-                            )
+                            ), userId = if (uiState.selectedGroup?.owner != uiState.me.id ||
+                                uiState.selectedChannel?.owner != uiState.me.id ||
+                                event.alarm.alarmType == AlarmType.PERSONAL
+                            ) {
+                                uiState.me.id
+                            } else {
+                                null
+                            }
                         )
                     }
                 }
@@ -284,6 +292,7 @@ class AlarmBrowserViewModel @Inject constructor(
                 uiState = uiState.copy(
                     selectedGroup = event.group,
                     selectedAlarm = null,
+                    selectedChannel = null,
                     filteredAlarms = filterAlarms(
                         uiState.alarms,
                         NavBarDestination.GROUPS,
@@ -390,7 +399,7 @@ class AlarmBrowserViewModel @Inject constructor(
                         mutableTransitionState = MutableTransitionState(false).apply {
                             targetState = true
                         },
-                        animatedDetailsScreenContent = uiState.detailsScreenContent
+                        animatedDetailsScreenContent = uiState.detailsScreenContent,
                     )
                 }
             }
@@ -445,7 +454,9 @@ class AlarmBrowserViewModel @Inject constructor(
 
         return when (curState.detailsScreenContent) {
             DetailsScreenContent.ALARM_DETAILS -> {
-                if (curState.selectedAlarm?.alarmType != AlarmType.PERSONAL) {
+                if (curState.selectedAlarm?.alarmType != AlarmType.PERSONAL &&
+                    curState.selectedAlarm?.enableChat == true
+                ) {
                     DetailsScreenContent.CHAT
                 } else {
                     DetailsScreenContent.NONE

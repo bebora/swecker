@@ -106,7 +106,7 @@ fun GroupListScreen(
                 groups = uiState.groups.filter { group ->
                     group.name.contains(uiState.searchKey, ignoreCase = true)
                 },
-                onEvent = { group -> onEvent(AlarmBrowserEvent.ChannelSelected(group)) },
+                onEvent = { group -> onEvent(AlarmBrowserEvent.GroupSelected(group)) },
                 selectedGroupId = uiState.selectedGroup?.id
             )
         }

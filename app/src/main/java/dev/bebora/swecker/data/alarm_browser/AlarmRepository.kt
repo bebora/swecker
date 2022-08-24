@@ -13,7 +13,7 @@ interface AlarmRepository {
 
     suspend fun insertAlarm(alarm: Alarm, userId: String?)
 
-    suspend fun updateAlarm(alarm: Alarm)
+    suspend fun updateAlarm(alarm: Alarm, userId: String?)
 
     fun getAllAlarms(): Flow<List<Alarm>>
 }
