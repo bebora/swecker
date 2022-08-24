@@ -160,7 +160,12 @@ class AlarmProviderServiceImpl : AlarmProviderService {
         Firebase.firestore
             .collection(FirebaseConstants.CHANNELS_COLLECTION)
             .document(newChannelData.id)
-            .set(newChannelData.copy(lowerName = newChannelData.name.lowercase()))
+            .set(
+                newChannelData.copy(
+                    lowerName = newChannelData.name.lowercase(),
+                    handle = newChannelData.handle?.lowercase()
+                )
+            )
             .addOnCompleteListener {
                 onComplete(it.exception)
             }
@@ -187,21 +192,22 @@ class AlarmProviderServiceImpl : AlarmProviderService {
         if (query.isEmpty()) {
             onSuccess(emptyList())
         } else {
+            val lowerQuery = query.lowercase()
             val channelsRef = Firebase.firestore
                 .collection(FirebaseConstants.CHANNELS_COLLECTION)
 
             channelsRef
-                .whereGreaterThanOrEqualTo("handle", query)
+                .whereGreaterThanOrEqualTo("handle", lowerQuery)
                 .whereLessThanOrEqualTo(
                     "handle",
-                    "${query}~"
+                    "${lowerQuery}~"
                 ) // https://stackoverflow.com/questions/46568142/google-firestore-query-on-substring-of-a-property-value-text-search
                 .get()
                 .addOnFailureListener(onError)
                 .addOnSuccessListener { handlesQuerySnapshot ->
                     channelsRef
-                        .whereGreaterThanOrEqualTo("lowerName", query)
-                        .whereLessThanOrEqualTo("lowerName", "${query}~")
+                        .whereGreaterThanOrEqualTo("lowerName", lowerQuery)
+                        .whereLessThanOrEqualTo("lowerName", "${lowerQuery}~")
                         .get()
                         .addOnFailureListener(onError)
                         .addOnSuccessListener { namesQuerySnapshot ->
@@ -224,11 +230,9 @@ class AlarmProviderServiceImpl : AlarmProviderService {
     override fun joinChannel(userId: String, channelId: String, onComplete: (Throwable?) -> Unit) {
         if (userId.isBlank()) {
             onComplete(EmptyUserException())
-        }
-        else if (channelId.isBlank()) {
+        } else if (channelId.isBlank()) {
             onComplete(EmptyChannelException())
-        }
-        else {
+        } else {
             Firebase.firestore
                 .collection(FirebaseConstants.CHANNELS_COLLECTION)
                 .document(channelId)
@@ -242,11 +246,9 @@ class AlarmProviderServiceImpl : AlarmProviderService {
     override fun leaveChannel(userId: String, channelId: String, onComplete: (Throwable?) -> Unit) {
         if (userId.isBlank()) {
             onComplete(EmptyUserException())
-        }
-        else if (channelId.isBlank()) {
+        } else if (channelId.isBlank()) {
             onComplete(EmptyChannelException())
-        }
-        else {
+        } else {
             Firebase.firestore
                 .collection(FirebaseConstants.CHANNELS_COLLECTION)
                 .document(channelId)
@@ -260,11 +262,9 @@ class AlarmProviderServiceImpl : AlarmProviderService {
     override fun leaveGroup(userId: String, groupId: String, onComplete: (Throwable?) -> Unit) {
         if (userId.isBlank()) {
             onComplete(EmptyUserException())
-        }
-        else if (groupId.isBlank()) {
+        } else if (groupId.isBlank()) {
             onComplete(EmptyChannelException())
-        }
-        else {
+        } else {
             Firebase.firestore
                 .collection(FirebaseConstants.GROUPS_COLLECTION)
                 .document(groupId)
