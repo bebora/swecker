@@ -3,7 +3,7 @@ package dev.bebora.swecker.data.settings
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
-class SettingsRepositoryPreview : SettingsRepositoryInterface {
+class FakeSettingsRepository : SettingsRepositoryInterface {
     override suspend fun setPalette(palette: Palette) {
     }
 
