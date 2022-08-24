@@ -16,7 +16,7 @@ fun DualPaneContentList(
 ) {
     Column(
         modifier = modifier
-            .widthIn(200.dp, 350.dp)
+            .widthIn(200.dp, 400.dp)
             .padding(8.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {

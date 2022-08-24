@@ -30,7 +30,7 @@ fun AlarmCard(
         enabled = alarm.enabled,
         modifier = modifier
             .heightIn(80.dp, 130.dp)
-            .widthIn(80.dp, 500.dp),
+            .widthIn(80.dp, 600.dp),
         elevation = if (selected) CardDefaults.cardElevation(
             defaultElevation = 16.dp
         ) else CardDefaults.cardElevation()
@@ -47,7 +47,7 @@ fun AlarmCard(
             ) {
                 Text(
                     style = MaterialTheme.typography.displayLarge,
-                    text = alarm.localTime?.format(DateTimeFormatter.ofPattern("HH:mm")) ?: ""
+                    text = alarm.localTime?.format(DateTimeFormatter.ofPattern("hh:mm")) ?: ""
                 )
                 Spacer(modifier = Modifier.width(4.dp))
                 Text(
@@ -80,10 +80,11 @@ fun AlarmCard(
             ) {
                 Text(
                     style = MaterialTheme.typography.labelMedium,
+                    textAlign = TextAlign.Left,
                     overflow = TextOverflow.Ellipsis,
                     maxLines = 1,
                     text = alarm.name,
-                    modifier = Modifier.width(90.dp)
+                    modifier = Modifier.fillMaxWidth(0.3f)
                 )
                 Text(
                     style = MaterialTheme.typography.labelMedium,

@@ -75,17 +75,20 @@ fun GroupItem(
                 Text(
                     text = group.firstAlarmName,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(all = 4.dp),
-                    style = MaterialTheme.typography.titleMedium
+                    modifier = Modifier.widthIn(0.dp,120.dp).padding(all = 4.dp),
+                    style = MaterialTheme.typography.titleMedium,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
                 Text(
-                    text = group.firstAlarmDateTime?.format(DateTimeFormatter.ofPattern("eee\n dd MMM uuuu")) ?: "Coming soon^tm",
+                    text = group.firstAlarmDateTime?.format(DateTimeFormatter.ofPattern("eee\n dd MMM uuuu")) ?: "",
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     textAlign = TextAlign.Center,
                     modifier = Modifier
                         .padding(vertical = 4.dp, horizontal = 16.dp)
-                        .width(80.dp),
+                        .width(100.dp),
                     style = MaterialTheme.typography.labelMedium,
+                    maxLines = 2,
                 )
             }
         }

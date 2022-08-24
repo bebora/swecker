@@ -80,7 +80,18 @@ class AlarmBrowserViewModel @Inject constructor(
                         authService.getUserId()
                     ).collect { groupsList ->
                         uiState = uiState.copy(
-                            groups = groupsList.map { it.toGroup() }
+                            groups = groupsList.map {thinGroup ->
+                                thinGroup.toGroup()
+                            }.map{group ->
+                                val firstGroupAlarm = uiState.alarms.firstOrNull{
+                                        alarm ->
+                                    alarm.groupId == group.id
+                                }
+                                group.copy(
+                                    firstAlarmDateTime = firstGroupAlarm?.dateTime,
+                                    firstAlarmName = firstGroupAlarm?.name?:""
+                                )
+                            }
                         )
                     }
                 }
@@ -90,7 +101,18 @@ class AlarmBrowserViewModel @Inject constructor(
                         authService.getUserId()
                     ).collect { channelsList ->
                         uiState = uiState.copy(
-                            channels = channelsList.map { it.toGroup() }
+                            channels = channelsList.map {
+                                it.toGroup()
+                            }.map{channel ->
+                                val firstChannelAlarm = uiState.alarms.firstOrNull{
+                                        alarm ->
+                                    alarm.groupId == channel.id
+                                }
+                                channel.copy(
+                                    firstAlarmDateTime = firstChannelAlarm?.dateTime,
+                                    firstAlarmName = firstChannelAlarm?.name?:""
+                                )
+                            }
                         )
                     }
                 }
@@ -253,7 +275,6 @@ class AlarmBrowserViewModel @Inject constructor(
                 )
             }
 
-            //TODO add actual alarm selection logic
             is AlarmBrowserEvent.GroupSelected -> {
                 uiState = uiState.copy(
                     selectedGroup = event.group,
@@ -437,7 +458,9 @@ class AlarmBrowserViewModel @Inject constructor(
             DetailsScreenContent.CHAT -> {
                 if (curState.selectedGroup != null) {
                     DetailsScreenContent.GROUP_ALARM_LIST
-                } else {
+                } else if(curState.selectedChannel != null){
+                    DetailsScreenContent.CHANNEL_ALARM_LIST
+                }else{
                     DetailsScreenContent.NONE
                 }
             }
