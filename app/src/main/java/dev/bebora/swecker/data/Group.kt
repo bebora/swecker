@@ -12,6 +12,7 @@ data class Group(
     val firstAlarmDateTime: OffsetDateTime? = null,
     val members: List<User> = emptyList(),
     val owner: String,
+    val handle: String? = null, // Only for channels
 )
 
 data class ThinGroup( //Used for channels as well
@@ -33,6 +34,7 @@ fun ThinGroup.toGroup() : Group {
         firstAlarmName = "",
         firstAlarmDateTime = null,
         members = emptyList(), //TODO members in ThinGroup are string, these are User
-        owner = owner
+        owner = owner,
+        handle = handle
     )
 }

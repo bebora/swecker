@@ -57,6 +57,8 @@ class AlarmBrowserViewModel @Inject constructor(
 
     private var groupsCollectorJob: Job? = null
 
+    private var channelsCollectorJob: Job? = null
+
     private var alarmsCollectorJob: Job? = null
 
     init {
@@ -80,6 +82,16 @@ class AlarmBrowserViewModel @Inject constructor(
                     ).collect { groupsList ->
                         uiState = uiState.copy(
                             groups = groupsList.map { it.toGroup() }
+                        )
+                    }
+                }
+                channelsCollectorJob?.cancel() // Remove the current collector
+                channelsCollectorJob = viewModelScope.launch {
+                    alarmProviderService.getUserChannels(
+                        authService.getUserId()
+                    ).collect { channelsList ->
+                        uiState = uiState.copy(
+                            channels = channelsList.map { it.toGroup() }
                         )
                     }
                 }
@@ -425,6 +437,7 @@ data class AlarmBrowserUIState(
     val onlineAlarms: List<StoredAlarm> = emptyList(),
     val filteredAlarms: List<Alarm>? = null,
     val groups: List<Group> = LocalAlarmDataProvider.allGroups,
+    val channels: List<Group> = LocalAlarmDataProvider.allChannels,
     val selectedAlarm: Alarm? = null,
     val selectedGroup: Group? = null,
     val detailsScreenContent: DetailsScreenContent = DetailsScreenContent.NONE,

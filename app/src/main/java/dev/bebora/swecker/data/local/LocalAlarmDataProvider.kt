@@ -74,7 +74,7 @@ object LocalAlarmDataProvider {
                     id = "VWg6iZJh6OQDjrNFNRQ3TCAEQch2",
                     name = "TheRealFabio",
                     username = "Ilogir",
-                    propicUrl = "https://firebasestorage.googleapis.com/v0/b/swecker-app.appspot.com/o/images%2FVWg6iZJh6OQDjrNFNRQ3TCAEQch2?alt=media&token=099d9732-0926-4fab-b791-43f40efa9d30"
+                    propicUrl = "https://www.w3schools.com/w3images/mac.jpg"
                 )
             ),
             firstAlarmDateTime = OffsetDateTime.parse("2011-12-03T10:15:30+02:00"),
@@ -93,6 +93,45 @@ object LocalAlarmDataProvider {
             members = emptyList(),
             firstAlarmDateTime = OffsetDateTime.parse("2011-12-03T10:15:30+02:00"),
             owner = "@you"
+        ),
+    )
+
+    val allChannels = listOf(
+        Group(
+            "1",
+            "Wanda the Channel",
+            members = listOf(
+                User(
+                    name = "Simone",
+                    username = "@bebora.dev"
+                ),
+                User(
+                    id = "VWg6iZJh6OQDjrNFNRQ3TCAEQch2",
+                    name = "TheRealFabio",
+                    username = "Ilogir",
+                    propicUrl = "https://www.w3schools.com/w3images/mac.jpg"
+                )
+            ),
+            firstAlarmDateTime = OffsetDateTime.parse("2021-12-03T10:17:30+02:00"),
+            owner = "@me",
+            handle = "wandathechannel",
+            groupPicUrl = "https://www.w3schools.com/html/workplace.jpg"
+        ),
+        Group(
+            "2",
+            "Another channel",
+            members = emptyList(),
+            firstAlarmDateTime = OffsetDateTime.parse("2021-12-03T10:11:30+02:00"),
+            owner = "@you",
+            handle = "examplechannel"
+        ),
+        Group(
+            "3",
+            "A third group! Very long title",
+            members = emptyList(),
+            firstAlarmDateTime = OffsetDateTime.parse("2021-12-09T10:15:35+02:00"),
+            owner = "@you",
+            handle = "thirdtimeisthecharm"
         ),
     )
 
