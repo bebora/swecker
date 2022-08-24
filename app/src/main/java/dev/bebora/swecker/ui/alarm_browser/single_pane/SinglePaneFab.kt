@@ -52,9 +52,11 @@ fun AlarmBrowserSinglePaneFab(
             }
         }
         DetailsScreenContent.GROUP_ALARM_LIST -> {
-            FloatingActionButton(onClick = {
-                onEvent(AlarmBrowserEvent.DialogOpened(DialogContent.ADD_ALARM))
-            }) {
+            FloatingActionButton(
+                modifier = modifier,
+                onClick = {
+                    onEvent(AlarmBrowserEvent.DialogOpened(DialogContent.ADD_ALARM))
+                }) {
                 Icon(
                     imageVector = Icons.Outlined.AddAlarm,
                     contentDescription = null
@@ -62,9 +64,11 @@ fun AlarmBrowserSinglePaneFab(
             }
         }
         DetailsScreenContent.CHANNEL_ALARM_LIST -> {
-            FloatingActionButton(onClick = {
-                onEvent(AlarmBrowserEvent.DialogOpened(DialogContent.ADD_ALARM))
-            }) {
+            FloatingActionButton(
+                modifier = modifier,
+                onClick = {
+                    onEvent(AlarmBrowserEvent.DialogOpened(DialogContent.ADD_ALARM))
+                }) {
                 Icon(
                     imageVector = Icons.Outlined.AddAlarm,
                     contentDescription = null

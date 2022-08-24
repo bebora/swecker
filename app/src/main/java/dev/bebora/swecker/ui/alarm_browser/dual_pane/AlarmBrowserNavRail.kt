@@ -1,10 +1,7 @@
 package dev.bebora.swecker.ui.alarm_browser.dual_pane
 
 import android.util.Log
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AddAlarm
 import androidx.compose.material.icons.outlined.AddAlert
@@ -51,6 +48,9 @@ fun AlarmBrowserNavRail(
         containerColor = MaterialTheme.colorScheme.surface,
         contentColor = MaterialTheme.colorScheme.onSurfaceVariant
     ) {
+        Column(
+            modifier = Modifier.requiredHeightIn(300.dp, 400.dp)
+        ) {
         Spacer(modifier = Modifier.height(20.dp))
         items.forEach { item ->
             val isSelected =
@@ -61,6 +61,7 @@ fun AlarmBrowserNavRail(
                 selected = isSelected,
                 onClick = { onEvent(AlarmBrowserEvent.NavBarNavigate(NavBarDestination.valueOf(item.uppercase()))) },
             )
+        }
         }
     }
 }

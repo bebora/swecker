@@ -1,13 +1,16 @@
 package dev.bebora.swecker.ui.alarm_browser.single_pane
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.padding
+import androidx.activity.compose.BackHandler
+import androidx.compose.animation.*
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Menu
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import dev.bebora.swecker.ui.alarm_browser.AlarmBrowserEvent
@@ -16,7 +19,9 @@ import dev.bebora.swecker.ui.alarm_browser.AlarmBrowserUIState
 import dev.bebora.swecker.ui.alarm_browser.NavBarDestination
 import dev.bebora.swecker.ui.alarm_browser.group_screen.GroupList
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class,
+    ExperimentalAnimationApi::class
+)
 @Composable
 fun GroupListScreen(
     modifier: Modifier = Modifier,
@@ -27,7 +32,17 @@ fun GroupListScreen(
     var showSearchBar by remember {
         mutableStateOf(false)
     }
+
+    val focusRequester = remember { FocusRequester() }
+
+    if (showSearchBar) {
+        LaunchedEffect(Unit) {
+            focusRequester.requestFocus()
+        }
+    }
+
     Scaffold(
+        modifier = Modifier,
         topBar = {
             SmallTopAppBar(
                 colors = TopAppBarDefaults.smallTopAppBarColors(
@@ -57,8 +72,7 @@ fun GroupListScreen(
         floatingActionButton = {
             AlarmBrowserSinglePaneFab(
                 destination = NavBarDestination.GROUPS,
-                modifier = Modifier
-                    .padding(32.dp),
+                modifier = Modifier,
                 detailsScreenContent = uiState.detailsScreenContent,
                 onEvent = onEvent
             )
@@ -73,11 +87,20 @@ fun GroupListScreen(
         Column(
             modifier = Modifier.padding(it)
         ) {
-            if (showSearchBar || uiState.searchKey.isNotEmpty()) {
+            AnimatedVisibility(
+                visible = showSearchBar || uiState.searchKey.isNotEmpty(),
+                enter = expandVertically(),
+                exit = shrinkVertically()
+            ) {
                 AlarmBrowserSearchBar(
-                    modifier = Modifier.padding(4.dp),
+                    modifier = Modifier
+                        .padding(4.dp)
+                        .focusRequester(focusRequester),
                     searchKey = uiState.searchKey,
                     onValueChange = { newValue -> onEvent(AlarmBrowserEvent.SearchGroups(newValue)) })
+                BackHandler() {
+                    showSearchBar = false
+                }
             }
             GroupList(
                 groups = uiState.groups.filter { group ->

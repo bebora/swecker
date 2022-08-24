@@ -1,10 +1,7 @@
 package dev.bebora.swecker.ui
 
 import androidx.compose.animation.*
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -58,7 +55,7 @@ fun SweckerNavigation(
             palette = settingsState.palette
         ) {
             // Surface is used as a hack to prevent the screen from blinking during navigation https://stackoverflow.com/a/71889434
-            Surface {
+            Surface (modifier = Modifier.systemBarsPadding()){
                 val navController = rememberAnimatedNavController()
                 AnimatedNavHost(navController, startDestination = ALARM_BROWSER,
                     enterTransition = {

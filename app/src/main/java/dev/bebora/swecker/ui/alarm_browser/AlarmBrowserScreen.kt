@@ -182,7 +182,7 @@ fun AlarmBrowserScreen(
 
                     if (uiState.dialogContent == DialogContent.NONE) {
                         SinglePaneScreen(
-                            modifier = modifier,
+                            modifier = modifier.systemBarsPadding(),
                             onEvent = viewModel::onEvent,
                             uiState = uiState,
                             onOpenDrawer = {
