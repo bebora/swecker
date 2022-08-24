@@ -26,7 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import dev.bebora.swecker.R
 import dev.bebora.swecker.common.composable.PasswordField
-import dev.bebora.swecker.data.service.impl.AuthServiceImpl
+import dev.bebora.swecker.data.service.testimpl.FakeAuthService
 import dev.bebora.swecker.util.UiEvent
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
@@ -180,7 +180,7 @@ fun LoginScreen(
 fun LoginScreenPreview() {
     LoginScreen(
         viewModel = LoginViewModel(
-            authService = AuthServiceImpl()
+            authService = FakeAuthService()
         )
     )
 }

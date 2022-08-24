@@ -18,7 +18,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import dev.bebora.swecker.R
 import dev.bebora.swecker.data.service.impl.AccountsServiceImpl
-import dev.bebora.swecker.data.service.impl.AuthServiceImpl
+import dev.bebora.swecker.data.service.testimpl.FakeAuthService
 import dev.bebora.swecker.util.UiEvent
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
@@ -88,7 +88,7 @@ fun AddContactScreen(
 fun AddContactScreenPreview() {
     AddContactScreen(
         viewModel = AddContactViewModel(
-            authService = AuthServiceImpl(),
+            authService = FakeAuthService(),
             accountsService = AccountsServiceImpl()
         )
     )

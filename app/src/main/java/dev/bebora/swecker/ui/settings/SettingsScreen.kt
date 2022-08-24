@@ -12,8 +12,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import dev.bebora.swecker.data.service.impl.AccountsServiceImpl
-import dev.bebora.swecker.data.service.impl.AuthServiceImpl
 import dev.bebora.swecker.data.service.impl.ImageStorageServiceImpl
+import dev.bebora.swecker.data.service.testimpl.FakeAuthService
 import dev.bebora.swecker.data.settings.DataStoreManager
 import dev.bebora.swecker.data.settings.Settings
 import dev.bebora.swecker.ui.settings.account.AccountDummyScreen
@@ -132,8 +132,7 @@ fun SettingsScreenPreview() {
                 repository = DataStoreManager(
                     LocalContext.current
                 ),
-                application = Application(),
-                authService = AuthServiceImpl(),
+                authService = FakeAuthService(),
                 accountsService = AccountsServiceImpl(),
                 imageStorageService = ImageStorageServiceImpl()
             )

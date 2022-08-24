@@ -25,7 +25,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import dev.bebora.swecker.R
 import dev.bebora.swecker.data.service.impl.AccountsServiceImpl
-import dev.bebora.swecker.data.service.impl.AuthServiceImpl
+import dev.bebora.swecker.data.service.testimpl.FakeAuthService
 import dev.bebora.swecker.ui.settings.account.SuggestLogin
 import dev.bebora.swecker.util.UiEvent
 
@@ -143,7 +143,7 @@ fun ContactBrowserScreen(
 fun ContactBrowserScreenPreview() {
     ContactBrowserScreen(
         viewModel = ContactsBrowserViewModel(
-            authService = AuthServiceImpl(),
+            authService = FakeAuthService(),
             accountsService = AccountsServiceImpl()
         ),
         onNavigate = {}

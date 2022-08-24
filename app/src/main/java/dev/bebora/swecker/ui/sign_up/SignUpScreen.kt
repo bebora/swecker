@@ -26,8 +26,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import dev.bebora.swecker.R
 import dev.bebora.swecker.common.composable.PasswordField
-import dev.bebora.swecker.data.service.impl.AuthServiceImpl
 import dev.bebora.swecker.data.service.impl.AccountsServiceImpl
+import dev.bebora.swecker.data.service.testimpl.FakeAuthService
 import dev.bebora.swecker.util.UiEvent
 
 @Composable
@@ -180,7 +180,7 @@ fun SignUpScreen(
 fun SignupScreenPreview() {
     SignUpScreen(
         viewModel = SignUpViewModel(
-            authService = AuthServiceImpl(),
+            authService = FakeAuthService(),
             accountsService = AccountsServiceImpl()
         )
     )

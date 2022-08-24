@@ -22,12 +22,12 @@ class SplashViewModel @Inject constructor(
         openAndPopUp(SETTINGS, SPLASH)
     }
 
-    private fun createAnonymousAccount(openAndPopUp: (String, String) -> Unit) {
+    /*private fun createAnonymousAccount(openAndPopUp: (String, String) -> Unit) {
         viewModelScope.launch {
             authService.createAnonymousAccount { error ->
                 if (error != null) onError(error = error)
                 else openAndPopUp(SETTINGS, SPLASH)
             }
         }
-    }
+    }*/
 }

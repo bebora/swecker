@@ -18,8 +18,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import dev.bebora.swecker.data.alarm_browser.AlarmRepositoryTestImpl
 import dev.bebora.swecker.data.service.impl.AccountsServiceImpl
 import dev.bebora.swecker.data.service.impl.AlarmProviderServiceImpl
-import dev.bebora.swecker.data.service.impl.AuthServiceImpl
 import dev.bebora.swecker.data.service.impl.ChatServiceImpl
+import dev.bebora.swecker.data.service.testimpl.FakeAuthService
 import dev.bebora.swecker.ui.alarm_browser.dual_pane.AlarmBrowserDualPaneContent
 import dev.bebora.swecker.ui.alarm_browser.dual_pane.DualPaneDialog
 import dev.bebora.swecker.ui.alarm_browser.single_pane.*
@@ -232,7 +232,7 @@ fun AlarmBrowserScreenPreview() {
         AlarmRepositoryTestImpl(),
         chatService = ChatServiceImpl(),
         accountsService = AccountsServiceImpl(),
-        authService = AuthServiceImpl(),
+        authService = FakeAuthService(),
         alarmProviderService = AlarmProviderServiceImpl()
     )
     AlarmBrowserScreen(viewModel = testViewModel)

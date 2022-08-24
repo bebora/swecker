@@ -11,13 +11,13 @@ import kotlinx.coroutines.flow.callbackFlow
 import javax.inject.Inject
 
 class AuthServiceImpl @Inject constructor() : AuthService {
-    override fun hasUser(): Boolean {
+    /*override fun hasUser(): Boolean {
         return Firebase.auth.currentUser != null
     }
 
     override fun isAnonymousUser(): Boolean {
         return Firebase.auth.currentUser?.isAnonymous ?: true
-    }
+    }*/
 
     override fun getUserId(): String {
         return Firebase.auth.currentUser?.uid.orEmpty()
@@ -33,7 +33,7 @@ class AuthServiceImpl @Inject constructor() : AuthService {
             .addOnCompleteListener { onResult(it.exception) }
     }
 
-    override fun sendRecoveryEmail(email: String, onResult: (Throwable?) -> Unit) {
+   /* override fun sendRecoveryEmail(email: String, onResult: (Throwable?) -> Unit) {
         Firebase.auth.sendPasswordResetEmail(email)
             .addOnCompleteListener { onResult(it.exception) }
     }
@@ -53,7 +53,7 @@ class AuthServiceImpl @Inject constructor() : AuthService {
     override fun deleteAccount(onResult: (Throwable?) -> Unit) {
         Firebase.auth.currentUser!!.delete()
             .addOnCompleteListener { onResult(it.exception) }
-    }
+    }*/
 
     override fun signOut() {
         Firebase.auth.signOut()

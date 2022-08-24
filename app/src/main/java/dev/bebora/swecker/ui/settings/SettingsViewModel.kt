@@ -1,6 +1,5 @@
 package dev.bebora.swecker.ui.settings
 
-import android.app.Application
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -20,10 +19,9 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-//FIXME Using AndroidViewModel to get the context to make the phone vibrate may be ugly
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
-    private val repository: SettingsRepositoryInterface, application: Application,
+    private val repository: SettingsRepositoryInterface,
     private val authService: AuthService,
     private val imageStorageService: ImageStorageService,
     private val accountsService: AccountsService
