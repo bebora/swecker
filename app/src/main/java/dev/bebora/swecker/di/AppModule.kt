@@ -27,8 +27,12 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideAlarmRepository(db: SweckerDatabase): AlarmRepository {
-        return AlarmRepositoryImpl(db.alarmDao, provideAccountService() ,provideAlarmProviderService())
+    fun provideAlarmRepository(
+        db: SweckerDatabase,
+        authService: AuthService,
+        alarmProviderService: AlarmProviderService
+    ): AlarmRepository {
+        return AlarmRepositoryImpl(db.alarmDao, authService, alarmProviderService)
     }
 
     @Provides
@@ -43,7 +47,7 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideAccountService(): AuthService {
+    fun provideAuthService(): AuthService {
         return AuthServiceImpl()
     }
 
@@ -55,7 +59,7 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideStorageService(): AccountsService {
+    fun provideAccountsService(): AccountsService {
         return AccountsServiceImpl()
     }
 
