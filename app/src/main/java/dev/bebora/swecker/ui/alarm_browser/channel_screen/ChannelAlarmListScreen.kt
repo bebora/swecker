@@ -1,6 +1,5 @@
 package dev.bebora.swecker.ui.alarm_browser.channel_screen
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -14,12 +13,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.graphics.painter.ColorPainter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import coil.compose.SubcomposeAsyncImage
 import dev.bebora.swecker.ui.alarm_browser.*
 import dev.bebora.swecker.ui.alarm_browser.single_pane.AlarmBrowserSinglePaneFab
+import dev.bebora.swecker.ui.settings.account.PropicPlaceholder
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -48,8 +49,12 @@ fun ChannelAlarmListScreen(
                     colors = TopAppBarDefaults.smallTopAppBarColors(
                         containerColor = MaterialTheme.colorScheme.surfaceVariant
                     ),
-                    modifier = modifier.clickable {
-                        onEvent(AlarmBrowserEvent.DetailsOpened(type = DetailsScreenContent.CHANNEL_DETAILS))
+                    modifier = if (uiState.me.id == uiState.selectedChannel?.owner) {
+                        Modifier.clickable {
+                            onEvent(AlarmBrowserEvent.DetailsOpened(type = DetailsScreenContent.CHANNEL_DETAILS))
+                        }
+                    } else {
+                        Modifier
                     },
                     title =
                     {
@@ -65,7 +70,8 @@ fun ChannelAlarmListScreen(
                             )
                             Text(
                                 modifier = modifier.padding(horizontal = 10.dp),
-                                text = uiState.selectedChannel.members.size.toString().plus(" members"),
+                                text = uiState.selectedChannel.members.size.toString()
+                                    .plus(" members"),
                                 style = MaterialTheme.typography.labelSmall
                             )
 
@@ -81,13 +87,35 @@ fun ChannelAlarmListScreen(
                                     contentDescription = "Go back"
                                 )
                             }
-                            Image(
-                                painter = ColorPainter(MaterialTheme.colorScheme.tertiary),
-                                contentDescription = null,
+
+                            SubcomposeAsyncImage(
+                                model = uiState.selectedChannel?.groupPicUrl,
+                                loading = {
+                                    PropicPlaceholder(
+                                        size = 45.dp,
+                                        color = MaterialTheme.colorScheme.primaryContainer
+                                    )
+                                    {
+                                        CircularProgressIndicator()
+                                    }
+                                },
+                                error = {
+                                    PropicPlaceholder(
+                                        size = 45.dp,
+                                        color = MaterialTheme.colorScheme.primaryContainer
+                                    ) {
+                                    }
+                                },
+                                contentDescription = "Profile picture",
+                                contentScale = ContentScale.Crop,
                                 modifier = Modifier
-                                    .size(45.dp)
+                                    .requiredSize(45.dp)
                                     .clip(CircleShape)
-                                    .border(1.5.dp, MaterialTheme.colorScheme.secondary, CircleShape)
+                                    .border(
+                                        width = 1.dp,
+                                        color = MaterialTheme.colorScheme.outline,
+                                        shape = CircleShape
+                                    )
                             )
                         }
                         Spacer(modifier = Modifier.width(8.dp))
@@ -96,13 +124,15 @@ fun ChannelAlarmListScreen(
             }
         },
         floatingActionButton = {
-            AlarmBrowserSinglePaneFab(
-                destination = NavBarDestination.CHANNELS,
-                modifier = Modifier
-                    .padding(32.dp),
-                detailsScreenContent = uiState.detailsScreenContent,
-                onEvent = onEvent
-            )
+            if(uiState.selectedChannel?.owner == uiState.me.id) {
+                AlarmBrowserSinglePaneFab(
+                    destination = NavBarDestination.CHANNELS,
+                    modifier = Modifier
+                        .padding(32.dp),
+                    detailsScreenContent = uiState.detailsScreenContent,
+                    onEvent = onEvent
+                )
+            }
         },
     ) {
         Box(modifier = Modifier.padding(it)) {

@@ -54,6 +54,8 @@ class AlarmBrowserViewModel @Inject constructor(
 
     private var groupsCollectorJob: Job? = null
 
+    private var alarmsCollectorJob: Job? = null
+
     private var channelsCollectorJob: Job? = null
 
     private var searchChannelsJob: Job? = null
@@ -61,7 +63,6 @@ class AlarmBrowserViewModel @Inject constructor(
     private var messagesCollectorJob: Job? = null
 
     init {
-        observeAlarms() // TODO Observe alarms may need to be updated after login/logout!
         viewModelScope.launch {
             userInfoChanges.collect {
                 accountsService.getUser(
@@ -114,6 +115,40 @@ class AlarmBrowserViewModel @Inject constructor(
                         )
                     }
                 }
+
+                alarmsCollectorJob?.cancel()
+                alarmsCollectorJob = viewModelScope.launch {
+                    repository.getAllAlarms()
+                        .catch { ex ->
+                            uiState = AlarmBrowserUIState(error = ex.message)
+                        }
+                        .collect { alarms ->
+                            if (application != null) {
+                                val alarmToSchedule = alarms.find { al ->
+                                    (al.dateTime!! > OffsetDateTime.now()) && al.enabled
+                                }
+                                if (alarmToSchedule != null) {
+                                    scheduleExactAlarm(
+                                        context = application.baseContext,
+                                        dateTime = alarmToSchedule.dateTime!!,
+                                        name = alarmToSchedule.name
+                                    )
+                                } else {
+                                    cancelAlarm(context = application.baseContext)
+                                }
+                            }
+                            val curState = uiState
+                            uiState = uiState.copy(
+                                alarms = alarms,
+                                filteredAlarms = filterAlarms(
+                                    alarms = alarms,
+                                    selectedDestination = curState.selectedDestination,
+                                    selectedGroup = curState.selectedGroup,
+                                    searchKey = curState.searchKey
+                                )
+                            )
+                        }
+                }
             }
         }
     }
@@ -137,45 +172,6 @@ class AlarmBrowserViewModel @Inject constructor(
                     )
                 }
             }
-    }
-
-    private fun observeAlarms() {
-        viewModelScope.launch {
-            repository.getAllAlarms()
-                .catch { ex ->
-                    uiState = AlarmBrowserUIState(error = ex.message)
-                }
-                .collect { alarms ->
-                    val sortedAlarms = alarms.sortedBy {
-                        it.dateTime
-                    }
-
-                    if (application != null) {
-                        val alarmToSchedule = sortedAlarms.find { al ->
-                            (al.dateTime!! > OffsetDateTime.now()) && al.enabled
-                        }
-                        if (alarmToSchedule != null) {
-                            scheduleExactAlarm(
-                                context = application.baseContext,
-                                dateTime = alarmToSchedule.dateTime!!,
-                                name = alarmToSchedule.name
-                            )
-                        } else {
-                            cancelAlarm(context = application.baseContext)
-                        }
-                    }
-                    val curState = uiState
-                    uiState = uiState.copy(
-                        alarms = sortedAlarms,
-                        filteredAlarms = filterAlarms(
-                            alarms = sortedAlarms,
-                            selectedDestination = curState.selectedDestination,
-                            selectedGroup = curState.selectedGroup,
-                            searchKey = curState.searchKey
-                        )
-                    )
-                }
-        }
     }
 
     fun onEvent(event: AlarmBrowserEvent) {
@@ -292,6 +288,7 @@ class AlarmBrowserViewModel @Inject constructor(
                         targetState = true
                     }
                 )
+                fetchUsersData(usersIds = event.group.members)
             }
 
             is AlarmBrowserEvent.ChannelSelected -> {
@@ -311,6 +308,7 @@ class AlarmBrowserViewModel @Inject constructor(
                         targetState = true
                     }
                 )
+                fetchUsersData(usersIds = event.channel.members)
             }
 
             is AlarmBrowserEvent.BackButtonPressed -> {
@@ -389,6 +387,18 @@ class AlarmBrowserViewModel @Inject constructor(
                         animatedDetailsScreenContent = uiState.detailsScreenContent,
                     )
                 }
+            }
+
+            is AlarmBrowserEvent.JoinChannel -> {
+                alarmProviderService.joinChannel(
+                    userId = uiState.me.id,
+                    channelId = event.channel.id,
+                    onComplete = {
+                        if (it != null) {
+                            onError(it)
+                        }
+                    }
+                )
             }
 
             is AlarmBrowserEvent.CreateGroupAlarmTEMP -> {

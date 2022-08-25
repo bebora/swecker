@@ -1,5 +1,6 @@
 package dev.bebora.swecker.ui.alarm_browser.group_screen
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -8,10 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.unit.dp
-import dev.bebora.swecker.ui.alarm_browser.AlarmBrowserEvent
-import dev.bebora.swecker.ui.alarm_browser.AlarmBrowserUIState
-import dev.bebora.swecker.ui.alarm_browser.AlarmList
-import dev.bebora.swecker.ui.alarm_browser.NavBarDestination
+import dev.bebora.swecker.ui.alarm_browser.*
 import dev.bebora.swecker.ui.alarm_browser.single_pane.AlarmBrowserSinglePaneFab
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -42,7 +40,8 @@ fun GroupAlarmListScreen(
                     colors = TopAppBarDefaults.smallTopAppBarColors(
                         containerColor = MaterialTheme.colorScheme.surfaceVariant
                     ),
-                    onEvent = onEvent
+                    modifier = Modifier.clickable{onEvent(AlarmBrowserEvent.DetailsOpened(type = DetailsScreenContent.GROUP_DETAILS))},
+                    onGoBack = {onEvent(AlarmBrowserEvent.BackButtonPressed)}
                 )
             }
         },

@@ -39,14 +39,14 @@ fun GroupDetailsScreen(
                     colors = TopAppBarDefaults.smallTopAppBarColors(
                         containerColor = MaterialTheme.colorScheme.surfaceVariant
                     ),
-                    onEvent = onEvent
+                    onGoBack = {onEvent(AlarmBrowserEvent.BackButtonPressed)}
                 )
             }
         }
     ) {
         Box(modifier = Modifier.padding(it)) {
             GroupDetails(
-                modifier = modifier,group = uiState.selectedGroup!!)
+                modifier = modifier,group = uiState.selectedGroup!!, usersData = uiState.usersData)
         }
     }
 }

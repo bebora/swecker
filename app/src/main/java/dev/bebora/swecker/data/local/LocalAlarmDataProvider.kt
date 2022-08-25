@@ -4,7 +4,6 @@ import androidx.compose.runtime.toMutableStateList
 import dev.bebora.swecker.data.Alarm
 import dev.bebora.swecker.data.AlarmType
 import dev.bebora.swecker.data.Group
-import dev.bebora.swecker.data.User
 import java.time.OffsetDateTime
 
 object LocalAlarmDataProvider {
@@ -66,16 +65,7 @@ object LocalAlarmDataProvider {
             "1",
             "Wanda the group",
             members = listOf(
-                User(
-                    name = "Simone",
-                    username = "@bebora.dev"
-                ),
-                User(
-                    id = "VWg6iZJh6OQDjrNFNRQ3TCAEQch2",
-                    name = "TheRealFabio",
-                    username = "Ilogir",
-                    propicUrl = "https://www.w3schools.com/w3images/mac.jpg"
-                )
+                "VWg6iZJh6OQDjrNFNRQ3TCAEQch2",
             ),
             firstAlarmDateTime = OffsetDateTime.parse("2011-12-03T10:15:30+02:00"),
             owner = "@me"
@@ -101,17 +91,8 @@ object LocalAlarmDataProvider {
             "1",
             "Wanda the Channel",
             members = listOf(
-                User(
-                    name = "Simone",
-                    username = "@bebora.dev"
+                "VWg6iZJh6OQDjrNFNRQ3TCAEQch2",
                 ),
-                User(
-                    id = "VWg6iZJh6OQDjrNFNRQ3TCAEQch2",
-                    name = "TheRealFabio",
-                    username = "Ilogir",
-                    propicUrl = "https://www.w3schools.com/w3images/mac.jpg"
-                )
-            ),
             firstAlarmDateTime = OffsetDateTime.parse("2021-12-03T10:17:30+02:00"),
             owner = "@me",
             handle = "wandathechannel",

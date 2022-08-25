@@ -6,6 +6,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import dev.bebora.swecker.ui.alarm_browser.*
+import dev.bebora.swecker.ui.alarm_browser.channel_screen.ChannelList
 import dev.bebora.swecker.ui.alarm_browser.group_screen.GroupList
 
 @Composable
@@ -44,11 +45,13 @@ fun DualPaneContentList(
             NavBarDestination.CHANNELS -> {
                 AlarmBrowserSearchBar(searchKey = uiState.searchKey, modifier = modifier,
                     onValueChange = { newValue -> onEvent(AlarmBrowserEvent.SearchGroups(newValue)) })
-                GroupList(
-                    groups = uiState.channels.filter { channel ->
+                ChannelList(
+                    channels = uiState.channels.filter { channel ->
                         channel.name.contains(uiState.searchKey, ignoreCase = true)
                     } + uiState.extraChannels,
                     onEvent = { channel -> onEvent(AlarmBrowserEvent.ChannelSelected(channel)) },
+                    myId = uiState.me.id,
+                    onChannelJoin = {channel -> onEvent(AlarmBrowserEvent.JoinChannel(channel))}
                 )
             }
         }

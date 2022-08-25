@@ -9,7 +9,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import dev.bebora.swecker.data.Group
-import dev.bebora.swecker.data.User
 import dev.bebora.swecker.ui.theme.SweckerTheme
 import java.time.OffsetDateTime
 
@@ -60,16 +59,7 @@ fun GroupListPreview() {
                     Group(
                         "3",
                         "A third group! Very long title",
-                        members = listOf(
-                            User(
-                                name = "A name",
-                                username = "@a_username"
-                            ),
-                            User(
-                                name = "Another name",
-                                username = "@another_username",
-                            )
-                        ),
+                        members = emptyList(),
                         firstAlarmName = "An alarm!",
                         firstAlarmDateTime = OffsetDateTime.parse("2011-12-03T10:15:30+02:00"),
                         owner = "@you"

@@ -18,7 +18,7 @@ import dev.bebora.swecker.ui.alarm_browser.AlarmBrowserEvent
 import dev.bebora.swecker.ui.alarm_browser.AlarmBrowserSearchBar
 import dev.bebora.swecker.ui.alarm_browser.AlarmBrowserUIState
 import dev.bebora.swecker.ui.alarm_browser.NavBarDestination
-import dev.bebora.swecker.ui.alarm_browser.group_screen.GroupList
+import dev.bebora.swecker.ui.alarm_browser.channel_screen.ChannelList
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class)
 @Composable
@@ -102,12 +102,14 @@ fun ChannelListScreen(
                 }
             }
 
-            GroupList(
-                groups = uiState.channels.filter { channel ->
+            ChannelList(
+                channels = uiState.channels.filter { channel ->
                     channel.name.contains(uiState.searchKey, ignoreCase = true)
                 } + uiState.extraChannels,
+                myId = uiState.me.id,
                 onEvent = { channel -> onEvent(AlarmBrowserEvent.ChannelSelected(channel)) },
-                selectedGroupId = uiState.selectedChannel?.id
+                onChannelJoin = { channel -> onEvent(AlarmBrowserEvent.JoinChannel(channel)) },
+                selectedChannelId = uiState.selectedChannel?.id
             )
         }
     }

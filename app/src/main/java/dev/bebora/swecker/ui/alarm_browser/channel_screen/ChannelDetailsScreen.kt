@@ -1,5 +1,6 @@
 package dev.bebora.swecker.ui.alarm_browser.channel_screen
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -10,8 +11,8 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.unit.dp
 import dev.bebora.swecker.ui.alarm_browser.AlarmBrowserEvent
 import dev.bebora.swecker.ui.alarm_browser.AlarmBrowserUIState
+import dev.bebora.swecker.ui.alarm_browser.DetailsScreenContent
 import dev.bebora.swecker.ui.alarm_browser.group_screen.GroupDetails
-import dev.bebora.swecker.ui.alarm_browser.group_screen.GroupTopAppBar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -36,19 +37,20 @@ fun ChannelDetailsScreen(
                     RectangleShape
                 }
             ) {
-                GroupTopAppBar(
-                    group = uiState.selectedChannel!!,
+                ChannelTopAppBar(
+                    channel = uiState.selectedChannel!!,
                     colors = TopAppBarDefaults.smallTopAppBarColors(
                         containerColor = MaterialTheme.colorScheme.surfaceVariant
                     ),
-                    onEvent = onEvent
+                    modifier = Modifier.clickable{onEvent(AlarmBrowserEvent.DetailsOpened(type = DetailsScreenContent.CHANNEL_DETAILS))},
+                    onGoBack = {onEvent(AlarmBrowserEvent.BackButtonPressed)}
                 )
             }
         }
     ) {
         Box(modifier = Modifier.padding(it)) {
             GroupDetails(
-                modifier = modifier,group = uiState.selectedChannel!!)
+                modifier = modifier,group = uiState.selectedChannel!!, usersData = uiState.usersData)
         }
     }
 }

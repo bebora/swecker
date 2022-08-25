@@ -1,4 +1,4 @@
-package dev.bebora.swecker.ui.alarm_browser.group_screen
+package dev.bebora.swecker.ui.alarm_browser.channel_screen
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
@@ -20,9 +20,9 @@ import dev.bebora.swecker.ui.settings.account.PropicPlaceholder
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun GroupTopAppBar(
+fun ChannelTopAppBar(
     modifier: Modifier = Modifier,
-    group: Group,
+    channel: Group,
     colors: TopAppBarColors,
     onGoBack: () -> Unit = {}
 ) {
@@ -35,7 +35,7 @@ fun GroupTopAppBar(
                 horizontalAlignment = Alignment.Start
             ) {
                 Text(
-                    text = group.name,
+                    text = channel.name,
                     textAlign = TextAlign.Left,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
@@ -43,7 +43,7 @@ fun GroupTopAppBar(
                 )
                 Text(
                     modifier = modifier.padding(horizontal = 10.dp),
-                    text = group.members.size.toString().plus(" members"),
+                    text = channel.members.size.toString().plus(" members"),
                     style = MaterialTheme.typography.labelSmall
                 )
 
@@ -59,8 +59,9 @@ fun GroupTopAppBar(
                         contentDescription = "Go back"
                     )
                 }
+
                 SubcomposeAsyncImage(
-                    model = group.groupPicUrl,
+                    model = channel.groupPicUrl,
                     loading = {
                         PropicPlaceholder(
                             size = 45.dp,
@@ -77,7 +78,7 @@ fun GroupTopAppBar(
                         ) {
                         }
                     },
-                    contentDescription = "Group profile picture",
+                    contentDescription = "Channel profile picture",
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
                         .requiredSize(45.dp)
@@ -88,8 +89,10 @@ fun GroupTopAppBar(
                             shape = CircleShape
                         )
                 )
+
             }
             Spacer(modifier = Modifier.width(8.dp))
         },
         actions = {})
 }
+

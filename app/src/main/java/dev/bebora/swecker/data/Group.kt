@@ -10,7 +10,7 @@ data class Group(
     val groupPicUrl: String = "",
     val firstAlarmName: String = "",
     val firstAlarmDateTime: OffsetDateTime? = null,
-    val members: List<User> = emptyList(),
+    val members: List<String> = emptyList(),
     val owner: String,
     val handle: String? = null, // Only for channels
 )
@@ -33,7 +33,7 @@ fun ThinGroup.toGroup() : Group {
         groupPicUrl = picture,
         firstAlarmName = "",
         firstAlarmDateTime = null,
-        members = emptyList(), //TODO members in ThinGroup are string, these are User
+        members = members,
         owner = owner,
         handle = handle
     )
