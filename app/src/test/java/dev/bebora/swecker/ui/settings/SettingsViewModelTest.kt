@@ -31,42 +31,42 @@ class SettingsViewModelTest {
     }
 
     @Test
-    fun settingsViewModel_PaletteChangeEvent_ValueUpdated() = runBlocking{
+    fun settingsViewModel_PaletteChangeEvent_ValueSaved() = runBlocking{
         Palette.values().forEach {
             viewModel.onEvent(SettingsEvent.SetPalette(it))
             assertEquals(it, viewModel.settings.first().palette)
         }
     }
     @Test
-    fun settingsViewModel_DarkModeChangeEvent_ValueUpdated() = runBlocking{
+    fun settingsViewModel_DarkModeChangeEvent_ValueSaved() = runBlocking{
         DarkModeType.values().forEach {
             viewModel.onEvent(SettingsEvent.SetDarkModeType(it))
             assertEquals(it, viewModel.settings.first().darkModeType)
         }
     }
     @Test
-    fun settingsViewModel_RingtoneChangeEvent_ValueUpdated() = runBlocking{
+    fun settingsViewModel_RingtoneChangeEvent_ValueSaved() = runBlocking{
         Ringtone.values().forEach {
             viewModel.onEvent(SettingsEvent.SetRingtone(it))
             assertEquals(it, viewModel.settings.first().ringtone)
         }
     }
     @Test
-    fun settingsViewModel_RingtoneDurationChangeEvent_ValueUpdated() = runBlocking{
+    fun settingsViewModel_RingtoneDurationChangeEvent_ValueSaved() = runBlocking{
         RingtoneDuration.values().forEach {
             viewModel.onEvent(SettingsEvent.SetRingtoneDuration(it))
             assertEquals(it, viewModel.settings.first().ringtoneDuration)
         }
     }
     @Test
-    fun settingsViewModel_RingtoneVolumeChangeEvent_ValueUpdated() = runBlocking{
+    fun settingsViewModel_RingtoneVolumeChangeEvent_ValueSaved() = runBlocking{
         listOf(0, 40, 100).forEach {
             viewModel.onEvent(SettingsEvent.SetRingtoneVolume(it))
             assertEquals(it, viewModel.settings.first().ringtoneVolume)
         }
     }
     @Test
-    fun settingsViewModel_VibrationChangeEvent_ValueUpdated() = runBlocking{
+    fun settingsViewModel_VibrationChangeEvent_ValueSaved() = runBlocking{
         listOf(false, true).forEach {
             viewModel.onEvent(SettingsEvent.SetVibration(it))
             assertEquals(it, viewModel.settings.first().vibration)
@@ -102,6 +102,26 @@ class SettingsViewModelTest {
                 assertEquals(0, countOpenPopups())
             }
         }
+    }
+    
+    @Test
+    fun settingsViewModel_SetTempValues_StateUpdated() {
+        val tempName = "New temp name"
+        val tempUsername = "adifferentusername"
+        val tempRingtone = Ringtone.VARIATION1
+        val tempRingtoneVolume = 100
+
+        viewModel.onEvent(SettingsEvent.SetTempName(tempName))
+        assertEquals(tempName, viewModel.uiState.currentName)
+
+        viewModel.onEvent(SettingsEvent.SetTempUsername(tempUsername))
+        assertEquals(tempUsername, viewModel.uiState.currentUsername)
+
+        viewModel.onEvent(SettingsEvent.SetTempRingtone(tempRingtone))
+        assertEquals(tempRingtone, viewModel.uiState.currentRingtone)
+
+        viewModel.onEvent(SettingsEvent.SetTempRingtoneVolume(tempRingtoneVolume))
+        assertEquals(tempRingtoneVolume, viewModel.uiState.currentRingtoneVolume)
     }
 
     private fun countOpenPopups() : Int {
