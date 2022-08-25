@@ -19,6 +19,7 @@ import dev.bebora.swecker.data.settings.SettingsRepositoryInterface
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.time.OffsetDateTime
+import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import javax.inject.Inject
@@ -60,7 +61,8 @@ class NotificationActivity(
                 val offsetDateTime = OffsetDateTime.parse(dateTime)
                 AlarmNotificationFullScreen(
                     alarmName = name!!,
-                    time = offsetDateTime.format(DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT)),
+                    time = offsetDateTime.atZoneSameInstant(ZoneId.systemDefault())
+                        .format(DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT)),
                     onAlarmDismiss = {
                         finish()
                     },

@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import java.time.LocalDate
+import java.time.*
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 
@@ -122,7 +122,8 @@ fun CustomCalendarView(
 ) {
     // Adds view to Compose
     AndroidView(
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth()
             .background(Color.White),
         factory = { context ->
             CalendarView(context)
@@ -144,4 +145,29 @@ fun CustomCalendarView(
             }
         }
     )
+}
+
+fun nextEnabledDate(enabledDays: List<Boolean>, time: LocalTime): OffsetDateTime {
+
+    val isAlreadyOver = LocalTime.now().isAfter(time)
+
+    var currentDay = LocalDate.now()
+
+    if (isAlreadyOver) {
+        currentDay = currentDay.plusDays(1)
+    }
+
+    val orderedEnabledDays =
+        enabledDays.slice(IntRange(currentDay.dayOfWeek.value - 1, enabledDays.size - 1)).plus(
+            enabledDays.slice(
+                IntRange(0, currentDay.dayOfWeek.value - 1)
+            )
+        )
+
+    val daysUntilFirst = orderedEnabledDays.indexOfFirst { b ->
+        b
+    }
+
+    return ZonedDateTime.of(currentDay, time, ZoneId.systemDefault())
+        .plusDays(daysUntilFirst.toLong()).toOffsetDateTime()
 }

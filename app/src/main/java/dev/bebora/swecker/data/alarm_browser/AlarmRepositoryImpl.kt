@@ -7,9 +7,11 @@ import dev.bebora.swecker.data.service.AlarmProviderService
 import dev.bebora.swecker.data.service.AuthService
 import dev.bebora.swecker.data.toAlarm
 import dev.bebora.swecker.data.toStoredAlarm
+import dev.bebora.swecker.ui.alarm_browser.alarm_details.nextEnabledDate
 import dev.bebora.swecker.ui.utils.onError
 import kotlinx.coroutines.flow.*
 import java.time.OffsetDateTime
+import java.time.ZoneId
 import javax.inject.Inject
 
 class AlarmRepositoryImpl @Inject constructor(
@@ -29,11 +31,24 @@ class AlarmRepositoryImpl @Inject constructor(
             alarmDataList.map { al ->
                 al.toAlarm()
             }
-        }.map { alarmDataList ->
+        }.map{
+            alarmList -> //Update alarms with repetition
+                alarmList.map {
+                al ->
+                    if(al.enabledDays.firstOrNull{b -> b} != null){
+                        al.copy(
+                            dateTime = nextEnabledDate(enabledDays = al.enabledDays,
+                                time = al.dateTime!!.atZoneSameInstant(ZoneId.systemDefault()).toLocalTime())
+                        )
+                    }else{
+                        al.copy()
+                    }
+            }
+        }.map { alarmDataList -> //add local data for the UI
             alarmDataList.map { al ->
                 al.copy(
-                    localTime = al.dateTime!!.toLocalTime(),
-                    localDate = al.dateTime.toLocalDate()
+                    localTime = al.dateTime!!.atZoneSameInstant(ZoneId.systemDefault()).toLocalTime(),
+                    localDate = al.dateTime.atZoneSameInstant(ZoneId.systemDefault()).toLocalDate()
                 )
             }
         }
@@ -44,7 +59,7 @@ class AlarmRepositoryImpl @Inject constructor(
                 }
                 alarmSavedOffline == null
             }
-            local.map { localAlarm ->
+            val allAlarmsSorted = local.map { localAlarm ->
                 val alarmSavedOnline = online.firstOrNull {
                     it.id == localAlarm.id
                 }
@@ -60,12 +75,23 @@ class AlarmRepositoryImpl @Inject constructor(
                 } else {
                     localAlarm
                 }
-            }.plus(onlineOnlyAlarms)
+            }.plus(onlineOnlyAlarms).sortedBy {
+                it.dateTime
+            }
+            val beforeNow = allAlarmsSorted.filter {
+                it.dateTime!! < OffsetDateTime.now()
+            }
+            val afterNow = allAlarmsSorted.filter {
+                it.dateTime!! > OffsetDateTime.now()
+            }
+            afterNow.plus(beforeNow)
         }
+
     }
 
     override suspend fun deleteAlarm(alarm: Alarm) {
-        TODO("Not yet implemented")
+        alarmDao.delete(alarm = alarm)
+
     }
 
     override suspend fun getAlarmById(id: String): Alarm? {

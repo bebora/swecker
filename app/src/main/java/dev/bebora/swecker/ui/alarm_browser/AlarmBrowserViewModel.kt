@@ -143,7 +143,7 @@ class AlarmBrowserViewModel @Inject constructor(
                                 filteredAlarms = filterAlarms(
                                     alarms = alarms,
                                     selectedDestination = curState.selectedDestination,
-                                    selectedGroup = curState.selectedGroup,
+                                    selectedGroup = curState.selectedGroup?:curState.selectedChannel,
                                     searchKey = curState.searchKey
                                 )
                             )

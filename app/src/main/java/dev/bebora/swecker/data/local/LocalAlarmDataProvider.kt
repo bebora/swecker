@@ -5,6 +5,7 @@ import dev.bebora.swecker.data.Alarm
 import dev.bebora.swecker.data.AlarmType
 import dev.bebora.swecker.data.Group
 import java.time.OffsetDateTime
+import java.time.ZoneId
 
 object LocalAlarmDataProvider {
     val allAlarms = listOf(
@@ -55,8 +56,8 @@ object LocalAlarmDataProvider {
         )
     ).map { al ->
         al.copy(
-            localTime = al.dateTime!!.toLocalTime(),
-            localDate = al.dateTime.toLocalDate()
+            localTime = al.dateTime!!.atZoneSameInstant(ZoneId.systemDefault()).toLocalTime(),
+            localDate = al.dateTime.atZoneSameInstant(ZoneId.systemDefault()).toLocalDate()
         )
     }.toMutableStateList()
 

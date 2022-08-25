@@ -27,7 +27,6 @@ import java.time.*
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import java.time.format.TextStyle
-import java.time.temporal.TemporalAdjusters
 import java.util.*
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -41,8 +40,8 @@ fun AlarmDetails(
 ) {
     var showDatePicker by remember { mutableStateOf(false) }
     var showTimePicker by remember { mutableStateOf(false) }
+    var showDeleteAlert by remember { mutableStateOf(false) }
     val enabledRepetition = alarm.enabledDays.reduceRight { a, b -> a || b }
-    val firstEnabledDay = alarm.enabledDays.indexOfFirst { a -> a } + 1
 
     val focusManager = LocalFocusManager.current
 
@@ -186,7 +185,10 @@ fun AlarmDetails(
                     }
                 }
             }
-
+            OutlinedButton(modifier = Modifier.fillMaxWidth(1f)
+                ,onClick = { showDeleteAlert = true }) {
+                Text(text = "Delete alarm")
+            }
             Spacer(modifier = Modifier.weight(1f))
 
             Row(
@@ -217,18 +219,16 @@ fun AlarmDetails(
                         val date = if (!enabledRepetition) {
                             alarm.localDate
                         } else {
-                            LocalDate.now().with(
-                                TemporalAdjusters.next(DayOfWeek.of(firstEnabledDay))
-                            )
+                            nextEnabledDate(enabledDays = alarm.enabledDays, time = alarm.localTime!!).toLocalDate()
                         }
                         onUpdateCompleted(
                             alarm.copy(
                                 localDate = date,
-                                dateTime = OffsetDateTime.of(
+                                dateTime = ZonedDateTime.of(
                                     date,
-                                    alarm.localTime?.withSecond(0),
-                                    OffsetDateTime.now().offset
-                                )
+                                    alarm.localTime,
+                                    ZoneId.systemDefault()
+                                ).toOffsetDateTime()
                             ),
                             true
 
@@ -260,6 +260,21 @@ fun AlarmDetails(
             }, onDismissRequest = {
                 showTimePicker = false
             })
+        if(showDeleteAlert){
+            AlertDialog(onDismissRequest = { showDeleteAlert = false },
+            title = { Text(text = "Delete alarm")},
+            text = { Text(text = "Do you really want to delete this alarm? The operation is irreversible")},
+            confirmButton = {
+                OutlinedButton(onClick = { /*TODO*/ }) {
+                    Text(text = "Yes")
+                }
+            },
+            dismissButton = {
+                OutlinedButton(onClick = { showDeleteAlert = false }) {
+                    Text(text = "No")
+                }
+            })
+        }
     }
 }
 
