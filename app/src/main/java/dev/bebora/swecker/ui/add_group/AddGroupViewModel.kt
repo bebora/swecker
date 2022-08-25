@@ -207,6 +207,7 @@ class AddGroupViewModel @Inject constructor(
                 }
             )
         }
+        uiState = AddGroupUIState()
     }
 }
 

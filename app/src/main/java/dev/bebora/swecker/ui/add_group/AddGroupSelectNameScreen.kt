@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AddPhotoAlternate
+import androidx.compose.material.icons.outlined.Label
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -107,6 +108,10 @@ fun AddGroupSelectNameScreen(
             OutlinedTextField(
                 modifier = Modifier
                     .weight(1f),
+                leadingIcon = {
+                    Icon(imageVector = Icons.Outlined.Label, contentDescription = null)
+                },
+                maxLines = 1,
                 label = { Text("Name") },
                 value = groupName,
                 onValueChange = setGroupName,

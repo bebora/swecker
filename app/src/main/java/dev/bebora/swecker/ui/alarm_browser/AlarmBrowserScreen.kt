@@ -23,7 +23,6 @@ import dev.bebora.swecker.data.service.testimpl.FakeAuthService
 import dev.bebora.swecker.ui.alarm_browser.dual_pane.AlarmBrowserDualPaneContent
 import dev.bebora.swecker.ui.alarm_browser.dual_pane.DualPaneDialog
 import dev.bebora.swecker.ui.alarm_browser.single_pane.*
-import dev.bebora.swecker.util.ADD_CONTACT
 import dev.bebora.swecker.util.SETTINGS
 import kotlinx.coroutines.launch
 
@@ -58,7 +57,10 @@ fun AlarmBrowserScreen(
                     DrawerSubSection(
                         title = "New channel",
                         icon = Icons.Outlined.Campaign
-                    ) { scope.launch { drawerState.close() } },
+                    ) {
+                        scope.launch { drawerState.close() }
+                        viewModel.onEvent(AlarmBrowserEvent.DialogOpened(DialogContent.ADD_CHANNEL))
+                      },
                 )
             ),
             DrawerSection(
@@ -80,7 +82,7 @@ fun AlarmBrowserScreen(
                         icon = Icons.Outlined.PersonAddAlt
                     ) {
                         scope.launch { drawerState.close() }
-                        onNavigate(ADD_CONTACT)
+                        viewModel.onEvent(AlarmBrowserEvent.DialogOpened(DialogContent.ADD_CONTACT))
                     },
                 )
             ),

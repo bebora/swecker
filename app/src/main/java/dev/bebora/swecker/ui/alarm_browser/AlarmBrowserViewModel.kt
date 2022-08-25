@@ -56,8 +56,6 @@ class AlarmBrowserViewModel @Inject constructor(
 
     private var channelsCollectorJob: Job? = null
 
-    private var alarmsCollectorJob: Job? = null
-
     private var searchChannelsJob: Job? = null
 
     private var messagesCollectorJob: Job? = null
@@ -113,16 +111,6 @@ class AlarmBrowserViewModel @Inject constructor(
                                     firstAlarmName = firstChannelAlarm?.name ?: ""
                                 )
                             }
-                        )
-                    }
-                }
-                alarmsCollectorJob?.cancel() // Remove the current collector
-                alarmsCollectorJob = viewModelScope.launch {
-                    alarmProviderService.getUserAlarms(
-                        authService.getUserId()
-                    ).collect { alarmList ->
-                        uiState = uiState.copy(
-                            onlineAlarms = alarmList
                         )
                     }
                 }
@@ -517,7 +505,6 @@ class AlarmBrowserViewModel @Inject constructor(
 
 data class AlarmBrowserUIState(
     val alarms: List<Alarm> = emptyList(),
-    val onlineAlarms: List<StoredAlarm> = emptyList(),
     val filteredAlarms: List<Alarm>? = null,
     val groups: List<Group> = LocalAlarmDataProvider.allGroups,
     val channels: List<Group> = LocalAlarmDataProvider.allChannels,
