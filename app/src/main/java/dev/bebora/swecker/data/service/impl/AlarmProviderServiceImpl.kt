@@ -235,12 +235,31 @@ class AlarmProviderServiceImpl : AlarmProviderService {
         } else if (channelId.isBlank()) {
             onComplete(EmptyChannelException())
         } else {
-            Firebase.firestore
+            val store = Firebase.firestore
+            val channelRef = store
                 .collection(FirebaseConstants.CHANNELS_COLLECTION)
                 .document(channelId)
-                .update("members", FieldValue.arrayUnion(userId))
-                .addOnCompleteListener {
-                    onComplete(it.exception)
+            val alarmsRef = store
+                .collection(FirebaseConstants.ALARMS_COLLECTION)
+            alarmsRef
+                .whereEqualTo("groupId", channelId)
+                .whereEqualTo("userId", null)
+                .get()
+                .addOnFailureListener(onComplete)
+                .addOnSuccessListener { querySnapshot ->
+                    val channelAlarms = querySnapshot.toObjects(StoredAlarm::class.java)
+                    Firebase.firestore
+                        .runTransaction { transaction ->
+                            transaction.update(channelRef, "members", FieldValue.arrayUnion(userId))
+                            channelAlarms.forEach { storedAlarm ->
+                                val newAlarmRef = alarmsRef.document()
+                                transaction.set(newAlarmRef, storedAlarm.copy(userId = userId))
+                            }
+                            null
+                        }
+                        .addOnCompleteListener {
+                            onComplete(it.exception)
+                        }
                 }
         }
     }
