@@ -184,6 +184,7 @@ class AlarmBrowserViewModel @Inject constructor(
                     selectedAlarm = null,
                     selectedGroup = null,
                     selectedChannel = null,
+                    extraChannels = emptyList(),
                     filteredAlarms = filterAlarms(
                         alarms = uiState.alarms,
                         selectedGroup = null,
@@ -398,6 +399,9 @@ class AlarmBrowserViewModel @Inject constructor(
                             onError(it)
                         }
                     }
+                )
+                uiState = uiState.copy(
+                    extraChannels = uiState.extraChannels.minus(event.channel)
                 )
             }
 

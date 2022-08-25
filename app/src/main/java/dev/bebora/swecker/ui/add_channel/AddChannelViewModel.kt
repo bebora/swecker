@@ -29,7 +29,9 @@ class AddChannelViewModel @Inject constructor(
 ) : ViewModel() {
     private val userInfoChanges = authService.getUserInfoChanges()
 
-    var uiState by mutableStateOf(AddChannelUIState())
+    var uiState by mutableStateOf(AddChannelUIState(
+        me = User()
+    ))
         private set
 
     init {
@@ -111,7 +113,9 @@ class AddChannelViewModel @Inject constructor(
                     Log.d("SWECKER-UPD-GRP-N", "Error creating channel $it")
                 } else {
                     onSuccess()
-                    uiState = AddChannelUIState()
+                    uiState = AddChannelUIState(
+                        me = uiState.me
+                    )
 
                 }
             }
@@ -131,7 +135,9 @@ class AddChannelViewModel @Inject constructor(
             }
         )
         
-        uiState = AddChannelUIState()
+        uiState = AddChannelUIState(
+            me = uiState.me
+        )
     }
 }
 
@@ -141,7 +147,7 @@ data class AddChannelUIState(
     val channelId: String = UUID.randomUUID().toString(),
     val channelPicUrl: Uri = Uri.EMPTY,
     val uploadedPicUrl: String = "",
-    val me: User = User(),
+    val me: User,
     val waitingForServiceResponse: Boolean = false,
     val accountStatusLoaded: Boolean = false,
 )

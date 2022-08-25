@@ -60,7 +60,9 @@ fun ChannelItem(
             horizontalAlignment = Alignment.Start,
             verticalArrangement = Arrangement.SpaceBetween
         ) {
-            Row() {
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
                 Text(
                     text = channel.name,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
