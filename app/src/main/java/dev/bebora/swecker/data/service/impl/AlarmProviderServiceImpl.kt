@@ -7,10 +7,7 @@ import com.google.firebase.ktx.Firebase
 import dev.bebora.swecker.data.StoredAlarm
 import dev.bebora.swecker.data.ThinGroup
 import dev.bebora.swecker.data.User
-import dev.bebora.swecker.data.service.AlarmProviderService
-import dev.bebora.swecker.data.service.EmptyChannelException
-import dev.bebora.swecker.data.service.EmptyGroupException
-import dev.bebora.swecker.data.service.EmptyUserException
+import dev.bebora.swecker.data.service.*
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.*
 
@@ -127,59 +124,66 @@ class AlarmProviderServiceImpl : AlarmProviderService {
     }
 
     override fun createChannel(
-        ownerId: String,
-        userIds: List<String>, // The list should already include the owner
-        onSuccess: (ThinGroup) -> Unit, // Contains id of created channel
-        onFailure: (Throwable) -> Unit
+        channel: ThinGroup,
+        onComplete: (Throwable?) -> Unit
     ) {
-        if (userIds.isEmpty()) {
-            onFailure(EmptyGroupException())
+        if (channel.id.isBlank()) {
+            onComplete(EmptyChannelException())
+        } else if (channel.handle == null) {
+            onComplete(EmptyHandleException())
+        } else if (channel.members.isEmpty()) {
+            onComplete(EmptyGroupException())
         } else {
-            val newDocRef = Firebase.firestore
-                .collection(FirebaseConstants.CHANNELS_COLLECTION)
-                .document()
-            val newGroup = ThinGroup(
-                id = newDocRef.id,
-                members = userIds,
-                name = "Channel name",
-                owner = ownerId,
-                picture = "",
-                lowerName = "channel name",
-                handle = ""
+            val newGroup = channel.copy(
+                lowerName = channel.name.lowercase().trim(),
+                handle = channel.handle.lowercase().trim()
             )
-            newDocRef.set(
-                newGroup
-            ).addOnFailureListener(onFailure)
-                .addOnSuccessListener {
-                    onSuccess(newGroup)
+            Firebase.firestore
+                .collection(FirebaseConstants.CHANNELS_COLLECTION)
+                .document(channel.id)
+                .set(newGroup)
+                .addOnCompleteListener {
+                    onComplete(it.exception)
                 }
         }
     }
 
     override fun updateChannel(newChannelData: ThinGroup, onComplete: (Throwable?) -> Unit) {
-        Firebase.firestore
-            .collection(FirebaseConstants.CHANNELS_COLLECTION)
-            .document(newChannelData.id)
-            .set(
-                newChannelData.copy(
-                    lowerName = newChannelData.name.lowercase(),
-                    handle = newChannelData.handle?.lowercase()
+        if (newChannelData.id.isBlank()) {
+            onComplete(EmptyChannelException())
+        } else if (newChannelData.handle == null) {
+            onComplete(EmptyHandleException())
+        } else if (newChannelData.members.isEmpty()) {
+            onComplete(EmptyGroupException())
+        } else {
+            Firebase.firestore
+                .collection(FirebaseConstants.CHANNELS_COLLECTION)
+                .document(newChannelData.id)
+                .set(
+                    newChannelData.copy(
+                        lowerName = newChannelData.name.lowercase(),
+                        handle = newChannelData.handle.lowercase()
+                    )
                 )
-            )
-            .addOnCompleteListener {
-                onComplete(it.exception)
-            }
+                .addOnCompleteListener {
+                    onComplete(it.exception)
+                }
+        }
     }
 
     //TODO should the alarms be removed after group deletion? And the chats?
     override fun deleteChannel(channelId: String, onComplete: (Throwable?) -> Unit) {
-        Firebase.firestore
-            .collection(FirebaseConstants.CHANNELS_COLLECTION)
-            .document(channelId)
-            .delete()
-            .addOnCompleteListener {
-                onComplete(it.exception)
-            }
+        if (channelId.isBlank()) {
+            onComplete(EmptyChannelException())
+        } else {
+            Firebase.firestore
+                .collection(FirebaseConstants.CHANNELS_COLLECTION)
+                .document(channelId)
+                .delete()
+                .addOnCompleteListener {
+                    onComplete(it.exception)
+                }
+        }
     }
 
     override fun searchNewChannels(

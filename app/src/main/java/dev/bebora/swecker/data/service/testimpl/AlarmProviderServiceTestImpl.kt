@@ -35,10 +35,8 @@ class AlarmProviderServiceTestImpl : AlarmProviderService {
     }
 
     override fun createChannel(
-        ownerId: String,
-        userIds: List<String>,
-        onSuccess: (ThinGroup) -> Unit,
-        onFailure: (Throwable) -> Unit
+        channel: ThinGroup,
+        onComplete: (Throwable?) -> Unit
     ) {
         TODO("Not yet implemented")
     }

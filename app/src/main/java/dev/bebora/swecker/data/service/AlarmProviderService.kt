@@ -26,10 +26,8 @@ interface AlarmProviderService {
     )
 
     fun createChannel(
-        ownerId: String,
-        userIds: List<String>,
-        onSuccess: (ThinGroup) -> Unit,
-        onFailure: (Throwable) -> Unit
+        channel: ThinGroup, // The channel should already have an id!
+        onComplete: (Throwable?) -> Unit
     )
 
     fun updateChannel(
@@ -83,4 +81,5 @@ interface AlarmProviderService {
 
 class EmptyGroupException : Exception()
 class EmptyUserException : Exception()
-class EmptyChannelException : Exception()
+class EmptyChannelException : Exception() // Channel id is blank
+class EmptyHandleException : Exception() // Channel should contain valid handle
