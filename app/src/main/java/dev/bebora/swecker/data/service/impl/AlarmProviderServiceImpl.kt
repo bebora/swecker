@@ -4,9 +4,7 @@ import android.util.Log
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import dev.bebora.swecker.data.StoredAlarm
-import dev.bebora.swecker.data.ThinGroup
-import dev.bebora.swecker.data.User
+import dev.bebora.swecker.data.*
 import dev.bebora.swecker.data.service.*
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.*
@@ -283,7 +281,8 @@ class AlarmProviderServiceImpl : AlarmProviderService {
         if (alarm.groupId == null) { // Create an alarm just for me
             Firebase.firestore
                 .collection(FirebaseConstants.ALARMS_COLLECTION)
-                .add(alarm)
+                .document(alarm.id)
+                .set(alarm)
                 .addOnCompleteListener { onComplete(it.exception) }
         } else { // Create alarm in group and for everyone in the group
             val store = Firebase.firestore
@@ -384,6 +383,41 @@ class AlarmProviderServiceImpl : AlarmProviderService {
                                 alarm.copy(
                                     userId = docIdUserId.second
                                 )
+                            )
+                        }
+                        null
+                    }.addOnCompleteListener {
+                        onComplete(it.exception)
+                    }
+                }
+        }
+    }
+
+    override fun deleteAlarm(alarm: StoredAlarm, onComplete: (Throwable?) -> Unit) {
+        if (alarm.alarmType == AlarmType.PERSONAL.toStoredString()) { // Soft delete just my alarm
+            Firebase.firestore
+                .collection(FirebaseConstants.ALARMS_COLLECTION)
+                .document(alarm.id)
+                .update("deleted", true)
+                .addOnCompleteListener {
+                    onComplete(it.exception)
+                }
+        } else { // Everyone will have the alarm soft deleted
+            val store = Firebase.firestore
+            val alarmsRef = Firebase.firestore
+                .collection(FirebaseConstants.ALARMS_COLLECTION)
+            alarmsRef
+                .whereEqualTo("id", alarm.id)
+                .get()
+                .addOnFailureListener(onComplete)
+                .addOnSuccessListener { querySnapshot ->
+                    val documents = querySnapshot.documents.map { it.id }
+                    store.runTransaction { transaction ->
+                        documents.forEach { docId ->
+                            transaction.update(
+                                alarmsRef.document(docId),
+                                "deleted",
+                                true
                             )
                         }
                         null

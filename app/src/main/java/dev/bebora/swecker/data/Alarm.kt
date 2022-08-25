@@ -91,6 +91,7 @@ data class StoredAlarm(
     val timestamp: String? = null, //Choose precision of timestamp
     @get:PropertyName("dateTime")
     val dateTime: String = "2022-08-25T16:05:00+01:00",
+    val deleted: Boolean = false,
     @get:PropertyName("receiveUpdates")
     val receiveUpdates: Boolean = true // If true get updates from original alarm (unless the alarm has been disabled)
 )

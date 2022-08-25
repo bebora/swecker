@@ -77,6 +77,11 @@ interface AlarmProviderService {
         onComplete: (Throwable?) -> Unit
     )
     // TODO add a way to set chat enabled/disabled
+
+    fun deleteAlarm(
+        alarm: StoredAlarm,
+        onComplete: (Throwable?) -> Unit
+    )
 }
 
 class EmptyGroupException : Exception()

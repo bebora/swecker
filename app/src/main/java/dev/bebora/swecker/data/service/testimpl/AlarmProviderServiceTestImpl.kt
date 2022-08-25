@@ -81,4 +81,11 @@ class AlarmProviderServiceTestImpl : AlarmProviderService {
     override fun updateAlarm(alarm: StoredAlarm, onComplete: (Throwable?) -> Unit) {
         TODO("Not yet implemented")
     }
+
+    /**
+     * This function will soft delete the alarm and set a flag
+     */
+    override fun deleteAlarm(alarm: StoredAlarm, onComplete: (Throwable?) -> Unit) {
+        TODO("Not yet implemented")
+    }
 }
