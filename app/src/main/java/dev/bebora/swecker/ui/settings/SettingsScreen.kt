@@ -1,20 +1,18 @@
 package dev.bebora.swecker.ui.settings
 
-import android.app.Application
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import dev.bebora.swecker.data.service.impl.ImageStorageServiceImpl
 import dev.bebora.swecker.data.service.testimpl.FakeAccountsService
 import dev.bebora.swecker.data.service.testimpl.FakeAuthService
-import dev.bebora.swecker.data.settings.DataStoreManager
+import dev.bebora.swecker.data.settings.FakeSettingsRepository
 import dev.bebora.swecker.data.settings.Settings
 import dev.bebora.swecker.ui.settings.account.AccountDummyScreen
 import dev.bebora.swecker.ui.settings.main.SettingsDummyScreen
@@ -129,9 +127,7 @@ fun SettingsScreenPreview() {
         SettingsScreen(
             modifier = Modifier,
             viewModel = SettingsViewModel(
-                repository = DataStoreManager(
-                    LocalContext.current
-                ),
+                repository = FakeSettingsRepository(),
                 authService = FakeAuthService(),
                 accountsService = FakeAccountsService(),
                 imageStorageService = ImageStorageServiceImpl()

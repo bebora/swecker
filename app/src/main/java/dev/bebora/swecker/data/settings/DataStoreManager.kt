@@ -4,7 +4,6 @@ import android.content.Context
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
-import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
@@ -20,8 +19,6 @@ class DataStoreManager @Inject constructor(@ApplicationContext appContext: Conte
     private val settingsDataStore = appContext.dataStore
 
     companion object {
-        val NAME = stringPreferencesKey("name")
-        val USERNAME = stringPreferencesKey("username")
         val PALETTE = intPreferencesKey("palette")
         val DARK_MODE_TYPE = intPreferencesKey("dark_mode_type")
         val RINGTONE = intPreferencesKey("ringtone")
