@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.bebora.swecker.R
+import dev.bebora.swecker.data.User
 import dev.bebora.swecker.data.service.*
 import dev.bebora.swecker.data.settings.SettingsRepositoryInterface
 import dev.bebora.swecker.ui.utils.UiText
@@ -42,8 +43,9 @@ class SettingsViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             userInfoChanges.collect {
+                // SuggestLogin checks for an empty userId and can be hidden
                 uiState = uiState.copy(
-                    userId = authService.getUserId(),
+                    me = User(id = authService.getUserId()),
                 )
                 accountsService.getUser(
                     userId = authService.getUserId(),
@@ -246,7 +248,6 @@ class SettingsViewModel @Inject constructor(
                     openAccountSettings = true,
                     openSoundsSettings = false,
                     openThemeSettings = false,
-                    userId = authService.getUserId(),
                 )
             }
             SettingsEvent.OpenSoundsSettings -> {
@@ -309,7 +310,7 @@ class SettingsViewModel @Inject constructor(
                     accountLoading = true
                 )
                 imageStorageService.setProfilePicture(
-                    uiState.userId,
+                    uiState.me.id,
                     event.imageUri,
                     onSuccess = {
                         onEvent(

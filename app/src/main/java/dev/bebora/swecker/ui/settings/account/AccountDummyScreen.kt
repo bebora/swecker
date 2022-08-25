@@ -90,7 +90,7 @@ fun AccountDummyScreen(
                     if (ui.accountLoading) {
                         CircularProgressIndicator()
                     }
-                    if (ui.userId.isNotBlank()) {
+                    if (ui.me.id.isNotBlank()) {
                         IconButton(onClick = { onEvent(SettingsEvent.SignOut) }) {
                             Icon(
                                 imageVector = Icons.Default.Logout,
@@ -401,7 +401,6 @@ fun AccountLoggedDummyScreenPreview() {
     SweckerTheme {
         AccountDummyScreen(
             ui = SettingsUiState(
-                userId = "fakeuser",
                 me = User(
                     id = "hello",
                     name = "fake",

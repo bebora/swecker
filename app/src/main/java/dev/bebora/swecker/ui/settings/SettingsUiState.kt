@@ -27,8 +27,6 @@ data class SettingsUiState(
     val showEditRingtoneVolumePopup: Boolean = false,
     val currentRingtoneVolume: Int = 0,
 
-    val userId: String = "",
-
     val me: User = User(),
 
     val accountLoading: Boolean = false,
