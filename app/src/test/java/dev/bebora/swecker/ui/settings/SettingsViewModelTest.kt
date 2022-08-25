@@ -72,4 +72,46 @@ class SettingsViewModelTest {
             assertEquals(it, viewModel.settings.first().vibration)
         }
     }
+    @Test
+    fun settingsViewModel_OpenAndClosePopups_NotOverlapping()  {
+        val popupEvents = listOf(
+            SettingsEvent.OpenEditDarkModeType,
+            SettingsEvent.DismissEditDarkModeType,
+
+            SettingsEvent.OpenEditName,
+            SettingsEvent.DismissEditName,
+
+            SettingsEvent.OpenEditRingtoneDuration,
+            SettingsEvent.DismissEditRingtoneDuration,
+
+            SettingsEvent.OpenEditRingtone,
+            SettingsEvent.DismissEditRingtone,
+
+            SettingsEvent.OpenEditRingtoneVolume,
+            SettingsEvent.DismissEditRingtoneVolume,
+
+            SettingsEvent.OpenEditUsername,
+            SettingsEvent.DismissEditUsername,
+        )
+        popupEvents.forEachIndexed { index, settingsEvent ->
+            viewModel.onEvent(settingsEvent)
+            if (index % 2 == 0) {
+                assertEquals(1, countOpenPopups())
+            }
+            else {
+                assertEquals(0, countOpenPopups())
+            }
+        }
+    }
+
+    private fun countOpenPopups() : Int {
+        return listOf(
+            viewModel.uiState.showEditDarkModeTypePopup,
+            viewModel.uiState.showEditNamePopup,
+            viewModel.uiState.showEditRingtoneDurationPopup,
+            viewModel.uiState.showEditRingtonePopup,
+            viewModel.uiState.showEditRingtoneVolumePopup,
+            viewModel.uiState.showEditUsernamePopup,
+        ).fold(0) { acc, value -> acc + if (value) 1 else 0 }
+    }
 }
