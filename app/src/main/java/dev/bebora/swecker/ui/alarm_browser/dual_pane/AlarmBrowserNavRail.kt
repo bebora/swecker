@@ -13,9 +13,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import dev.bebora.swecker.data.alarm_browser.AlarmRepositoryTestImpl
-import dev.bebora.swecker.data.service.impl.AccountsServiceImpl
 import dev.bebora.swecker.data.service.impl.ChatServiceImpl
 import dev.bebora.swecker.data.service.testimpl.AlarmProviderServiceTestImpl
+import dev.bebora.swecker.data.service.testimpl.FakeAccountsService
 import dev.bebora.swecker.data.service.testimpl.FakeAuthService
 import dev.bebora.swecker.ui.alarm_browser.*
 import dev.bebora.swecker.ui.theme.SweckerTheme
@@ -109,7 +109,7 @@ fun NavRailPreview() {
     val testViewModel = AlarmBrowserViewModel(
         AlarmRepositoryTestImpl(),
         chatService = ChatServiceImpl(),
-        accountsService = AccountsServiceImpl(),
+        accountsService = FakeAccountsService(),
         authService = FakeAuthService(),
         alarmProviderService = AlarmProviderServiceTestImpl()
     )

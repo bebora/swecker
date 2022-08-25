@@ -17,7 +17,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import dev.bebora.swecker.R
-import dev.bebora.swecker.data.service.impl.AccountsServiceImpl
+import dev.bebora.swecker.data.service.testimpl.FakeAccountsService
 import dev.bebora.swecker.data.service.testimpl.FakeAuthService
 import dev.bebora.swecker.util.UiEvent
 
@@ -89,7 +89,7 @@ fun AddContactScreenPreview() {
     AddContactScreen(
         viewModel = AddContactViewModel(
             authService = FakeAuthService(),
-            accountsService = AccountsServiceImpl()
+            accountsService = FakeAccountsService()
         )
     )
 }

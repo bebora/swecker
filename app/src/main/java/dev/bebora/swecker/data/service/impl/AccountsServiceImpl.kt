@@ -18,7 +18,7 @@ class AccountsServiceImpl : AccountsService {
         onError: (Throwable) -> Unit,
         onSuccess: (User) -> Unit
     ) {
-        if (userId == "") {
+        if (userId.isBlank()) {
             Log.d("SWECKER-DEB", "userId is empty")
             onError(BlankUserOrUsernameException())
         } else {
@@ -30,7 +30,7 @@ class AccountsServiceImpl : AccountsService {
                 .addOnFailureListener { error -> onError(error) }
                 .addOnSuccessListener { result ->
                     Log.d("SWECKER-RESULT-GET", "Result is $result")
-                    val user = result.toObject<User>()
+                    val user = result.toObject<UserWithFriends>()?.toUser()
                     onSuccess(user ?: User())
                 }
         }
@@ -103,11 +103,10 @@ class AccountsServiceImpl : AccountsService {
         }
     }*/
 
-    override fun addUserListener() {
+    /*override fun addUserListener() {
         TODO("Not yet implemented")
-    }
+    }*/
 
-    // TODO update reference to me in my friends documents
     override fun saveUser(requestedUser: User, oldUser: User?, onResult: (Throwable?) -> Unit) {
         var user = requestedUser.copy(
             username = requestedUser.username.lowercase()
@@ -300,7 +299,7 @@ class AccountsServiceImpl : AccountsService {
                     "username",
                     "${query}~"
                 ) // https://stackoverflow.com/questions/46568142/google-firestore-query-on-substring-of-a-property-value-text-search
-                .whereNotEqualTo("username", from.username)
+                .whereNotEqualTo("id", from.id)
                 .get()
                 .addOnFailureListener(onError)
                 .addOnSuccessListener { querySnapshot ->
@@ -320,9 +319,15 @@ class AccountsServiceImpl : AccountsService {
             val meRef = usersRef.document(me.id)
             val friendRef = usersRef.document(friend.id)
             store.runTransaction { transaction ->
-                transaction.update(meRef, "friends", FieldValue.arrayRemove(friend))
-                transaction.update(friendRef, "friends", FieldValue.arrayRemove(me))
-                null
+                val meInDb = transaction.get(meRef)
+                val friendInDb = transaction.get(friendRef)
+                if (!meInDb.exists() || !friendInDb.exists()) {
+                    throw UserNotFoundException()
+                } else {
+                    transaction.update(meRef, "friends", FieldValue.arrayRemove(friend))
+                    transaction.update(friendRef, "friends", FieldValue.arrayRemove(me))
+                    null
+                }
             }
                 .addOnCompleteListener {
                     onResult(it.exception)

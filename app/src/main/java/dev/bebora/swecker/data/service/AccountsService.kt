@@ -10,7 +10,7 @@ interface AccountsService {
         onSuccess: (User) -> Unit
     )
 
-    fun addUserListener()
+    //fun addUserListener()
 
     /**
      * If update is true, the existing user will be updated, otherwise it will be created
