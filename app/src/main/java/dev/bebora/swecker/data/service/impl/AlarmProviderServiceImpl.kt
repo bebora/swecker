@@ -402,12 +402,13 @@ class AlarmProviderServiceImpl : AlarmProviderService {
                 .addOnCompleteListener {
                     onComplete(it.exception)
                 }
-        } else { // Everyone will have the alarm soft deleted
+        } else { // Everyone will have the alarm soft deleted, the original one will disappear so new members will not be able to see it at all
             val store = Firebase.firestore
             val alarmsRef = Firebase.firestore
                 .collection(FirebaseConstants.ALARMS_COLLECTION)
             alarmsRef
                 .whereEqualTo("id", alarm.id)
+                .whereNotEqualTo("userId", null) // First modify all users' versions
                 .get()
                 .addOnFailureListener(onComplete)
                 .addOnSuccessListener { querySnapshot ->
@@ -420,6 +421,8 @@ class AlarmProviderServiceImpl : AlarmProviderService {
                                 true
                             )
                         }
+                        // Then hard delete the group/channel original one
+                        transaction.delete(alarmsRef.document(alarm.id))
                         null
                     }.addOnCompleteListener {
                         onComplete(it.exception)
