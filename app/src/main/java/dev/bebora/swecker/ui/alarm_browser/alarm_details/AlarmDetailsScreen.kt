@@ -34,9 +34,10 @@ import java.util.*
 fun AlarmDetails(
     modifier: Modifier = Modifier,
     alarm: Alarm,
-    isReadOnly: Boolean,
+    canDelete: Boolean,
     onAlarmPartiallyUpdated: (Alarm) -> Unit,
-    onUpdateCompleted: (Alarm, Boolean) -> Unit
+    onUpdateCompleted: (Alarm, Boolean) -> Unit,
+    onAlarmDeleted: (Alarm) -> Unit = {}
 ) {
     var showDatePicker by remember { mutableStateOf(false) }
     var showTimePicker by remember { mutableStateOf(false) }
@@ -102,7 +103,7 @@ fun AlarmDetails(
                 onValueChange = { newName ->
                     onAlarmPartiallyUpdated(alarm.copy(name = newName))
                 },
-                readOnly = isReadOnly,
+                readOnly = false,
                 singleLine = true,
                 modifier = Modifier
                     .fillMaxWidth(1f),
@@ -185,10 +186,14 @@ fun AlarmDetails(
                     }
                 }
             }
-            OutlinedButton(modifier = Modifier.fillMaxWidth(1f)
-                ,onClick = { showDeleteAlert = true }) {
-                Text(text = "Delete alarm")
+            if (canDelete) {
+                OutlinedButton(
+                    modifier = Modifier.fillMaxWidth(1f),
+                    onClick = { showDeleteAlert = true }) {
+                    Text(text = "Delete alarm")
+                }
             }
+
             Spacer(modifier = Modifier.weight(1f))
 
             Row(
@@ -219,7 +224,10 @@ fun AlarmDetails(
                         val date = if (!enabledRepetition) {
                             alarm.localDate
                         } else {
-                            nextEnabledDate(enabledDays = alarm.enabledDays, time = alarm.localTime!!).toLocalDate()
+                            nextEnabledDate(
+                                enabledDays = alarm.enabledDays,
+                                time = alarm.localTime!!
+                            ).toLocalDate()
                         }
                         onUpdateCompleted(
                             alarm.copy(
@@ -260,20 +268,20 @@ fun AlarmDetails(
             }, onDismissRequest = {
                 showTimePicker = false
             })
-        if(showDeleteAlert){
+        if (showDeleteAlert) {
             AlertDialog(onDismissRequest = { showDeleteAlert = false },
-            title = { Text(text = "Delete alarm")},
-            text = { Text(text = "Do you really want to delete this alarm? The operation is irreversible")},
-            confirmButton = {
-                OutlinedButton(onClick = { /*TODO*/ }) {
-                    Text(text = "Yes")
-                }
-            },
-            dismissButton = {
-                OutlinedButton(onClick = { showDeleteAlert = false }) {
-                    Text(text = "No")
-                }
-            })
+                title = { Text(text = "Delete alarm") },
+                text = { Text(text = "Do you really want to delete this alarm? The operation is irreversible") },
+                confirmButton = {
+                    OutlinedButton(onClick = { onAlarmDeleted(alarm) }) {
+                        Text(text = "Yes")
+                    }
+                },
+                dismissButton = {
+                    OutlinedButton(onClick = { showDeleteAlert = false }) {
+                        Text(text = "No")
+                    }
+                })
         }
     }
 }
@@ -377,7 +385,7 @@ fun AlarmDetailsPreview() {
             Box(modifier = Modifier.padding(it)) {
                 AlarmDetails(
                     alarm = alarm,
-                    isReadOnly = false,
+                    canDelete = false,
                     onAlarmPartiallyUpdated = { al -> alarm = al },
                     onUpdateCompleted = { _, _ -> })
             }
@@ -426,10 +434,18 @@ fun AlarmDetailsScreen(
             }
         }
     ) {
+        val myId = uiState.me.id
+        val selectedAlarm = uiState.selectedAlarm
+        val canDeleteAlarm = uiState.channels.firstOrNull { channel ->
+            channel.id == selectedAlarm?.groupId
+        }?.owner == myId || uiState.groups.firstOrNull { group ->
+            group.id == selectedAlarm?.groupId
+        }?.owner == myId || uiState.selectedAlarm?.alarmType == AlarmType.PERSONAL
+
         AlarmDetails(
             modifier = modifier.padding(it),
             alarm = uiState.selectedAlarm!!,
-            isReadOnly = false,
+            canDelete = canDeleteAlarm,
             onAlarmPartiallyUpdated = { al ->
                 onEvent(
                     AlarmBrowserEvent.AlarmPartiallyUpdated(
@@ -437,7 +453,8 @@ fun AlarmDetailsScreen(
                     )
                 )
             },
-            onUpdateCompleted = { al, b -> onEvent(AlarmBrowserEvent.AlarmUpdated(al, b)) }
+            onUpdateCompleted = { al, b -> onEvent(AlarmBrowserEvent.AlarmUpdated(al, b)) },
+            onAlarmDeleted = { al -> onEvent(AlarmBrowserEvent.AlarmDeleted(al)) },
         )
     }
 

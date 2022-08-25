@@ -14,6 +14,8 @@ sealed class AlarmBrowserEvent {
 
     data class AlarmUpdated(val alarm: Alarm, val success: Boolean) : AlarmBrowserEvent()
 
+    data class AlarmDeleted(val alarm: Alarm) : AlarmBrowserEvent()
+
     data class AlarmPartiallyUpdated(val alarm: Alarm) : AlarmBrowserEvent()
 
     data class DialogOpened(val type: DialogContent) : AlarmBrowserEvent()

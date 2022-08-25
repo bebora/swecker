@@ -27,27 +27,33 @@ class AlarmRepositoryImpl @Inject constructor(
         localAlarms = alarmDao.getAll()
         onlineAlarms = alarmProviderService.getUserAlarms(
             authService.getUserId()
-        ).map { alarmDataList ->
+        ).map {
+            it.filter { storedAlarm ->
+                !storedAlarm.deleted
+            }
+        }.map { alarmDataList ->
             alarmDataList.map { al ->
                 al.toAlarm()
             }
-        }.map{
-            alarmList -> //Update alarms with repetition
-                alarmList.map {
-                al ->
-                    if(al.enabledDays.firstOrNull{b -> b} != null){
-                        al.copy(
-                            dateTime = nextEnabledDate(enabledDays = al.enabledDays,
-                                time = al.dateTime!!.atZoneSameInstant(ZoneId.systemDefault()).toLocalTime())
+        }.map { alarmList -> //Update alarms with repetition
+            alarmList.map { al ->
+                if (al.enabledDays.firstOrNull { b -> b } != null) {
+                    al.copy(
+                        dateTime = nextEnabledDate(
+                            enabledDays = al.enabledDays,
+                            time = al.dateTime!!.atZoneSameInstant(ZoneId.systemDefault())
+                                .toLocalTime()
                         )
-                    }else{
-                        al.copy()
-                    }
+                    )
+                } else {
+                    al.copy()
+                }
             }
         }.map { alarmDataList -> //add local data for the UI
             alarmDataList.map { al ->
                 al.copy(
-                    localTime = al.dateTime!!.atZoneSameInstant(ZoneId.systemDefault()).toLocalTime(),
+                    localTime = al.dateTime!!.atZoneSameInstant(ZoneId.systemDefault())
+                        .toLocalTime(),
                     localDate = al.dateTime.atZoneSameInstant(ZoneId.systemDefault()).toLocalDate()
                 )
             }
@@ -89,10 +95,23 @@ class AlarmRepositoryImpl @Inject constructor(
 
     }
 
-    override suspend fun deleteAlarm(alarm: Alarm) {
+    override suspend fun deleteAlarm(alarm: Alarm, userId: String?) {
         alarmDao.delete(alarm = alarm)
 
+
+        if (authService.getUserId().isNotEmpty()) {
+            alarmProviderService.deleteAlarm(
+                alarm = alarm.toStoredAlarm().copy(
+                    userId = userId
+                ),
+            ) {
+                if (it != null) {
+                    onError(it)
+                }
+            }
+        }
     }
+
 
     override suspend fun getAlarmById(id: String): Alarm? {
         TODO()
@@ -119,10 +138,13 @@ class AlarmRepositoryImpl @Inject constructor(
 
     override suspend fun updateAlarm(alarm: Alarm, userId: String?) {
         alarmDao.insert(alarm = alarm)
+
         if (authService.getUserId().isNotEmpty()) {
-            alarmProviderService.updateAlarm(alarm = alarm.toStoredAlarm().copy(
-                userId = userId
-            )) {
+            alarmProviderService.updateAlarm(
+                alarm = alarm.toStoredAlarm().copy(
+                    userId = userId
+                )
+            ) {
                 if (it != null) {
                     onError(it)
                 }

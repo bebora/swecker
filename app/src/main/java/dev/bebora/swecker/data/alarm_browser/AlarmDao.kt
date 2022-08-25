@@ -10,11 +10,11 @@ interface AlarmDao {
     fun getAll(): Flow<List<Alarm>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(alarm: Alarm)
+    suspend fun insert(alarm: Alarm)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertList(alarm: List<Alarm>)
 
     @Delete
-    fun delete(alarm: Alarm)
+    suspend fun delete(alarm: Alarm)
 }

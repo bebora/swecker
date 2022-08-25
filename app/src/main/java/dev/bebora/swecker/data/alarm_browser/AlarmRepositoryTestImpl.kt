@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.flow
 
 class AlarmRepositoryTestImpl : AlarmRepository {
 
-    override suspend fun deleteAlarm(alarm: Alarm) {
+    override suspend fun deleteAlarm(alarm: Alarm,userId: String?) {
         TODO("Not yet implemented")
     }
 

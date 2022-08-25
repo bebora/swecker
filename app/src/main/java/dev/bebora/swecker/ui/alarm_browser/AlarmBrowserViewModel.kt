@@ -143,7 +143,8 @@ class AlarmBrowserViewModel @Inject constructor(
                                 filteredAlarms = filterAlarms(
                                     alarms = alarms,
                                     selectedDestination = curState.selectedDestination,
-                                    selectedGroup = curState.selectedGroup?:curState.selectedChannel,
+                                    selectedGroup = curState.selectedGroup
+                                        ?: curState.selectedChannel,
                                     searchKey = curState.searchKey
                                 )
                             )
@@ -202,7 +203,8 @@ class AlarmBrowserViewModel @Inject constructor(
                     targetState = true
                 }
 
-                if (selectedAlarm?.id.equals(event.alarm.id)) {
+                if (selectedAlarm?.id.equals(event.alarm.id) &&
+                    detailsScreenContent == DetailsScreenContent.ALARM_DETAILS) {
                     detailsScreenContent = detailsScreenContentOnGoBack()
                     if (uiState.detailsScreenContent != DetailsScreenContent.NONE) {
                         mutableTransitionState = MutableTransitionState(true).apply {
@@ -270,6 +272,35 @@ class AlarmBrowserViewModel @Inject constructor(
                             fetchUsersData(usersIds = it.reversed().map { msg -> msg.uId })
                         }
                 }
+            }
+
+            is AlarmBrowserEvent.AlarmDeleted -> {
+                viewModelScope.launch {
+                    repository.deleteAlarm(
+                        alarm = event.alarm,
+                        userId = if (uiState.selectedGroup?.owner != uiState.me.id ||
+                            uiState.selectedChannel?.owner != uiState.me.id ||
+                            event.alarm.alarmType == AlarmType.PERSONAL
+                        ) {
+                            uiState.me.id
+                        } else {
+                            null
+                        }
+                    )
+                }
+                var detailsScreenContent: DetailsScreenContent = DetailsScreenContent.NONE
+
+                if(uiState.selectedGroup != null){
+                    detailsScreenContent = DetailsScreenContent.GROUP_ALARM_LIST
+                }else if(uiState.selectedChannel != null){
+                    detailsScreenContent = DetailsScreenContent.CHANNEL_ALARM_LIST
+                }
+                uiState = uiState.copy(
+                    detailsScreenContent = detailsScreenContent,
+                    animatedDetailsScreenContent = detailsScreenContent,
+                    dialogContent = DialogContent.NONE,
+                    selectedAlarm = null,
+                )
             }
 
             is AlarmBrowserEvent.GroupSelected -> {

@@ -29,7 +29,7 @@ fun AddAlarmContent(
     AlarmDetails(
         modifier = modifier,
         alarm = alarm.value,
-        isReadOnly = false,
+        canDelete = false,
         onAlarmPartiallyUpdated = viewModel::onAlarmPartiallyUpdate,
         onUpdateCompleted = { al, b ->
             viewModel.onUpdateCompleted(al, b, group, userId, alarmType)

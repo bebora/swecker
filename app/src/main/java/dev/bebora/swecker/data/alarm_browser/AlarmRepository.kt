@@ -5,7 +5,7 @@ import dev.bebora.swecker.data.AlarmType
 import kotlinx.coroutines.flow.Flow
 
 interface AlarmRepository {
-    suspend fun deleteAlarm(alarm: Alarm)
+    suspend fun deleteAlarm(alarm: Alarm, userId: String?)
 
     suspend fun getAlarmById(id: String): Alarm?
 
