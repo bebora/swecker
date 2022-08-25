@@ -130,6 +130,7 @@ fun AddGroupInputField(
                     .padding(4.dp),
                 label = { Text("Search contacts") },
                 value = searchKey,
+                singleLine = true,
                 onValueChange = onSearchKeyChanged,
             )
         }

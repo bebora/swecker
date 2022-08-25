@@ -30,7 +30,9 @@ class AddGroupViewModel @Inject constructor(
 
     private var friendsCollectorJob: Job? = null
 
-    var uiState by mutableStateOf(AddGroupUIState())
+    var uiState by mutableStateOf(AddGroupUIState(
+        me = User()
+    ))
         private set
 
     init {
@@ -172,7 +174,10 @@ class AddGroupViewModel @Inject constructor(
                 if (it != null) {
                     Log.d("SWECKER-UPD-GRP-N", "Error updating group with new name")
                 } else {
-                    uiState = AddGroupUIState()
+                    uiState = AddGroupUIState(
+                        me = uiState.me,
+                        allContacts = uiState.allContacts
+                    )
                     onSuccess()
                 }
             }
@@ -207,7 +212,10 @@ class AddGroupViewModel @Inject constructor(
                 }
             )
         }
-        uiState = AddGroupUIState()
+        uiState = AddGroupUIState(
+            me = uiState.me,
+            allContacts = uiState.allContacts
+        )
     }
 }
 
@@ -216,7 +224,7 @@ data class AddGroupUIState(
     val selectedMembers: List<User> = emptyList(),
     val groupName: String = "",
     val content: AddGroupContent = AddGroupContent.GROUP_SELECT_CONTACTS,
-    val me: User = User(),
+    val me: User,
     val waitingForServiceResponse: Boolean = false,
     val accountStatusLoaded: Boolean = false,
     val tempGroupData: ThinGroup = ThinGroup()
