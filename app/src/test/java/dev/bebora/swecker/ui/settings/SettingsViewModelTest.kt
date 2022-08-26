@@ -8,8 +8,7 @@ import dev.bebora.swecker.data.settings.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNull
+import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -139,6 +138,17 @@ class SettingsViewModelTest {
             viewModel.onEvent(SettingsEvent.LogOut)
             assertEquals("", authService.getUserId())
         }
+    }
+
+    @Test
+    fun settingsViewModel_ToggleExampleAlarm_StateUpdated() {
+        val initialToggleState = viewModel.uiState.exampleAlarmActive
+        // State should change
+        viewModel.onEvent(SettingsEvent.ToggleExampleAlarmActive)
+        assertNotEquals(initialToggleState, viewModel.uiState.exampleAlarmActive)
+        // State should return as the initial one
+        viewModel.onEvent(SettingsEvent.ToggleExampleAlarmActive)
+        assertEquals(initialToggleState, viewModel.uiState.exampleAlarmActive)
     }
 
     @Test
