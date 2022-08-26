@@ -2,6 +2,7 @@ package dev.bebora.swecker.ui.alarm_notification
 
 import android.content.Context
 import android.media.AudioAttributes
+import android.media.AudioManager
 import android.media.MediaPlayer
 import android.os.*
 import android.view.WindowManager
@@ -25,6 +26,7 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import javax.inject.Inject
+import kotlin.math.roundToInt
 
 @AndroidEntryPoint
 class NotificationActivity(
@@ -32,6 +34,8 @@ class NotificationActivity(
     @Inject
     lateinit var repository: SettingsRepositoryInterface
     private lateinit var vibrator: Vibrator
+    private lateinit var audioManager: AudioManager
+    private var originalMediaVolume: Int = 0
 
     private lateinit var mediaPlayer: MediaPlayer
 
@@ -48,6 +52,8 @@ class NotificationActivity(
         } else {
             this.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
         }
+
+        audioManager = getSystemService(AUDIO_SERVICE) as AudioManager
 
         lifecycleScope.launch {
             val result = repository.getSettings().first()
@@ -84,9 +90,23 @@ class NotificationActivity(
         super.onDestroy()
         mediaPlayer.stop()
         vibrator.cancel()
+        audioManager.setStreamVolume(
+            AudioManager.STREAM_MUSIC,
+            originalMediaVolume,
+            0
+        )
     }
 
     private fun onSettingsLoaded(settings: Settings) {
+        val maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
+        originalMediaVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC)
+        val targetVolume = (maxVolume / 100f * settings.ringtoneVolume).roundToInt()
+        audioManager.setStreamVolume(
+            AudioManager.STREAM_MUSIC,
+            targetVolume,
+            0
+        )
+
         val audioResource = when (settings.ringtone) {
             Ringtone.DEFAULT -> dev.bebora.swecker.R.raw.nuclear
             else -> dev.bebora.swecker.R.raw.nuclear
@@ -98,7 +118,6 @@ class NotificationActivity(
                     .setUsage(AudioAttributes.USAGE_ALARM)
                     .build()
             )
-            setVolume(settings.ringtoneVolume / 100f, settings.ringtoneVolume / 100f)
             setWakeMode(applicationContext, PowerManager.PARTIAL_WAKE_LOCK)
         }
 
