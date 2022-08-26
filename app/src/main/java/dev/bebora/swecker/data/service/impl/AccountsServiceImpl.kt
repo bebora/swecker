@@ -299,12 +299,12 @@ class AccountsServiceImpl : AccountsService {
                     "username",
                     "${query}~"
                 ) // https://stackoverflow.com/questions/46568142/google-firestore-query-on-substring-of-a-property-value-text-search
-                .whereNotEqualTo("id", from.id)
+                // .whereNotEqualTo("id", from.id) // https://firebase.google.com/docs/firestore/query-data/queries#compound_queries
                 .get()
                 .addOnFailureListener(onError)
                 .addOnSuccessListener { querySnapshot ->
                     onSuccess(
-                        querySnapshot.toObjects(User::class.java)
+                        querySnapshot.toObjects(User::class.java).filter { it.id != from.id }
                     )
                 }
         }
