@@ -15,3 +15,8 @@ interface AuthService {
     fun logOut()
     fun getUserInfoChanges(): Flow<Int>
 }
+
+class AuthInvalidUserException : Exception()
+class AuthInvalidCredentialsException : Exception()
+class AuthUserCollisionException : Exception()
+class AuthWeakPasswordException : Exception()

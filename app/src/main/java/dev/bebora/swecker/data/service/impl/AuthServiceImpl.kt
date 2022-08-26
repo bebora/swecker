@@ -1,9 +1,12 @@
 package dev.bebora.swecker.data.service.impl
 
-import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
+import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import dev.bebora.swecker.data.service.AuthInvalidCredentialsException
+import dev.bebora.swecker.data.service.AuthInvalidUserException
 import dev.bebora.swecker.data.service.AuthService
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -25,7 +28,17 @@ class AuthServiceImpl @Inject constructor() : AuthService {
 
     override fun authenticate(email: String, password: String, onResult: (Throwable?) -> Unit) {
         Firebase.auth.signInWithEmailAndPassword(email, password)
-            .addOnCompleteListener { onResult(it.exception) }
+            .addOnCompleteListener {
+                onResult(
+                    when(it.exception) {
+                        is FirebaseAuthInvalidUserException -> AuthInvalidUserException()
+                        is FirebaseAuthInvalidCredentialsException -> AuthInvalidCredentialsException()
+                        null -> null
+                        else -> Exception()
+                    }
+                )
+                onResult(it.exception)
+            }
     }
 
     override fun createAccount(email: String, password: String, onResult: (Throwable?) -> Unit) {
