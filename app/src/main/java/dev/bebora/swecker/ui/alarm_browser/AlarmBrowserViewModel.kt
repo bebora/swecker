@@ -225,14 +225,8 @@ class AlarmBrowserViewModel @Inject constructor(
                             event.alarm.copy(
                                 timeStamp = OffsetDateTime.now()
                                     .format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)
-                            ), userId = if (uiState.selectedGroup?.owner != uiState.me.id ||
-                                uiState.selectedChannel?.owner != uiState.me.id ||
-                                event.alarm.alarmType == AlarmType.PERSONAL
-                            ) {
-                                uiState.me.id
-                            } else {
-                                null
-                            }
+                            ),
+                            userId = if(shouldSendUserId()) {uiState.me.id} else {null}
                         )
                     }
                 }
@@ -278,14 +272,7 @@ class AlarmBrowserViewModel @Inject constructor(
                 viewModelScope.launch {
                     repository.deleteAlarm(
                         alarm = event.alarm,
-                        userId = if (uiState.selectedGroup?.owner != uiState.me.id ||
-                            uiState.selectedChannel?.owner != uiState.me.id ||
-                            event.alarm.alarmType == AlarmType.PERSONAL
-                        ) {
-                            uiState.me.id
-                        } else {
-                            null
-                        }
+                        userId = if(shouldSendUserId()) {uiState.me.id} else {null}
                     )
                 }
                 var detailsScreenContent: DetailsScreenContent = DetailsScreenContent.NONE
@@ -544,6 +531,19 @@ class AlarmBrowserViewModel @Inject constructor(
                 }
             )
         }
+    }
+
+    private fun shouldSendUserId():Boolean{
+        if(uiState.selectedGroup != null){
+            return uiState.selectedGroup!!.owner != uiState.me.id
+        }
+        if(uiState.selectedChannel != null){
+            return uiState.selectedChannel!!.owner != uiState.me.id
+        }
+        if(uiState.selectedAlarm != null){
+            return uiState.selectedAlarm!!.alarmType == AlarmType.PERSONAL
+        }
+        return true
     }
 }
 
