@@ -26,6 +26,7 @@ class FakeAuthService : AuthService {
         else {
             userId = validUserId
             infoChanges += 1
+            onResult(null)
         }
     }
 
