@@ -306,11 +306,17 @@ class AlarmProviderServiceImpl : AlarmProviderService {
         } else { // Create alarm in group and for everyone in the group
             val store = Firebase.firestore
             val alarmsRef = store.collection(FirebaseConstants.ALARMS_COLLECTION)
+            val channelsRef = store.collection(FirebaseConstants.CHANNELS_COLLECTION)
             val groupsRef = store.collection(FirebaseConstants.GROUPS_COLLECTION)
-            val groupRef = groupsRef.document(alarm.groupId)
+            val channelOrGroupRef =
+                if (alarm.alarmType == AlarmType.GROUP.toStoredString()) {
+                    groupsRef.document(alarm.groupId)
+                } else {
+                    channelsRef.document(alarm.groupId)
+                }
             store.runTransaction { transaction ->
-                val groupInDb = transaction.get(groupRef)
-                val members = groupInDb.toObject(ThinGroup::class.java)?.members ?: emptyList()
+                val channelOrGroupInDb = transaction.get(channelOrGroupRef)
+                val members = channelOrGroupInDb.toObject(ThinGroup::class.java)?.members ?: emptyList()
                 transaction.set(
                     alarmsRef.document(alarm.id), // In the original alarm the id field and the document id are the same
                     alarm
