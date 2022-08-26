@@ -1,6 +1,7 @@
 package dev.bebora.swecker.ui.settings
 
 import MainCoroutineRule
+import dev.bebora.swecker.data.User
 import dev.bebora.swecker.data.service.testimpl.FakeAccountsService
 import dev.bebora.swecker.data.service.testimpl.FakeAuthService
 import dev.bebora.swecker.data.service.testimpl.FakeImageStorageService
@@ -12,6 +13,9 @@ import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import dev.bebora.swecker.R
+import dev.bebora.swecker.ui.utils.UiText
+import dev.bebora.swecker.util.UiEvent
 
 class SettingsViewModelTest {
     @ExperimentalCoroutinesApi
@@ -35,49 +39,55 @@ class SettingsViewModelTest {
     }
 
     @Test
-    fun settingsViewModel_PaletteChangeEvent_ValueSaved() = runBlocking{
+    fun settingsViewModel_PaletteChangeEvent_ValueSaved() = runBlocking {
         Palette.values().forEach {
             viewModel.onEvent(SettingsEvent.SetPalette(it))
             assertEquals(it, viewModel.settings.first().palette)
         }
     }
+
     @Test
-    fun settingsViewModel_DarkModeChangeEvent_ValueSaved() = runBlocking{
+    fun settingsViewModel_DarkModeChangeEvent_ValueSaved() = runBlocking {
         DarkModeType.values().forEach {
             viewModel.onEvent(SettingsEvent.SetDarkModeType(it))
             assertEquals(it, viewModel.settings.first().darkModeType)
         }
     }
+
     @Test
-    fun settingsViewModel_RingtoneChangeEvent_ValueSaved() = runBlocking{
+    fun settingsViewModel_RingtoneChangeEvent_ValueSaved() = runBlocking {
         Ringtone.values().forEach {
             viewModel.onEvent(SettingsEvent.SetRingtone(it))
             assertEquals(it, viewModel.settings.first().ringtone)
         }
     }
+
     @Test
-    fun settingsViewModel_RingtoneDurationChangeEvent_ValueSaved() = runBlocking{
+    fun settingsViewModel_RingtoneDurationChangeEvent_ValueSaved() = runBlocking {
         RingtoneDuration.values().forEach {
             viewModel.onEvent(SettingsEvent.SetRingtoneDuration(it))
             assertEquals(it, viewModel.settings.first().ringtoneDuration)
         }
     }
+
     @Test
-    fun settingsViewModel_RingtoneVolumeChangeEvent_ValueSaved() = runBlocking{
+    fun settingsViewModel_RingtoneVolumeChangeEvent_ValueSaved() = runBlocking {
         listOf(0, 40, 100).forEach {
             viewModel.onEvent(SettingsEvent.SetRingtoneVolume(it))
             assertEquals(it, viewModel.settings.first().ringtoneVolume)
         }
     }
+
     @Test
-    fun settingsViewModel_VibrationChangeEvent_ValueSaved() = runBlocking{
+    fun settingsViewModel_VibrationChangeEvent_ValueSaved() = runBlocking {
         listOf(false, true).forEach {
             viewModel.onEvent(SettingsEvent.SetVibration(it))
             assertEquals(it, viewModel.settings.first().vibration)
         }
     }
+
     @Test
-    fun settingsViewModel_OpenAndClosePopups_NotOverlapping()  {
+    fun settingsViewModel_OpenAndClosePopups_NotOverlapping() {
         val popupEvents = listOf(
             SettingsEvent.OpenEditDarkModeType,
             SettingsEvent.DismissEditDarkModeType,
@@ -101,13 +111,12 @@ class SettingsViewModelTest {
             viewModel.onEvent(settingsEvent)
             if (index % 2 == 0) {
                 assertEquals(1, countOpenPopups())
-            }
-            else {
+            } else {
                 assertEquals(0, countOpenPopups())
             }
         }
     }
-    
+
     @Test
     fun settingsViewModel_SetTempValues_StateUpdated() {
         val tempName = "New temp name"
@@ -132,7 +141,8 @@ class SettingsViewModelTest {
     fun settingsViewModel_RequestLogout_UserIsLoggedOut() {
         authService.authenticate(
             FakeAuthService.validLoginEmail,
-            FakeAuthService.validPassword) {
+            FakeAuthService.validPassword
+        ) {
             // Initial auth should be successful
             assertNull(it)
             viewModel.onEvent(SettingsEvent.LogOut)
@@ -173,7 +183,81 @@ class SettingsViewModelTest {
         assertEquals(0, countOpenDummyScreens())
     }
 
-    private fun countOpenPopups() : Int {
+    @Test
+    fun settingsViewModel_SetAlreadyTakenUsername_UiIsNotified() =
+        accountsService.saveUser(
+            requestedUser = User(
+                id = FakeAuthService.validUserId + "real",
+                name = "Test",
+                username = "handle"
+            ),
+            oldUser = null
+        ) {
+            runBlocking {
+                val channel = viewModel.accountUiEvent
+                viewModel.onEvent(
+                    SettingsEvent.SaveUser(
+                        user = User(
+                            id = FakeAuthService.validUserId,
+                            name = "Frech",
+                            username = "handle"
+                        )
+                    )
+                )
+                assertEquals(
+                    R.string.unavailable_username,
+                    ((channel.first() as UiEvent.ShowSnackbar).uiText as UiText.StringResource).resId
+                )
+                println("Test actually done")
+            }
+        }
+
+    @Test
+    fun settingsViewModel_SetEmptyUsername_UiIsNotified() =
+        runBlocking {
+            val channel = viewModel.accountUiEvent
+            viewModel.onEvent(
+                SettingsEvent.SaveUser(
+                    user = User(
+                        id = FakeAuthService.validUserId,
+                        name = "Frech",
+                        username = ""
+                    )
+                )
+            )
+            assertEquals(
+                R.string.blank_user_or_username,
+                ((channel.first() as UiEvent.ShowSnackbar).uiText as UiText.StringResource).resId
+            )
+        }
+
+    @Test
+    fun settingsViewModel_SetValidUsername_StateUpdated() =
+        accountsService.saveUser(
+            requestedUser = User(
+                id = FakeAuthService.validUserId,
+                name = "Test",
+                username = "handle"
+            ),
+            oldUser = null
+        ) {
+            runBlocking {
+                val newName = "Totally different name"
+                viewModel.onEvent(
+                    SettingsEvent.SaveUser(
+                        user = User(
+                            id = FakeAuthService.validUserId,
+                            name = newName,
+                            username = "handle"
+                        )
+                    )
+                )
+                assertEquals(newName, viewModel.uiState.me.name)
+                println("Test actually done")
+            }
+        }
+
+    private fun countOpenPopups(): Int {
         return listOf(
             viewModel.uiState.showEditDarkModeTypePopup,
             viewModel.uiState.showEditNamePopup,
@@ -184,7 +268,7 @@ class SettingsViewModelTest {
         ).fold(0) { acc, value -> acc + if (value) 1 else 0 }
     }
 
-    private fun countOpenDummyScreens() : Int {
+    private fun countOpenDummyScreens(): Int {
         return listOf(
             viewModel.uiState.openAccountSettings,
             viewModel.uiState.openThemeSettings,
