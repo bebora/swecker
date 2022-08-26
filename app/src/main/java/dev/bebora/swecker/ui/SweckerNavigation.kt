@@ -20,7 +20,6 @@ import dev.bebora.swecker.ui.login.LoginScreen
 import dev.bebora.swecker.ui.settings.SettingsScreen
 import dev.bebora.swecker.ui.settings.SettingsViewModel
 import dev.bebora.swecker.ui.sign_up.SignUpScreen
-import dev.bebora.swecker.ui.splash.SplashScreen
 import dev.bebora.swecker.ui.theme.SettingsAwareTheme
 import dev.bebora.swecker.util.*
 
@@ -78,14 +77,6 @@ fun SweckerNavigation(
                             onGoToSignup = { navController.navigate(SIGNUP) },
                             onGoBack = { navController.popBackStack() },
                             onLoginSuccess = { navController.popBackStack() })
-                    }
-                    composable(SPLASH) {
-                        SplashScreen(openAndPopUp = { route, popUp ->
-                            navController.navigate(route) {
-                                launchSingleTop = true
-                                popUpTo(popUp) { inclusive = true }
-                            }
-                        })
                     }
                     composable(SIGNUP) {
                         SignUpScreen(
