@@ -12,13 +12,13 @@ sealed class UiText {
         vararg val args: Any
     ): UiText()
 
-    @Composable
+    /*@Composable
     fun asString(): String {
         return when(this) {
             is DynamicString -> value
             is StringResource -> stringResource(resId, *args)
         }
-    }
+    }*/
 
     fun asString(context: Context): String {
         return when(this) {

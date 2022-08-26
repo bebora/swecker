@@ -4,8 +4,8 @@ import dev.bebora.swecker.data.service.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
-class FakeAuthService : AuthService {
-    private var userId: String? = null
+class FakeAuthService(val initialUserId: String? = null) : AuthService {
+    private var userId: String? = initialUserId
     private var infoChanges: Int = 0
 
     override fun getUserId(): String {

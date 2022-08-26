@@ -30,6 +30,9 @@ class ContactsBrowserViewModel @Inject constructor(
     private val _contactsUiEvent = Channel<UiEvent>()
     val contactsUiEvent = _contactsUiEvent.receiveAsFlow()
 
+    private val _collectorsChange = Channel<Boolean>()
+    internal val collectorsChange = _collectorsChange.receiveAsFlow()
+
     private var friendsCollectorJob: Job? = null
 
     private var friendshipsCollectorJob: Job? = null
@@ -73,6 +76,7 @@ class ContactsBrowserViewModel @Inject constructor(
                         )
                     }
                 }
+                _collectorsChange.send(true)
             }
         }
     }
@@ -80,7 +84,7 @@ class ContactsBrowserViewModel @Inject constructor(
     fun onEvent(event: ContactsEvent) {
         when (event) {
             // TODO this event is currently the same in AddContactViewModel and this one is not used
-            is ContactsEvent.RequestFriendship -> {
+            /*is ContactsEvent.RequestFriendship -> {
                 uiState = uiState.copy(
                     uploadingFriendshipRequest = true
                 )
@@ -115,7 +119,7 @@ class ContactsBrowserViewModel @Inject constructor(
                         }
                     }
                 }
-            }
+            }*/
             is ContactsEvent.AcceptFriendshipRequest -> {
                 uiState = uiState.copy(
                     uploadingFriendshipRequest = true

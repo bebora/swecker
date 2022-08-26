@@ -6,9 +6,12 @@ import dev.bebora.swecker.data.service.impl.UserWithFriends
 import dev.bebora.swecker.data.service.impl.toUser
 import kotlinx.coroutines.flow.*
 
-class FakeAccountsService : AccountsService {
-    private val users = mutableMapOf<String, UserWithFriends>()
-    private val friendshipRequests = mutableMapOf<String, List<String>>() // to, from
+class FakeAccountsService(
+    initialUsers: MutableMap<String, UserWithFriends> = mutableMapOf(),
+    initialFriendshipRequests: MutableMap<String, List<String>> = mutableMapOf()
+) : AccountsService {
+    private val users = initialUsers
+    private val friendshipRequests = initialFriendshipRequests // to, from
 
     override fun getUser(userId: String, onError: (Throwable) -> Unit, onSuccess: (User) -> Unit) {
         if (userId.isBlank()) {
@@ -139,10 +142,10 @@ class FakeAccountsService : AccountsService {
             val meInDb = users[me.id]!!
             val friendInDb = users[friend.id]!!
             users[me.id] = meInDb.copy(
-                friends = meInDb.friends - friend
+                friends = meInDb.friends.filter { it.id != friend.id }
             )
             users[friend.id] = friendInDb.copy(
-                friends = friendInDb.friends - me
+                friends = friendInDb.friends.filter { it.id != me.id }
             )
             onResult(null)
         }
