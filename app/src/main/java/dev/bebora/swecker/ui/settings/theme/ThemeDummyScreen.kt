@@ -89,7 +89,8 @@ fun ThemeDummyScreen(
                     localDate = LocalDate.now(),
                     localTime = LocalTime.now()
                 ),
-                modifier = Modifier.padding(horizontal = 16.dp),
+                modifier = Modifier.padding(horizontal = 16.dp)
+                    .align(Alignment.CenterHorizontally),
                 onEvent = { onEvent(SettingsEvent.ToggleExampleAlarmActive) }
             )
             Spacer(modifier = Modifier.height(16.dp))
