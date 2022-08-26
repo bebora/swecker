@@ -48,3 +48,12 @@ interface SettingsRepositoryInterface {
 
     fun getSettings(): Flow<Settings>
 }
+
+fun RingtoneDuration.toSeconds() : Int {
+    return when(this) {
+        RingtoneDuration.SECONDS_5 -> 5
+        RingtoneDuration.SECONDS_30 -> 30
+        RingtoneDuration.MINUTE_1 -> 60
+        RingtoneDuration.MINUTES_5 -> 300
+    }
+}

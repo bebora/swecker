@@ -16,6 +16,8 @@ import dagger.hilt.android.AndroidEntryPoint
 import dev.bebora.swecker.data.settings.Ringtone
 import dev.bebora.swecker.data.settings.Settings
 import dev.bebora.swecker.data.settings.SettingsRepositoryInterface
+import dev.bebora.swecker.data.settings.toSeconds
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.time.OffsetDateTime
@@ -100,19 +102,25 @@ class NotificationActivity(
             setWakeMode(applicationContext, PowerManager.PARTIAL_WAKE_LOCK)
         }
 
+        lifecycleScope.launch {
+            val ringtoneDurationMillis = settings.ringtoneDuration.toSeconds() * 1000L
+            delay(timeMillis = ringtoneDurationMillis)
+            mediaPlayer.stop()
+        }
+
         mediaPlayer.start()
 
         if (settings.vibration) {
             if (Build.VERSION.SDK_INT >= 26) {
                 vibrator.vibrate(
                     VibrationEffect.createWaveform(
-                        longArrayOf(0, 300, 200),
-                        intArrayOf(0, 122, 122),
-                        1
+                        longArrayOf(650, 350),
+                        intArrayOf(0, 122),
+                        0
                     )
                 )
             } else {
-                vibrator.vibrate(longArrayOf(0, 300, 100), 1)
+                vibrator.vibrate(longArrayOf(650, 350), 0)
             }
         }
     }
