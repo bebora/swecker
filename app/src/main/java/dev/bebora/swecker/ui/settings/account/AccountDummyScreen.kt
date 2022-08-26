@@ -91,10 +91,10 @@ fun AccountDummyScreen(
                         CircularProgressIndicator()
                     }
                     if (ui.me.id.isNotBlank()) {
-                        IconButton(onClick = { onEvent(SettingsEvent.SignOut) }) {
+                        IconButton(onClick = { onEvent(SettingsEvent.LogOut) }) {
                             Icon(
                                 imageVector = Icons.Default.Logout,
-                                contentDescription = "Sign out"
+                                contentDescription = "Log out"
                             )
                         }
                     }

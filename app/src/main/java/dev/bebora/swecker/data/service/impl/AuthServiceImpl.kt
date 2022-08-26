@@ -55,7 +55,7 @@ class AuthServiceImpl @Inject constructor() : AuthService {
             .addOnCompleteListener { onResult(it.exception) }
     }*/
 
-    override fun signOut() {
+    override fun logOut() {
         Firebase.auth.signOut()
     }
 

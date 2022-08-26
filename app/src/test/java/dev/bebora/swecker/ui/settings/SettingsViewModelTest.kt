@@ -9,6 +9,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -19,14 +20,18 @@ class SettingsViewModelTest {
     var mainCoroutineRule = MainCoroutineRule()
 
     private lateinit var viewModel: SettingsViewModel
+    private val repository = FakeSettingsRepository()
+    private val authService = FakeAuthService()
+    private val accountsService = FakeAccountsService()
+    private val imageStorageService = FakeImageStorageService()
 
     @Before
     fun setUp() {
         viewModel = SettingsViewModel(
-            repository = FakeSettingsRepository(),
-            authService = FakeAuthService(),
-            accountsService = FakeAccountsService(),
-            imageStorageService = FakeImageStorageService()
+            repository = repository,
+            authService = authService,
+            accountsService = accountsService,
+            imageStorageService = imageStorageService
         )
     }
 
@@ -124,6 +129,40 @@ class SettingsViewModelTest {
         assertEquals(tempRingtoneVolume, viewModel.uiState.currentRingtoneVolume)
     }
 
+    @Test
+    fun settingsViewModel_RequestLogout_UserIsLoggedOut() {
+        authService.authenticate(
+            FakeAuthService.validLoginEmail,
+            FakeAuthService.validPassword) {
+            // Initial auth should be successful
+            assertNull(it)
+            viewModel.onEvent(SettingsEvent.LogOut)
+            assertEquals("", authService.getUserId())
+        }
+    }
+
+    @Test
+    fun settingsViewModel_OpenDummySections_NotOverlapping() {
+        // Account
+        viewModel.onEvent(SettingsEvent.OpenAccountSettings)
+        assertEquals(true, viewModel.uiState.openAccountSettings)
+        assertEquals(1, countOpenDummyScreens())
+        viewModel.onEvent(SettingsEvent.CloseSettingsSubsection)
+        assertEquals(0, countOpenDummyScreens())
+        // Theme
+        viewModel.onEvent(SettingsEvent.OpenThemeSettings)
+        assertEquals(true, viewModel.uiState.openThemeSettings)
+        assertEquals(1, countOpenDummyScreens())
+        viewModel.onEvent(SettingsEvent.CloseSettingsSubsection)
+        assertEquals(0, countOpenDummyScreens())
+        // Sounds
+        viewModel.onEvent(SettingsEvent.OpenSoundsSettings)
+        assertEquals(true, viewModel.uiState.openSoundsSettings)
+        assertEquals(1, countOpenDummyScreens())
+        viewModel.onEvent(SettingsEvent.CloseSettingsSubsection)
+        assertEquals(0, countOpenDummyScreens())
+    }
+
     private fun countOpenPopups() : Int {
         return listOf(
             viewModel.uiState.showEditDarkModeTypePopup,
@@ -132,6 +171,14 @@ class SettingsViewModelTest {
             viewModel.uiState.showEditRingtonePopup,
             viewModel.uiState.showEditRingtoneVolumePopup,
             viewModel.uiState.showEditUsernamePopup,
+        ).fold(0) { acc, value -> acc + if (value) 1 else 0 }
+    }
+
+    private fun countOpenDummyScreens() : Int {
+        return listOf(
+            viewModel.uiState.openAccountSettings,
+            viewModel.uiState.openThemeSettings,
+            viewModel.uiState.openSoundsSettings,
         ).fold(0) { acc, value -> acc + if (value) 1 else 0 }
     }
 }

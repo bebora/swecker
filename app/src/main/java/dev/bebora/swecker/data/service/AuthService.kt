@@ -12,6 +12,6 @@ interface AuthService {
     //fun createAnonymousAccount(onResult: (Throwable?) -> Unit)
     //fun linkAccount(email: String, password: String, onResult: (Throwable?) -> Unit)
     //fun deleteAccount(onResult: (Throwable?) -> Unit)
-    fun signOut()
+    fun logOut()
     fun getUserInfoChanges(): Flow<Int>
 }

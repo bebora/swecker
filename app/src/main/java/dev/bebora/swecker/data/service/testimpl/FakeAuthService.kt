@@ -45,7 +45,7 @@ class FakeAuthService : AuthService {
         }
     }
 
-    override fun signOut() {
+    override fun logOut() {
         userId = null
         infoChanges += 1
     }

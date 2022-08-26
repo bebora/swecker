@@ -14,12 +14,10 @@ sealed class SettingsEvent {
     object OpenEditName: SettingsEvent()
     object DismissEditName: SettingsEvent()
     data class SetTempName(val name: String) : SettingsEvent()
-    data class SetName(val name: String) : SettingsEvent()
 
     object OpenEditUsername: SettingsEvent()
     object DismissEditUsername: SettingsEvent()
     data class SetTempUsername(val username: String) : SettingsEvent()
-    data class SetUsername(val username: String) : SettingsEvent()
 
     object OpenEditDarkModeType: SettingsEvent()
     object DismissEditDarkModeType: SettingsEvent()
@@ -55,5 +53,5 @@ sealed class SettingsEvent {
     //ImageStorageService
     data class SetProfilePicture(val imageUri: Uri): SettingsEvent()
 
-    object SignOut: SettingsEvent()
+    object LogOut: SettingsEvent()
 }

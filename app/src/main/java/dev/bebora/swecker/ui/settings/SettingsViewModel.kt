@@ -67,13 +67,6 @@ class SettingsViewModel @Inject constructor(
                     showEditNamePopup = true,
                     currentName = uiState.me.name
                 )
-                /*
-                viewModelScope.launch {
-                    uiState = uiState.copy(
-                        currentName = settings.first().name
-                    )
-                }
-                 */
             }
             SettingsEvent.DismissEditName -> {
                 uiState = uiState.copy(
@@ -85,25 +78,12 @@ class SettingsViewModel @Inject constructor(
                     currentName = event.name
                 )
             }
-            is SettingsEvent.SetName -> {
-                /*viewModelScope.launch {
-                    repository.setName(event.name)
-                }*/
-                uiState = uiState.copy(
-                    showEditNamePopup = false
-                )
-            }
 
             SettingsEvent.OpenEditUsername -> {
                 uiState = uiState.copy(
                     showEditUsernamePopup = true,
                     currentUsername = uiState.me.username
                 )
-                /*viewModelScope.launch {
-                    uiState = uiState.copy(
-                        currentUsername = settings.first().username
-                    )
-                }*/
             }
             SettingsEvent.DismissEditUsername -> {
                 uiState = uiState.copy(
@@ -113,14 +93,6 @@ class SettingsViewModel @Inject constructor(
             is SettingsEvent.SetTempUsername -> {
                 uiState = uiState.copy(
                     currentUsername = event.username
-                )
-            }
-            is SettingsEvent.SetUsername -> {
-                /*viewModelScope.launch {
-                    repository.setUsername(event.username)
-                }*/
-                uiState = uiState.copy(
-                    showEditUsernamePopup = false
                 )
             }
 
@@ -329,8 +301,8 @@ class SettingsViewModel @Inject constructor(
                     }
                 )
             }
-            SettingsEvent.SignOut -> {
-                authService.signOut()
+            SettingsEvent.LogOut -> {
+                authService.logOut()
             }
         }
     }
