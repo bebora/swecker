@@ -1,6 +1,7 @@
 package dev.bebora.swecker.ui.settings
 
 import MainCoroutineRule
+import android.net.Uri
 import dev.bebora.swecker.data.User
 import dev.bebora.swecker.data.service.testimpl.FakeAccountsService
 import dev.bebora.swecker.data.service.testimpl.FakeAuthService
@@ -16,6 +17,7 @@ import org.junit.Test
 import dev.bebora.swecker.R
 import dev.bebora.swecker.ui.utils.UiText
 import dev.bebora.swecker.util.UiEvent
+import org.mockito.Mockito.mock
 
 class SettingsViewModelTest {
     @ExperimentalCoroutinesApi
@@ -256,6 +258,30 @@ class SettingsViewModelTest {
                 println("Test actually done")
             }
         }
+
+    @Test
+    fun settingsViewModel_SetNewPicture_StateUpdated() {
+        val uri = mock(Uri::class.java)
+        accountsService.saveUser(
+            requestedUser = User(
+                id = FakeAuthService.validUserId,
+                name = "Test",
+                username = "handle",
+                propicUrl = ""
+            ),
+            oldUser = null
+        ) {
+            runBlocking<Unit> {
+                viewModel.onEvent(
+                    SettingsEvent.SetProfilePicture(
+                        imageUri = uri
+                    )
+                )
+                assertNotEquals("", viewModel.uiState.me.propicUrl)
+                println("Test actually done")
+            }
+        }
+    }
 
     private fun countOpenPopups(): Int {
         return listOf(
