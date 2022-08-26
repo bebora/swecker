@@ -1,13 +1,9 @@
 package dev.bebora.swecker.data.service.impl
 
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
-import com.google.firebase.auth.FirebaseAuthInvalidUserException
+import com.google.firebase.auth.*
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
-import dev.bebora.swecker.data.service.AuthInvalidCredentialsException
-import dev.bebora.swecker.data.service.AuthInvalidUserException
-import dev.bebora.swecker.data.service.AuthService
+import dev.bebora.swecker.data.service.*
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -30,43 +26,54 @@ class AuthServiceImpl @Inject constructor() : AuthService {
         Firebase.auth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener {
                 onResult(
-                    when(it.exception) {
+                    when (it.exception) {
                         is FirebaseAuthInvalidUserException -> AuthInvalidUserException()
                         is FirebaseAuthInvalidCredentialsException -> AuthInvalidCredentialsException()
                         null -> null
                         else -> Exception()
                     }
                 )
-                onResult(it.exception)
+                // onResult(it.exception)
             }
     }
 
     override fun createAccount(email: String, password: String, onResult: (Throwable?) -> Unit) {
         Firebase.auth.createUserWithEmailAndPassword(email, password)
-            .addOnCompleteListener { onResult(it.exception) }
+            .addOnCompleteListener {
+                onResult(
+                    when (it.exception) {
+                        is FirebaseAuthWeakPasswordException -> AuthWeakPasswordException()
+                        is FirebaseAuthInvalidCredentialsException -> AuthInvalidCredentialsException()
+                        is FirebaseAuthUserCollisionException -> AuthUserCollisionException()
+                        null -> null
+                        else -> Exception()
+                    }
+                )
+                // onResult(it.exception)
+            }
     }
 
-   /* override fun sendRecoveryEmail(email: String, onResult: (Throwable?) -> Unit) {
-        Firebase.auth.sendPasswordResetEmail(email)
-            .addOnCompleteListener { onResult(it.exception) }
-    }
+    /* override fun sendRecoveryEmail(email: String, onResult: (Throwable?) -> Unit) {
+         Firebase.auth.sendPasswordResetEmail(email)
+             .addOnCompleteListener { onResult(it.exception) }
+     }
 
-    override fun createAnonymousAccount(onResult: (Throwable?) -> Unit) {
-        Firebase.auth.signInAnonymously()
-            .addOnCompleteListener { onResult(it.exception) }
-    }
+     override fun createAnonymousAccount(onResult: (Throwable?) -> Unit) {
+         Firebase.auth.signInAnonymously()
+             .addOnCompleteListener { onResult(it.exception) }
+     }
 
-    override fun linkAccount(email: String, password: String, onResult: (Throwable?) -> Unit) {
-        val credential = EmailAuthProvider.getCredential(email, password)
+     override fun linkAccount(email: String, password: String, onResult: (Throwable?) -> Unit) {
+         val credential = EmailAuthProvider.getCredential(email, password)
 
-        Firebase.auth.currentUser!!.linkWithCredential(credential)
-            .addOnCompleteListener { onResult(it.exception) }
-    }
+         Firebase.auth.currentUser!!.linkWithCredential(credential)
+             .addOnCompleteListener { onResult(it.exception) }
+     }
 
-    override fun deleteAccount(onResult: (Throwable?) -> Unit) {
-        Firebase.auth.currentUser!!.delete()
-            .addOnCompleteListener { onResult(it.exception) }
-    }*/
+     override fun deleteAccount(onResult: (Throwable?) -> Unit) {
+         Firebase.auth.currentUser!!.delete()
+             .addOnCompleteListener { onResult(it.exception) }
+     }*/
 
     override fun logOut() {
         Firebase.auth.signOut()

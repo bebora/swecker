@@ -39,6 +39,7 @@ class FakeAuthService : AuthService {
         else {
             userId = validUserId
             infoChanges += 1
+            onResult(null)
         }
     }
 
@@ -61,5 +62,6 @@ class FakeAuthService : AuthService {
         const val invalidSignupPassword = "weak"
         const val disabledUserEmail = "lo@ack.er"
         const val wrongPassword = "Che3bonta"
+        const val validSignupEmail = "we@are.us"
     }
 }

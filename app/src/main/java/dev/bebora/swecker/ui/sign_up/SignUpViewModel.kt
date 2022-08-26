@@ -5,16 +5,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
-import com.google.firebase.auth.FirebaseAuthUserCollisionException
-import com.google.firebase.auth.FirebaseAuthWeakPasswordException
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.bebora.swecker.R
 import dev.bebora.swecker.common.isValidEmail
 import dev.bebora.swecker.common.isValidPassword
 import dev.bebora.swecker.data.User
-import dev.bebora.swecker.data.service.AuthService
-import dev.bebora.swecker.data.service.AccountsService
+import dev.bebora.swecker.data.service.*
 import dev.bebora.swecker.ui.utils.UiText
 import dev.bebora.swecker.ui.utils.onError
 import dev.bebora.swecker.util.UiEvent
@@ -72,7 +68,8 @@ class SignUpViewModel @Inject constructor(
                 uiState = uiState.copy(
                     loading = true
                 )
-                viewModelScope.launch {
+                // The viewModelScope is not actually needed as the onComplete function is just a callback
+                //viewModelScope.launch {
                     authService.createAccount(uiState.email, uiState.password) { error ->
                         if (error == null) {
                             accountsService.saveUser(
@@ -107,9 +104,9 @@ class SignUpViewModel @Inject constructor(
                             )
                             onError(error = error)
                             val stringRes = when (error) {
-                                is FirebaseAuthWeakPasswordException -> R.string.invalid_password
-                                is FirebaseAuthInvalidCredentialsException -> R.string.invalid_email
-                                is FirebaseAuthUserCollisionException -> R.string.email_already_exists
+                                is AuthWeakPasswordException -> R.string.invalid_password
+                                is AuthInvalidCredentialsException -> R.string.invalid_email
+                                is AuthUserCollisionException -> R.string.email_already_exists
                                 else -> R.string.unknown_error
                             }
                             viewModelScope.launch {
@@ -121,7 +118,7 @@ class SignUpViewModel @Inject constructor(
                             }
                         }
                     }
-                }
+                //}
             }
         }
     }
