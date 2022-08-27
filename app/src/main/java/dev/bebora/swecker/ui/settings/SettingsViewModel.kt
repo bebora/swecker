@@ -43,6 +43,7 @@ class SettingsViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             userInfoChanges.collect {
+                Log.d("SWECKER-AUTH-SETTINGS", "Settings detected an auth change")
                 // SuggestLogin checks for an empty userId and can be hidden
                 uiState = uiState.copy(
                     me = User(id = authService.getUserId()),
@@ -54,7 +55,10 @@ class SettingsViewModel @Inject constructor(
                             me = it
                         )
                     },
-                    onError = ::onError
+                    onError = {
+                        Log.e("SWECKER-FAIL", "Settings could not retrieve the user")
+                        onError(it)
+                    }
                 )
             }
         }

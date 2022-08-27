@@ -41,7 +41,7 @@ class AddContactViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             userInfoChanges.collect {
-                Log.d("SWECKER-CHANGE-AUTH", "Rilevato cambio utente")
+                Log.d("SWECKER-CHANGE-AUTH", "Rilevato cambio utente da add contact")
                 accountsService.getUser(
                     userId = authService.getUserId(),
                     onSuccess = {

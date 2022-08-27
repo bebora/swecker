@@ -57,7 +57,7 @@ class SignUpViewModelTest {
 
             val channel = viewModel.uiEvent
             viewModel.onEvent(
-                SignUpEvent.SignInClick(onNavigate = {})
+                SignUpEvent.SignUpClick(onNavigate = {})
             )
             assertEquals(
                 R.string.invalid_email,
@@ -77,7 +77,7 @@ class SignUpViewModelTest {
 
             val channel = viewModel.uiEvent
             viewModel.onEvent(
-                SignUpEvent.SignInClick(onNavigate = {})
+                SignUpEvent.SignUpClick(onNavigate = {})
             )
             assertEquals(
                 R.string.invalid_password,
@@ -96,7 +96,7 @@ class SignUpViewModelTest {
 
             val channel = viewModel.uiEvent
             viewModel.onEvent(
-                SignUpEvent.SignInClick(onNavigate = {})
+                SignUpEvent.SignUpClick(onNavigate = {})
             )
             assertEquals(
                 R.string.email_already_exists,
@@ -114,7 +114,7 @@ class SignUpViewModelTest {
 
         var navigationOccurred = false
         viewModel.onEvent(
-            SignUpEvent.SignInClick(onNavigate = { navigationOccurred = true })
+            SignUpEvent.SignUpClick(onNavigate = { navigationOccurred = true })
         )
         assertEquals(true, navigationOccurred)
     }

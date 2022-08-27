@@ -82,13 +82,13 @@ class AuthServiceImpl @Inject constructor() : AuthService {
     override fun getUserInfoChanges(): Flow<Int> {
         var counter = 0
         return callbackFlow {
-            val authStateListener = FirebaseAuth.AuthStateListener {
+            val idTokenListener = FirebaseAuth.IdTokenListener {
                 counter += 1
                 trySend(counter)
             }
-            Firebase.auth.addAuthStateListener(authStateListener)
+            Firebase.auth.addIdTokenListener(idTokenListener)
             awaitClose {
-                Firebase.auth.removeAuthStateListener(authStateListener)
+                Firebase.auth.removeIdTokenListener(idTokenListener)
             }
         }
     }

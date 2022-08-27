@@ -37,7 +37,7 @@ class AddChannelViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             userInfoChanges.collect {
-                Log.d("SWECKER-CHANGE-AUTH", "Rilevato cambio utente")
+                Log.d("SWECKER-CHANGE-AUTH", "Rilevato cambio utente da add channel")
                 accountsService.getUser(
                     userId = authService.getUserId(),
                     onSuccess = {

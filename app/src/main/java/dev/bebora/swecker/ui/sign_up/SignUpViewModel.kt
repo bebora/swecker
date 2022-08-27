@@ -38,7 +38,7 @@ class SignUpViewModel @Inject constructor(
             is SignUpEvent.SetTempPassword -> {
                 uiState = uiState.copy(password = event.password.trim())
             }
-            is SignUpEvent.SignInClick -> {
+            is SignUpEvent.SignUpClick -> {
                 if (!uiState.email.isValidEmail()) {
                     viewModelScope.launch {
                         _uiEvent.send(
@@ -85,7 +85,18 @@ class SignUpViewModel @Inject constructor(
                                     loading = false
                                 )
                                 if (saveUserError == null) {
-                                    event.onNavigate()
+                                    // Technically useless, but will trigger the id token listeners
+                                    authService.authenticate(
+                                        email = uiState.email,
+                                        password = uiState.password
+                                    ) {
+                                        if (it != null) {
+                                            onError(it)
+                                        }
+                                        else {
+                                            event.onNavigate()
+                                        }
+                                    }
                                 }
                                 else {
                                     onError(error = saveUserError)

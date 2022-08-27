@@ -38,7 +38,7 @@ class AddGroupViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             userInfoChanges.collect {
-                Log.d("SWECKER-CHANGE-AUTH", "Rilevato cambio utente")
+                Log.d("SWECKER-CHANGE-AUTH", "Rilevato cambio utente da addgroup")
                 accountsService.getUser(
                     userId = authService.getUserId(),
                     onSuccess = {

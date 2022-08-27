@@ -153,7 +153,7 @@ fun SignUpScreen(
                         .fillMaxWidth(),
                     onClick = {
                         keyboardController?.hide()
-                        viewModel.onEvent(SignUpEvent.SignInClick(onSignUpSuccess))
+                        viewModel.onEvent(SignUpEvent.SignUpClick(onSignUpSuccess))
                     },
                     enabled = !uiState.loading
                 ) {
