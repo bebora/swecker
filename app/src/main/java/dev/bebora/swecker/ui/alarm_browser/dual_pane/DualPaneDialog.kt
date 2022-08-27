@@ -39,6 +39,7 @@ fun DualPaneDialog(
             )
         DialogContent.ADD_CONTACT -> AddContactDialog(
             onGoBack = { onEvent(AlarmBrowserEvent.BackButtonPressed) },
+            onNavigate = onNavigate
             )
         else -> {}
     }

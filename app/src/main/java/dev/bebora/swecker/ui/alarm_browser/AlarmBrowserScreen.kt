@@ -23,7 +23,7 @@ import dev.bebora.swecker.data.service.testimpl.FakeAuthService
 import dev.bebora.swecker.ui.alarm_browser.dual_pane.AlarmBrowserDualPaneContent
 import dev.bebora.swecker.ui.alarm_browser.dual_pane.DualPaneDialog
 import dev.bebora.swecker.ui.alarm_browser.single_pane.*
-import dev.bebora.swecker.util.SETTINGS
+import dev.bebora.swecker.util.*
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class)
@@ -52,15 +52,17 @@ fun AlarmBrowserScreen(
                         icon = Icons.Outlined.Groups
                     ) {
                         scope.launch { drawerState.close() }
-                        viewModel.onEvent(AlarmBrowserEvent.DialogOpened(DialogContent.ADD_GROUP))
+                        onNavigate(ADD_GROUP)
                     },
                     DrawerSubSection(
                         title = "New channel",
                         icon = Icons.Outlined.Campaign
                     ) {
                         scope.launch { drawerState.close() }
-                        viewModel.onEvent(AlarmBrowserEvent.DialogOpened(DialogContent.ADD_CHANNEL))
-                      },
+                        //viewModel.onEvent(AlarmBrowserEvent.DialogOpened(DialogContent.ADD_CHANNEL))
+                        onNavigate(ADD_CHANNEL)
+
+                    },
                 )
             ),
             DrawerSection(
@@ -71,7 +73,7 @@ fun AlarmBrowserScreen(
                         icon = Icons.Outlined.Contacts
                     ) {
                         scope.launch { drawerState.close() }
-                        viewModel.onEvent(AlarmBrowserEvent.DialogOpened(DialogContent.CONTACT_BROWSER))
+                        onNavigate(CONTACT_BROWSER)
                     },
                     DrawerSubSection(
                         title = "Friendship requests",
@@ -82,7 +84,7 @@ fun AlarmBrowserScreen(
                         icon = Icons.Outlined.PersonAddAlt
                     ) {
                         scope.launch { drawerState.close() }
-                        viewModel.onEvent(AlarmBrowserEvent.DialogOpened(DialogContent.ADD_CONTACT))
+                        onNavigate(ADD_CONTACT)
                     },
                 )
             ),
