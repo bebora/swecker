@@ -7,16 +7,18 @@ import kotlinx.coroutines.flow.flow
 class FakeAuthService(val initialUserId: String? = null) : AuthService {
     private var userId: String? = initialUserId
     private var infoChanges: Int = 0
+    private var acceptSignUpCredentials: Boolean = false
 
     override fun getUserId(): String {
         return userId ?: ""
     }
 
     override fun authenticate(email: String, password: String, onResult: (Throwable?) -> Unit) {
-        if (email != validLoginEmail) {
+        val bypassChecks = email == validSignupEmail && acceptSignUpCredentials
+        if (email != validLoginEmail && !bypassChecks) {
             onResult(AuthInvalidUserException())
         }
-        else if (password != validPassword ) {
+        else if (password != validPassword && !bypassChecks) {
             onResult(AuthInvalidCredentialsException())
         }
         else {
@@ -37,6 +39,7 @@ class FakeAuthService(val initialUserId: String? = null) : AuthService {
             onResult(AuthInvalidCredentialsException())
         }
         else {
+            acceptSignUpCredentials = true
             userId = validUserId
             infoChanges += 1
             onResult(null)
