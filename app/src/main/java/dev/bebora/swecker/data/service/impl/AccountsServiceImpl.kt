@@ -304,7 +304,9 @@ class AccountsServiceImpl : AccountsService {
                 .addOnFailureListener(onError)
                 .addOnSuccessListener { querySnapshot ->
                     onSuccess(
-                        querySnapshot.toObjects(User::class.java).filter { it.id != from.id }
+                        querySnapshot.toObjects(UserWithFriends::class.java)
+                            .filter { it.id != from.id }
+                            .map { it.toUser() }
                     )
                 }
         }
