@@ -40,6 +40,7 @@ class AlarmBrowserViewModel @Inject constructor(
     private val authService: AuthService,
     private val accountsService: AccountsService,
     private val alarmProviderService: AlarmProviderService,
+    private val iODispatcher: CoroutineDispatcher = Dispatchers.IO,
     private val application: Application? = null
 ) : ViewModel() {
     // UI state exposed to the UI
@@ -220,7 +221,7 @@ class AlarmBrowserViewModel @Inject constructor(
                 )
 
                 if (event.success) {
-                    CoroutineScope(Dispatchers.IO).launch {
+                    CoroutineScope(iODispatcher).launch {
                         repository.updateAlarm(
                             event.alarm.copy(
                                 timeStamp = OffsetDateTime.now()
@@ -422,23 +423,6 @@ class AlarmBrowserViewModel @Inject constructor(
                     extraChannels = uiState.extraChannels.minus(event.channel)
                 )
             }
-
-            is AlarmBrowserEvent.CreateGroupAlarmTEMP -> {
-                alarmProviderService.createAlarm(
-                    alarm = StoredAlarm(
-                        id = "fakeid",
-                        groupId = "testgroup",
-                        name = "Firebase alarm",
-                        alarmType = AlarmType.GROUP.toStoredString(),
-                        timestamp = Clock.systemUTC().instant().epochSecond.toString()
-                    ),
-                    onComplete = {
-                        if (it != null) {
-                            onError(it)
-                        }
-                    }
-                )
-            }
         }
     }
 
@@ -517,7 +501,7 @@ class AlarmBrowserViewModel @Inject constructor(
             processingQuery = true
         )*/
         searchChannelsJob?.cancel()
-        searchChannelsJob = viewModelScope.launch {
+        searchChannelsJob = viewModelScope.launch(iODispatcher) {
             delay(250)
             alarmProviderService.searchNewChannels(
                 from = uiState.me,
@@ -593,14 +577,4 @@ enum class NavBarDestination {
     PERSONAL,
     GROUPS,
     CHANNELS
-}
-
-fun getNavbarIcon(name: String, isSelected: Boolean): ImageVector {
-    return when (name) {
-        "Home" -> if (isSelected) Icons.Filled.Home else Icons.Outlined.Home
-        "Personal" -> if (isSelected) Icons.Filled.Person else Icons.Outlined.Person
-        "Groups" -> if (isSelected) Icons.Filled.Groups else Icons.Outlined.Groups
-        "Channels" -> if (isSelected) Icons.Filled.Campaign else Icons.Outlined.Campaign
-        else -> Icons.Default.Error
-    }
 }

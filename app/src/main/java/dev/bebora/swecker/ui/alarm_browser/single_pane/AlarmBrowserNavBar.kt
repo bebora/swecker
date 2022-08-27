@@ -13,6 +13,7 @@ import dev.bebora.swecker.data.service.testimpl.FakeAccountsService
 import dev.bebora.swecker.data.service.testimpl.FakeAuthService
 import dev.bebora.swecker.ui.alarm_browser.*
 import dev.bebora.swecker.ui.theme.SweckerTheme
+import dev.bebora.swecker.ui.utils.getNavbarIcon
 
 @Composable
 fun AlarmBrowserNavBar(

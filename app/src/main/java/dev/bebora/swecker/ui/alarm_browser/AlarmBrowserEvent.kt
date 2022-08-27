@@ -33,6 +33,4 @@ sealed class AlarmBrowserEvent {
     data class SendMessage(val text: String) : AlarmBrowserEvent()
 
     data class JoinChannel(val channel: Group) : AlarmBrowserEvent()
-
-    object CreateGroupAlarmTEMP : AlarmBrowserEvent()
 }

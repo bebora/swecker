@@ -49,6 +49,6 @@ class FakeAlarmRepository(fakeAlarmProviderService: AlarmProviderService = FakeA
     }
 
     companion object {
-        const val currentUserId = "userfound"
+        const val currentUserId = "luca"
     }
 }
