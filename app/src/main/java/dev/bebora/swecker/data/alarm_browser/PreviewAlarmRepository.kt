@@ -7,7 +7,7 @@ import dev.bebora.swecker.data.Alarm
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
-class AlarmRepositoryTestImpl : AlarmRepository {
+class PreviewAlarmRepository : AlarmRepository {
 
     override suspend fun deleteAlarm(alarm: Alarm,userId: String?) {
         TODO("Not yet implemented")

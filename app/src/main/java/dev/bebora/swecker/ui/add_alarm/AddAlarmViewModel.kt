@@ -2,15 +2,18 @@ package dev.bebora.swecker.ui.add_alarm
 
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.bebora.swecker.data.Alarm
 import dev.bebora.swecker.data.AlarmType
 import dev.bebora.swecker.data.Group
 import dev.bebora.swecker.data.alarm_browser.AlarmRepository
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalTime
@@ -22,6 +25,7 @@ import javax.inject.Inject
 @HiltViewModel
 class AddAlarmViewModel @Inject constructor(
     private val repository: AlarmRepository,
+    private val iODispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : ViewModel() {
     private val _alarm = MutableStateFlow(
         Alarm(
@@ -33,7 +37,7 @@ class AddAlarmViewModel @Inject constructor(
             alarmType = AlarmType.PERSONAL
         )
     )
-    val alarm: StateFlow<Alarm> = _alarm
+    val alarm: StateFlow<Alarm> = _alarm.asStateFlow()
 
     fun onUpdateCompleted(alarm: Alarm, success: Boolean, group: Group?, userId: String?, alarmType: AlarmType) {
         if (success) {
@@ -46,7 +50,7 @@ class AddAlarmViewModel @Inject constructor(
                 alarmType = AlarmType.PERSONAL
             )
 
-            CoroutineScope(Dispatchers.IO).launch {
+            CoroutineScope(iODispatcher).launch {
                 repository.insertAlarm(
                     alarm.copy(
                         groupId = group?.id,
@@ -64,7 +68,7 @@ class AddAlarmViewModel @Inject constructor(
         }
     }
 
-    fun OnUpdateCanceled() {
+    fun onUpdateCanceled() {
         _alarm.value = Alarm(
             id = UUID.randomUUID().toString(),
             name = "",

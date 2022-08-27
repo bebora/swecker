@@ -78,6 +78,9 @@ interface AlarmProviderService {
     )
     // TODO add a way to set chat enabled/disabled
 
+    /**
+     * This function will soft delete the alarm and set a flag
+     */
     fun deleteAlarm(
         alarm: StoredAlarm,
         onComplete: (Throwable?) -> Unit

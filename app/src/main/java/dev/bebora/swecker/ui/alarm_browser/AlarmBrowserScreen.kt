@@ -15,7 +15,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import dev.bebora.swecker.data.alarm_browser.AlarmRepositoryTestImpl
+import dev.bebora.swecker.data.alarm_browser.PreviewAlarmRepository
 import dev.bebora.swecker.data.service.impl.AlarmProviderServiceImpl
 import dev.bebora.swecker.data.service.impl.ChatServiceImpl
 import dev.bebora.swecker.data.service.testimpl.FakeAccountsService
@@ -233,7 +233,7 @@ fun AlarmBrowserScreen(
 @Composable
 fun AlarmBrowserScreenPreview() {
     val testViewModel = AlarmBrowserViewModel(
-        AlarmRepositoryTestImpl(),
+        PreviewAlarmRepository(),
         chatService = ChatServiceImpl(),
         accountsService = FakeAccountsService(),
         authService = FakeAuthService(),
