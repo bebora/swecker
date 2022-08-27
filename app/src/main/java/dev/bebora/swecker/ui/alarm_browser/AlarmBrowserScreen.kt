@@ -76,10 +76,6 @@ fun AlarmBrowserScreen(
                         onNavigate(CONTACT_BROWSER)
                     },
                     DrawerSubSection(
-                        title = "Friendship requests",
-                        icon = Icons.Outlined.GroupAdd
-                    ) { scope.launch { drawerState.close() } },
-                    DrawerSubSection(
                         title = "Add a friend",
                         icon = Icons.Outlined.PersonAddAlt
                     ) {
@@ -192,6 +188,7 @@ fun AlarmBrowserScreen(
                             onOpenDrawer = {
                                 scope.launch { drawerState.open() }
                             },
+                            onNavigate = onNavigate
                         )
                     }
                 } else {
@@ -201,6 +198,7 @@ fun AlarmBrowserScreen(
                         onOpenDrawer = {
                             scope.launch { drawerState.open() }
                         },
+                        onNavigate = onNavigate
                     )
                     val density = LocalDensity.current
 

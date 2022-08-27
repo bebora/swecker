@@ -28,6 +28,7 @@ fun GroupListScreen(
     onEvent: (AlarmBrowserEvent) -> Unit,
     uiState: AlarmBrowserUIState,
     navigationAction: () -> Unit,
+    onNavigate: (String) -> Unit
 ) {
     var showSearchBar by remember {
         mutableStateOf(false)
@@ -74,7 +75,8 @@ fun GroupListScreen(
                 destination = NavBarDestination.GROUPS,
                 modifier = Modifier,
                 detailsScreenContent = uiState.detailsScreenContent,
-                onEvent = onEvent
+                onEvent = onEvent,
+                onNavigate = onNavigate
             )
         },
         bottomBar = {

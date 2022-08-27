@@ -6,7 +6,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import dev.bebora.swecker.ui.add_channel.AddChannelScreen
 
 //TODO display something when the profile picture is being uploaded (similar to what is done in AddGroupScreen)
 @OptIn(ExperimentalMaterial3Api::class)
@@ -106,7 +105,7 @@ fun AddGroupDialog(
             }
         }
         else{
-            AddChannelScreen(
+            AddGroupScreen(
                 onGoBack = onGoBack
             )
         }

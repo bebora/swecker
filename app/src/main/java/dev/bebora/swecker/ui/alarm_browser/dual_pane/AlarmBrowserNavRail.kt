@@ -19,6 +19,8 @@ import dev.bebora.swecker.data.service.testimpl.FakeAccountsService
 import dev.bebora.swecker.data.service.testimpl.FakeAuthService
 import dev.bebora.swecker.ui.alarm_browser.*
 import dev.bebora.swecker.ui.theme.SweckerTheme
+import dev.bebora.swecker.util.ADD_CHANNEL
+import dev.bebora.swecker.util.ADD_GROUP
 
 @Composable
 fun AlarmBrowserNavRail(
@@ -26,6 +28,7 @@ fun AlarmBrowserNavRail(
     alarmBrowserUIState: AlarmBrowserUIState,
     onOpenDrawer: () -> Unit,
     onEvent: (AlarmBrowserEvent) -> Unit,
+    onNavigate: (String) -> Unit = {}
 ) {
 
     val items = listOf("Home", "Personal", "Groups", "Channels")
@@ -42,7 +45,8 @@ fun AlarmBrowserNavRail(
             }
             AlarmBrowserNavRailFab(
                 destination = alarmBrowserUIState.selectedDestination,
-                onEvent = onEvent
+                onEvent = onEvent,
+                onNavigate = onNavigate
             )
         },
         containerColor = MaterialTheme.colorScheme.surface,
@@ -70,7 +74,8 @@ fun AlarmBrowserNavRail(
 fun AlarmBrowserNavRailFab(
     modifier: Modifier = Modifier,
     destination: NavBarDestination,
-    onEvent: (AlarmBrowserEvent) -> Unit
+    onEvent: (AlarmBrowserEvent) -> Unit,
+    onNavigate: (String) -> Unit
 ) {
     FloatingActionButton(modifier = modifier, onClick = {
         when (destination) {
@@ -78,10 +83,12 @@ fun AlarmBrowserNavRailFab(
                 onEvent(AlarmBrowserEvent.DialogOpened(DialogContent.ADD_ALARM))
             }
             NavBarDestination.GROUPS -> {
-                onEvent(AlarmBrowserEvent.DialogOpened(DialogContent.ADD_GROUP))
+                //onEvent(AlarmBrowserEvent.DialogOpened(DialogContent.ADD_GROUP))
+                onNavigate(ADD_GROUP)
             }
             NavBarDestination.CHANNELS -> {
-                onEvent(AlarmBrowserEvent.DialogOpened(DialogContent.ADD_CHANNEL))
+                //onEvent(AlarmBrowserEvent.DialogOpened(DialogContent.ADD_CHANNEL))
+                onNavigate(ADD_CHANNEL)
             }
         }
     }) {

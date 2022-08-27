@@ -12,13 +12,16 @@ import dev.bebora.swecker.ui.alarm_browser.AlarmBrowserEvent
 import dev.bebora.swecker.ui.alarm_browser.DetailsScreenContent
 import dev.bebora.swecker.ui.alarm_browser.DialogContent
 import dev.bebora.swecker.ui.alarm_browser.NavBarDestination
+import dev.bebora.swecker.util.ADD_CHANNEL
+import dev.bebora.swecker.util.ADD_GROUP
 
 @Composable
 fun AlarmBrowserSinglePaneFab(
     modifier: Modifier = Modifier,
     destination: NavBarDestination,
     detailsScreenContent: DetailsScreenContent,
-    onEvent: (AlarmBrowserEvent) -> Unit
+    onEvent: (AlarmBrowserEvent) -> Unit,
+    onNavigate: (String) -> Unit = {}
 ) {
     when (detailsScreenContent) {
         DetailsScreenContent.NONE -> {
@@ -28,10 +31,12 @@ fun AlarmBrowserSinglePaneFab(
                         onEvent(AlarmBrowserEvent.DialogOpened(DialogContent.ADD_ALARM))
                     }
                     NavBarDestination.GROUPS -> {
-                        onEvent(AlarmBrowserEvent.DialogOpened(DialogContent.ADD_GROUP))
+                        //onEvent(AlarmBrowserEvent.DialogOpened(DialogContent.ADD_GROUP))
+                        onNavigate(ADD_GROUP)
                     }
                     NavBarDestination.CHANNELS -> {
-                        onEvent(AlarmBrowserEvent.DialogOpened(DialogContent.ADD_CHANNEL))
+                        //onEvent(AlarmBrowserEvent.DialogOpened(DialogContent.ADD_CHANNEL))
+                        onNavigate(ADD_CHANNEL)
                     }
                 }
             }) {

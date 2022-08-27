@@ -21,6 +21,7 @@ fun SinglePaneScreen(
     onEvent: (AlarmBrowserEvent) -> Unit,
     uiState: AlarmBrowserUIState,
     onOpenDrawer: () -> Unit,
+    onNavigate: (String) -> Unit
 ) {
     when (uiState.animatedDetailsScreenContent) {
         DetailsScreenContent.NONE -> {
@@ -41,13 +42,15 @@ fun SinglePaneScreen(
                     modifier = modifier,
                     onEvent = onEvent,
                     uiState = uiState,
-                    navigationAction = onOpenDrawer
+                    navigationAction = onOpenDrawer,
+                    onNavigate = onNavigate
                 )
                 NavBarDestination.CHANNELS -> ChannelListScreen(
                     modifier = modifier,
                     onEvent = onEvent,
                     uiState = uiState,
-                    navigationAction = onOpenDrawer
+                    navigationAction = onOpenDrawer,
+                    onNavigate = onNavigate
                 )
             }
         }

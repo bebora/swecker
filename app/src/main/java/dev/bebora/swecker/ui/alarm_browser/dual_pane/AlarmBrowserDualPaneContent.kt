@@ -16,7 +16,8 @@ fun AlarmBrowserDualPaneContent(
     modifier: Modifier = Modifier,
     onEvent: (AlarmBrowserEvent) -> Unit,
     onOpenDrawer: () -> Unit = {},
-    uiState: AlarmBrowserUIState
+    uiState: AlarmBrowserUIState,
+    onNavigate: (String) -> Unit
 ) {
     Row(
         modifier = modifier
@@ -28,6 +29,7 @@ fun AlarmBrowserDualPaneContent(
             alarmBrowserUIState = uiState,
             onEvent = onEvent,
             onOpenDrawer = { onOpenDrawer() },
+            onNavigate = onNavigate
         )
         DualPaneContentList(onEvent = onEvent, uiState = uiState)
 
