@@ -12,6 +12,8 @@ import dev.bebora.swecker.data.alarm_browser.AlarmRepositoryImpl
 import dev.bebora.swecker.data.service.*
 import dev.bebora.swecker.data.service.impl.*
 import dev.bebora.swecker.data.settings.*
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import javax.inject.Singleton
 
 @Module
@@ -72,5 +74,11 @@ object TestAppModule {
     @Singleton
     fun provideAlarmProviderService(): AlarmProviderService {
         return AlarmProviderServiceImpl()
+    }
+
+    @Provides
+    @Singleton
+    fun provideIoDispatcher(): CoroutineDispatcher {
+        return Dispatchers.IO
     }
 }

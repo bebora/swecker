@@ -15,17 +15,16 @@ import dev.bebora.swecker.data.service.FriendshipRequestToYourselfException
 import dev.bebora.swecker.ui.utils.UiText
 import dev.bebora.swecker.ui.utils.onError
 import dev.bebora.swecker.util.UiEvent
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.receiveAsFlow
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class AddContactViewModel @Inject constructor(
     private val authService: AuthService,
     private val accountsService: AccountsService,
+    private val iODispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : ViewModel() {
     private val userInfoChanges = authService.getUserInfoChanges()
 
@@ -80,7 +79,7 @@ class AddContactViewModel @Inject constructor(
             processingQuery = true
         )
         searchJob?.cancel()
-        searchJob = viewModelScope.launch {
+        searchJob = viewModelScope.launch(iODispatcher) {
             delay(250)
             accountsService.searchUsers(
                 from = uiState.me,
