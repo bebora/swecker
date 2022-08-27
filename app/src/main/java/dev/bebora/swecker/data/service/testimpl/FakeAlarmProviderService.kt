@@ -49,11 +49,13 @@ class FakeAlarmProviderService : AlarmProviderService {
     // Test do not notify listeners
     override fun updateGroup(newGroupData: ThinGroup, onComplete: (Throwable?) -> Unit) {
         groups[newGroupData.id] = newGroupData
+        onComplete(null)
     }
 
     // Test do not notify listeners
     override fun deleteGroup(groupId: String, onComplete: (Throwable?) -> Unit) {
         groups.remove(groupId)
+        onComplete(null)
     }
 
     // Test do not notify listeners
@@ -61,17 +63,20 @@ class FakeAlarmProviderService : AlarmProviderService {
         channel: ThinGroup,
         onComplete: (Throwable?) -> Unit
     ) {
-        channels[channel.id] = channel
+        channels[channel.id] = channel.copy(lowerName = channel.name.lowercase())
+        onComplete(null)
     }
 
     // Test do not notify listeners
     override fun updateChannel(newChannelData: ThinGroup, onComplete: (Throwable?) -> Unit) {
         channels[newChannelData.id] = newChannelData
+        onComplete(null)
     }
 
     // Test do not notify listeners
     override fun deleteChannel(channelId: String, onComplete: (Throwable?) -> Unit) {
         channels.remove(channelId)
+        onComplete(null)
     }
 
     override fun searchNewChannels(
@@ -118,6 +123,7 @@ class FakeAlarmProviderService : AlarmProviderService {
     override fun createAlarm(alarm: StoredAlarm, onComplete: (Throwable?) -> Unit) {
         assert(alarm.id.isNotEmpty())
         alarms.add(alarm)
+        onComplete(null)
     }
 
     override fun getUserAlarms(userId: String): Flow<List<StoredAlarm>> {
@@ -133,6 +139,7 @@ class FakeAlarmProviderService : AlarmProviderService {
         }
         alarms.removeAt(oldAlarmIndex)
         alarms.add(alarm)
+        onComplete(null)
     }
 
     override fun deleteAlarm(alarm: StoredAlarm, onComplete: (Throwable?) -> Unit) {
@@ -140,5 +147,6 @@ class FakeAlarmProviderService : AlarmProviderService {
             it.id == alarm.id && it.userId == alarm.userId
         }
         alarms.removeAt(oldAlarmIndex)
+        onComplete(null)
     }
 }

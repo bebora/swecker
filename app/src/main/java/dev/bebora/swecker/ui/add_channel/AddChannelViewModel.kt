@@ -15,6 +15,8 @@ import dev.bebora.swecker.data.service.AlarmProviderService
 import dev.bebora.swecker.data.service.AuthService
 import dev.bebora.swecker.data.service.ImageStorageService
 import dev.bebora.swecker.ui.utils.onError
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import java.util.UUID
 import javax.inject.Inject
@@ -26,6 +28,7 @@ class AddChannelViewModel @Inject constructor(
     private val accountsService: AccountsService,
     private val imageStorageService: ImageStorageService,
     private val alarmProviderService: AlarmProviderService,
+    private val iODispatcher: CoroutineDispatcher,
 ) : ViewModel() {
     private val userInfoChanges = authService.getUserInfoChanges()
 
@@ -116,28 +119,26 @@ class AddChannelViewModel @Inject constructor(
                     uiState = AddChannelUIState(
                         me = uiState.me
                     )
-
                 }
             }
         )
     }
 
     fun discardChannelCreation(onSuccess: () -> Unit) {
-        onSuccess() // Allow the popup to be closed instantly
-
-
-        imageStorageService.deleteChannelPicture(
-            channelId = uiState.channelId,
-            onComplete = {
-                if (it != null) {
-                    Log.d("SWECKER-DELGI-ERR", "Can't delete channel image", it)
+        CoroutineScope(iODispatcher).launch {
+            imageStorageService.deleteChannelPicture(
+                channelId = uiState.channelId,
+                onComplete = {
+                    if (it != null) {
+                        Log.d("SWECKER-DELGI-ERR", "Can't delete channel image", it)
+                    }
                 }
-            }
-        )
-        
+            )
+        }
         uiState = AddChannelUIState(
             me = uiState.me
         )
+        onSuccess() // Allow the popup to be closed instantly (almost, the previous ui copy shouldn't be heavy)
     }
 }
 
@@ -145,10 +146,8 @@ data class AddChannelUIState(
     val channelName: String = "",
     val channelHandle: String = "",
     val channelId: String = UUID.randomUUID().toString(),
-    val channelPicUrl: Uri = Uri.EMPTY,
     val uploadedPicUrl: String = "",
     val me: User,
     val waitingForServiceResponse: Boolean = false,
     val accountStatusLoaded: Boolean = false,
 )
-
