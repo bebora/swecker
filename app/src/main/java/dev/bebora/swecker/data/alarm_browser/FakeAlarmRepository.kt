@@ -10,14 +10,13 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlin.coroutines.suspendCoroutine
 
-class FakeAlarmRepository(fakeAlarmProviderService: AlarmProviderService = FakeAlarmProviderService(), userId: String = "test") :
+class FakeAlarmRepository(fakeAlarmProviderService: AlarmProviderService = FakeAlarmProviderService()) :
     AlarmRepository {
     val alarmProviderService = fakeAlarmProviderService
-    val currentUserId = userId
 
     override suspend fun deleteAlarm(alarm: Alarm, userId: String?) {
         suspendCoroutine { continuation ->
-            alarmProviderService.deleteAlarm(alarm = alarm.toStoredAlarm(),
+            alarmProviderService.deleteAlarm(alarm = alarm.toStoredAlarm().copy(userId = userId),
                 onComplete = {
                     continuation.resumeWith(Result.success(Unit))
                 })
@@ -26,7 +25,7 @@ class FakeAlarmRepository(fakeAlarmProviderService: AlarmProviderService = FakeA
 
     override suspend fun insertAlarm(alarm: Alarm, userId: String?) {
         suspendCoroutine { continuation ->
-            alarmProviderService.createAlarm(alarm = alarm.toStoredAlarm(),
+            alarmProviderService.createAlarm(alarm = alarm.toStoredAlarm().copy(userId = userId),
                 onComplete = {
                     continuation.resumeWith(Result.success(Unit))
                 })
@@ -36,7 +35,7 @@ class FakeAlarmRepository(fakeAlarmProviderService: AlarmProviderService = FakeA
 
     override suspend fun updateAlarm(alarm: Alarm, userId: String?) {
         suspendCoroutine { continuation ->
-            alarmProviderService.updateAlarm(alarm = alarm.toStoredAlarm(),
+            alarmProviderService.updateAlarm(alarm = alarm.toStoredAlarm().copy(userId = userId),
                 onComplete = {
                     continuation.resumeWith(Result.success(Unit))
                 })
@@ -47,5 +46,9 @@ class FakeAlarmRepository(fakeAlarmProviderService: AlarmProviderService = FakeA
         return alarmProviderService.getUserAlarms(currentUserId)
             .map { listStoredAlarms -> listStoredAlarms.map { it.toAlarm() } }
         //emit(LocalAlarmDataProvider.allAlarms)
+    }
+
+    companion object {
+        const val currentUserId = "userfound"
     }
 }

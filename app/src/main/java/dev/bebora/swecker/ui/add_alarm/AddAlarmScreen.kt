@@ -25,10 +25,10 @@ fun AddAlarmContent(
     userId: String?,
     alarmType: AlarmType,
     ) {
-    val alarm = viewModel.alarm.collectAsState()
+    val alarm = viewModel.vmAlarm
     AlarmDetails(
         modifier = modifier,
-        alarm = alarm.value,
+        alarm = alarm,
         canDelete = false,
         onAlarmPartiallyUpdated = viewModel::onAlarmPartiallyUpdate,
         onUpdateCompleted = { al, b ->

@@ -377,7 +377,8 @@ fun AlarmDetailsPreview() {
                     id = "@monesi#1",
                     name = "Alarm test",
                     enabledDays = mutableListOf(true, false, false, false, true, true, true),
-                    alarmType = AlarmType.PERSONAL
+                    alarmType = AlarmType.PERSONAL,
+                    localTime = LocalTime.now()
                 )
             )
         }

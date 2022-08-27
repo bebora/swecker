@@ -122,7 +122,7 @@ class FakeAlarmProviderService : AlarmProviderService {
 
     override fun getUserAlarms(userId: String): Flow<List<StoredAlarm>> {
         return flow {
-            alarms.filter { it.userId == userId }
+            emit(alarms.filter { it.userId == userId })
         }
     }
 
