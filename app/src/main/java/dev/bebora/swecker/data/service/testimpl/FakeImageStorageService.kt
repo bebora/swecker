@@ -4,6 +4,9 @@ import android.net.Uri
 import dev.bebora.swecker.data.service.ImageStorageService
 
 class FakeImageStorageService : ImageStorageService {
+    var uploadedImages = 0
+    var deletedImages = 0
+
     override fun setProfilePicture(
         userId: String,
         imageUri: Uri,
@@ -11,6 +14,7 @@ class FakeImageStorageService : ImageStorageService {
         onFailure: (String) -> Unit
     ) {
         val waterfall = "https://www.gstatic.com/webp/gallery/2.jpg"
+        uploadedImages++
         onSuccess(waterfall)
     }
 
@@ -21,6 +25,7 @@ class FakeImageStorageService : ImageStorageService {
         onFailure: (String) -> Unit
     ) {
         val field = "https://filesamples.com/samples/image/jpeg/sample_640%C3%97426.jpeg"
+        uploadedImages++
         onSuccess(field)
     }
 
@@ -28,6 +33,7 @@ class FakeImageStorageService : ImageStorageService {
         groupId: String,
         onComplete: (Throwable?) -> Unit
     ) {
+        deletedImages++
         onComplete(null)
     }
 
@@ -38,6 +44,7 @@ class FakeImageStorageService : ImageStorageService {
         onFailure: (String) -> Unit
     ) {
         val fire = "https://www.gstatic.com/webp/gallery/5.jpg"
+        uploadedImages++
         onSuccess(fire)
     }
 
@@ -45,6 +52,7 @@ class FakeImageStorageService : ImageStorageService {
         channelId: String,
         onComplete: (Throwable?) -> Unit
     ) {
+        deletedImages++
         onComplete(null)
     }
 }

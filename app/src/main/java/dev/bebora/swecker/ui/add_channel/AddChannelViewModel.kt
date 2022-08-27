@@ -125,9 +125,10 @@ class AddChannelViewModel @Inject constructor(
     }
 
     fun discardChannelCreation(onSuccess: () -> Unit) {
+        val toRemoveId = uiState.channelId
         CoroutineScope(iODispatcher).launch {
             imageStorageService.deleteChannelPicture(
-                channelId = uiState.channelId,
+                channelId = toRemoveId,
                 onComplete = {
                     if (it != null) {
                         Log.d("SWECKER-DELGI-ERR", "Can't delete channel image", it)

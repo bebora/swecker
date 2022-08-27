@@ -27,7 +27,7 @@ class AddChannelViewModelTest {
     private lateinit var viewModel: AddChannelViewModel
     private lateinit var alarmProviderService: AlarmProviderService
     private lateinit var authService: AuthService
-    private lateinit var imageStorageService: ImageStorageService
+    private lateinit var imageStorageService: FakeImageStorageService
     private lateinit var accountsService: AccountsService
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -37,7 +37,7 @@ class AddChannelViewModelTest {
     @Before
     fun setUp() {
         alarmProviderService = FakeAlarmProviderService()
-        authService = FakeAuthService()
+        authService = FakeAuthService(initialUserId = "validuser")
         accountsService = FakeAccountsService()
         imageStorageService = FakeImageStorageService()
         alarmProviderService = FakeAlarmProviderService()
@@ -90,6 +90,7 @@ class AddChannelViewModelTest {
         }
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun addChannelViewModel_DiscardCreation_StateIsReset() {
         val fakeName = "trebora"
@@ -98,6 +99,7 @@ class AddChannelViewModelTest {
             assertNotEquals(fakeName, viewModel.uiState.channelName)
             println("Test actually done")
         }
-
+        dispatcher.scheduler.advanceUntilIdle()
+        assertEquals(1, imageStorageService.deletedImages)
     }
 }

@@ -15,6 +15,8 @@ import dev.bebora.swecker.data.service.AlarmProviderService
 import dev.bebora.swecker.data.service.AuthService
 import dev.bebora.swecker.data.service.ImageStorageService
 import dev.bebora.swecker.ui.utils.onError
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -25,6 +27,7 @@ class AddGroupViewModel @Inject constructor(
     private val accountsService: AccountsService,
     private val imageStorageService: ImageStorageService,
     private val alarmProviderService: AlarmProviderService,
+    private val iODispatcher: CoroutineDispatcher,
 ) : ViewModel() {
     private val userInfoChanges = authService.getUserInfoChanges()
 
@@ -192,30 +195,33 @@ class AddGroupViewModel @Inject constructor(
     }
 
     fun discardGroupCreation(onSuccess: () -> Unit) {
-        onSuccess() // Allow the popup to be closed instantly
-        if (uiState.tempGroupData.id.isNotBlank()) {
-            alarmProviderService.deleteGroup(
-                uiState.tempGroupData.id,
-                onComplete = { groupDeletionError ->
-                    if (groupDeletionError != null) {
-                        Log.d("SWECKER-DELG-ERR", "Can't delete group", groupDeletionError)
-                    }
-
-                    imageStorageService.deleteGroupPicture(
-                        groupId = uiState.tempGroupData.id,
-                        onComplete = {
-                            if (it != null) {
-                                Log.d("SWECKER-DELGI-ERR", "Can't delete group image", it)
-                            }
+        val toRemoveId = uiState.tempGroupData.id
+        CoroutineScope(iODispatcher).launch {
+            if (toRemoveId.isNotBlank()) {
+                alarmProviderService.deleteGroup(
+                    toRemoveId,
+                    onComplete = { groupDeletionError ->
+                        if (groupDeletionError != null) {
+                            Log.d("SWECKER-DELG-ERR", "Can't delete group", groupDeletionError)
                         }
-                    )
-                }
-            )
+
+                        imageStorageService.deleteGroupPicture(
+                            groupId = toRemoveId,
+                            onComplete = {
+                                if (it != null) {
+                                    Log.d("SWECKER-DELGI-ERR", "Can't delete group image", it)
+                                }
+                            }
+                        )
+                    }
+                )
+            }
         }
         uiState = AddGroupUIState(
             me = uiState.me,
             allContacts = uiState.allContacts
         )
+        onSuccess()
     }
 }
 
