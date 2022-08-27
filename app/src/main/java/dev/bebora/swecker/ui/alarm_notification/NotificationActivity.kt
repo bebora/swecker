@@ -1,5 +1,6 @@
 package dev.bebora.swecker.ui.alarm_notification
 
+import android.app.NotificationManager
 import android.content.Context
 import android.media.AudioAttributes
 import android.media.AudioManager
@@ -95,6 +96,9 @@ class NotificationActivity(
             originalMediaVolume,
             0
         )
+        val notificationManager =
+            this.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.cancel(1)
     }
 
     private fun onSettingsLoaded(settings: Settings) {
