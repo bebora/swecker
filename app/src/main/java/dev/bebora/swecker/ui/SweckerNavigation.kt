@@ -11,6 +11,8 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavGraphBuilder
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.dialog
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
@@ -74,62 +76,67 @@ fun SweckerNavigation(
                         slideInHorizontally(initialOffsetX = { -it / 2 }) + scaleIn(initialScale = .8f)
                     }
                 ) {
-                    composable(SETTINGS) { backStackEntry ->
-                        SettingsScreen(
-                            onNavigate = { navController.navigate(it) },
-                            onGoBack = { navController.popBackStack() })
-                    }
-                    composable(LOGIN) { backStackEntry ->
-                        LoginScreen(
-                            onGoToSignup = { navController.navigate(SIGNUP) },
-                            onGoBack = { navController.popBackStack() },
-                            onLoginSuccess = { navController.popBackStack() })
-                    }
-                    composable(SIGNUP) {
-                        SignUpScreen(
-                            onGoToLogin = {
-                                navController.navigate(LOGIN) {
-                                    launchSingleTop = true
-                                    popUpTo(SIGNUP) { inclusive = true }
-                                }
-                            },
-                            onGoBack = { navController.popBackStack() },
-                            onSignUpSuccess = {
-                                navController.popBackStack(
-                                    LOGIN,
-                                    inclusive = true
-                                )
-                            })
-                    }
-                    composable(ALARM_BROWSER) {
-                        AlarmBrowserScreen(onNavigate = { navController.navigate(it) })
-                    }
-                    dialog(route = CONTACT_BROWSER, dialogProperties = DialogProperties(usePlatformDefaultWidth = false)) {
-                        ContactBrowserDialog(
-                            onNavigate = { navController.navigate(it) },
-                            onGoBack = { navController.popBackStack() },
-                        )
-                    }
-                    dialog(route = ADD_CONTACT, dialogProperties = DialogProperties(usePlatformDefaultWidth = false)) {
-                        AddContactDialog(
-                            onGoBack = { navController.popBackStack() },
-                            onNavigate = { navController.navigate(it) }
-                        )
-                    }
-                    dialog(route = ADD_GROUP, dialogProperties = DialogProperties(usePlatformDefaultWidth = false)) {
-                        AddGroupDialog(
-                            onGoBack = { navController.popBackStack() },
-                            onNavigate = { navController.navigate(it) },
-                            )
-                    }
-                    dialog(route = ADD_CHANNEL, dialogProperties = DialogProperties(usePlatformDefaultWidth = false)) {
-                        AddChannelDialog(
-                            onGoBack = { navController.popBackStack() },
-                            onNavigate = { navController.navigate(it) },
-                            )
-                    }
+                    sweckerGraph(navController = navController)
                 }
             }
         }
+    }
+}
+
+@OptIn(ExperimentalAnimationApi::class, ExperimentalComposeUiApi::class)
+fun NavGraphBuilder.sweckerGraph(navController: NavHostController) {
+    composable(SETTINGS) { backStackEntry ->
+        SettingsScreen(
+            onNavigate = { navController.navigate(it) },
+            onGoBack = { navController.popBackStack() })
+    }
+    composable(LOGIN) { backStackEntry ->
+        LoginScreen(
+            onGoToSignup = { navController.navigate(SIGNUP) },
+            onGoBack = { navController.popBackStack() },
+            onLoginSuccess = { navController.popBackStack() })
+    }
+    composable(SIGNUP) {
+        SignUpScreen(
+            onGoToLogin = {
+                navController.navigate(LOGIN) {
+                    launchSingleTop = true
+                    popUpTo(SIGNUP) { inclusive = true }
+                }
+            },
+            onGoBack = { navController.popBackStack() },
+            onSignUpSuccess = {
+                navController.popBackStack(
+                    LOGIN,
+                    inclusive = true
+                )
+            })
+    }
+    composable(ALARM_BROWSER) {
+        AlarmBrowserScreen(onNavigate = { navController.navigate(it) })
+    }
+    dialog(route = CONTACT_BROWSER, dialogProperties = DialogProperties(usePlatformDefaultWidth = false)) {
+        ContactBrowserDialog(
+            onNavigate = { navController.navigate(it) },
+            onGoBack = { navController.popBackStack() },
+        )
+    }
+    dialog(route = ADD_CONTACT, dialogProperties = DialogProperties(usePlatformDefaultWidth = false)) {
+        AddContactDialog(
+            onGoBack = { navController.popBackStack() },
+            onNavigate = { navController.navigate(it) }
+        )
+    }
+    dialog(route = ADD_GROUP, dialogProperties = DialogProperties(usePlatformDefaultWidth = false)) {
+        AddGroupDialog(
+            onGoBack = { navController.popBackStack() },
+            onNavigate = { navController.navigate(it) },
+        )
+    }
+    dialog(route = ADD_CHANNEL, dialogProperties = DialogProperties(usePlatformDefaultWidth = false)) {
+        AddChannelDialog(
+            onGoBack = { navController.popBackStack() },
+            onNavigate = { navController.navigate(it) },
+        )
     }
 }
