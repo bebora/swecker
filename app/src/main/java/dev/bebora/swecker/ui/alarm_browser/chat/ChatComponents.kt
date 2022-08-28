@@ -197,7 +197,7 @@ fun MessageInputBar(
         shape = ShapeDefaults.ExtraLarge,
         color = MaterialTheme.colorScheme.surfaceVariant,
         contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
-        border = BorderStroke(2.dp, MaterialTheme.colorScheme.outlineVariant)
+        border = BorderStroke(2.dp, MaterialTheme.colorScheme.outline)
     ) {
         Row(
             modifier = Modifier

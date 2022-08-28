@@ -72,7 +72,7 @@ fun AlarmCard(
                 )
             }
             Row(
-                horizontalArrangement = Arrangement.SpaceBetween,
+                horizontalArrangement = Arrangement.End,
                 verticalAlignment = Alignment.Top,
                 modifier = Modifier
                     .fillMaxWidth(1.0f)
@@ -84,8 +84,9 @@ fun AlarmCard(
                     overflow = TextOverflow.Ellipsis,
                     maxLines = 1,
                     text = alarm.name,
-                    modifier = Modifier.fillMaxWidth(0.3f)
+                    modifier = Modifier.weight(0.8f)
                 )
+                Spacer(modifier = Modifier.width(16.dp))
                 Text(
                     style = MaterialTheme.typography.labelMedium,
                     textAlign = TextAlign.Left,
@@ -93,6 +94,7 @@ fun AlarmCard(
                         ?: "",
                     modifier = Modifier.width(120.dp)
                 )
+                Spacer(modifier = Modifier.weight(0.1f))
                 Icon(
                     modifier = Modifier.requiredSize(30.dp),
                     imageVector = alarmTypeToIcon(alarm.alarmType, alarm.enabled),
