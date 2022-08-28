@@ -9,6 +9,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import dev.bebora.swecker.R
 import dev.bebora.swecker.ui.alarm_browser.AlarmBrowserEvent
 import dev.bebora.swecker.ui.alarm_browser.AlarmBrowserUIState
 import dev.bebora.swecker.ui.alarm_browser.DetailsScreenContent
@@ -34,7 +36,7 @@ fun DualPaneContentDetails(
         ) {
             Box(modifier = Modifier.fillMaxSize(1f), contentAlignment = Alignment.Center) {
                 Text(
-                    text = "Select something",
+                    text = stringResource(R.string.suggest_selection),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     style = MaterialTheme.typography.displayMedium
                 )

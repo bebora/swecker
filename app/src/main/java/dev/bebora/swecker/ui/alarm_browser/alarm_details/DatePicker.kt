@@ -14,10 +14,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import dev.bebora.swecker.R
 import java.time.*
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
@@ -51,7 +53,7 @@ fun DatePicker(
                     .padding(16.dp)
             ) {
                 Text(
-                    text = "Select date",
+                    text = stringResource(R.string.select_date),
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onPrimary
                 )
@@ -89,7 +91,7 @@ fun DatePicker(
                     colors = ButtonDefaults.textButtonColors(),
                 ) {
                     Text(
-                        text = "Cancel",
+                        text = stringResource(R.string.cancel),
                     )
                 }
 
@@ -104,7 +106,7 @@ fun DatePicker(
                     colors = ButtonDefaults.textButtonColors(),
                 ) {
                     Text(
-                        text = "OK",
+                        text = stringResource(R.string.ok),
                     )
                 }
 

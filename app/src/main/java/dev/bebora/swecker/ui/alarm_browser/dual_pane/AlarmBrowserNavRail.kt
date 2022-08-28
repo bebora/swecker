@@ -10,8 +10,10 @@ import androidx.compose.material.icons.outlined.Menu
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import dev.bebora.swecker.R
 import dev.bebora.swecker.data.alarm_browser.PreviewAlarmRepository
 import dev.bebora.swecker.data.service.impl.ChatServiceImpl
 import dev.bebora.swecker.data.service.testimpl.FakeAlarmProviderService
@@ -31,9 +33,6 @@ fun AlarmBrowserNavRail(
     onEvent: (AlarmBrowserEvent) -> Unit,
     onNavigate: (String) -> Unit = {}
 ) {
-
-    val items = listOf("Home", "Personal", "Groups", "Channels")
-
     NavigationRail(
         modifier = modifier,
         header = {
@@ -57,16 +56,43 @@ fun AlarmBrowserNavRail(
             modifier = Modifier.requiredHeightIn(300.dp, 400.dp)
         ) {
         Spacer(modifier = Modifier.height(20.dp))
-        items.forEach { item ->
-            val isSelected =
-                alarmBrowserUIState.selectedDestination == NavBarDestination.valueOf(item.uppercase())
+
+            var isSelected =
+                alarmBrowserUIState.selectedDestination == NavBarDestination.HOME
             NavigationRailItem(
-                icon = { Icon(getNavbarIcon(item, isSelected), contentDescription = item) },
-                label = { Text(item) },
+                icon = { Icon(getNavbarIcon("Home", isSelected), contentDescription = "Home") },
+                label = { Text(stringResource(R.string.home)) },
                 selected = isSelected,
-                onClick = { onEvent(AlarmBrowserEvent.NavBarNavigate(NavBarDestination.valueOf(item.uppercase()))) },
+                onClick = { onEvent(AlarmBrowserEvent.NavBarNavigate(NavBarDestination.HOME)) },
             )
-        }
+
+            isSelected =
+                alarmBrowserUIState.selectedDestination == NavBarDestination.PERSONAL
+            NavigationRailItem(
+                icon = { Icon(getNavbarIcon("Personal", isSelected), contentDescription = "Personal") },
+                label = { Text(stringResource(R.string.personal)) },
+                selected = isSelected,
+                onClick = { onEvent(AlarmBrowserEvent.NavBarNavigate(NavBarDestination.PERSONAL)) },
+            )
+
+            isSelected =
+                alarmBrowserUIState.selectedDestination == NavBarDestination.GROUPS
+            NavigationRailItem(
+                icon = { Icon(getNavbarIcon("Groups", isSelected), contentDescription = "Groups") },
+                label = { Text(stringResource(R.string.groups)) },
+                selected = isSelected,
+                onClick = { onEvent(AlarmBrowserEvent.NavBarNavigate(NavBarDestination.GROUPS)) },
+            )
+
+            isSelected =
+                alarmBrowserUIState.selectedDestination == NavBarDestination.CHANNELS
+            NavigationRailItem(
+                icon = { Icon(getNavbarIcon("Channels", isSelected), contentDescription = "Channels") },
+                label = { Text(stringResource(R.string.channels)) },
+                selected = isSelected,
+                onClick = { onEvent(AlarmBrowserEvent.NavBarNavigate(NavBarDestination.CHANNELS)) },
+            )
+
         }
     }
 }

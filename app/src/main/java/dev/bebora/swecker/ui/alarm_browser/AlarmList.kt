@@ -1,8 +1,6 @@
 package dev.bebora.swecker.ui.alarm_browser
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
@@ -34,6 +32,9 @@ fun AlarmList(
                     al.id == selectedAlarm.id
             }
             AlarmCard(alarm = al, modifier = modifier, onEvent = onEvent, selected = selected)
+        }
+        item() {
+            Spacer(modifier = Modifier.height(64.dp))
         }
     }
 }

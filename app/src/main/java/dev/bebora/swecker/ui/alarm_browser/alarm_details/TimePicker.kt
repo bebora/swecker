@@ -14,6 +14,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.window.Dialog
@@ -47,7 +48,7 @@ fun TimePicker(
                     .padding(16.dp)
             ) {
                 Text(
-                    text = "Select time",
+                    text =  stringResource(dev.bebora.swecker.R.string.select_time),
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onPrimary
                 )
@@ -71,7 +72,7 @@ fun TimePicker(
                     colors = ButtonDefaults.textButtonColors(),
                 ) {
                     Text(
-                        text = "Cancel",
+                        text = stringResource(dev.bebora.swecker.R.string.cancel),
                     )
                 }
 
@@ -86,7 +87,7 @@ fun TimePicker(
                     colors = ButtonDefaults.textButtonColors(),
                 ) {
                     Text(
-                        text = "OK",
+                        text = stringResource(dev.bebora.swecker.R.string.ok),
                     )
                 }
 
@@ -102,7 +103,8 @@ fun CustomTimePickerView(
 ) {
     // Adds view to Compose
     AndroidView(
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth()
             .background(Color.White),
         factory = { context ->
             TimePicker(context)

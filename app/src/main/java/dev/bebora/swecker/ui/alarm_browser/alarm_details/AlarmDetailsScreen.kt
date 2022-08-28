@@ -14,10 +14,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import dev.bebora.swecker.R
 import dev.bebora.swecker.data.Alarm
 import dev.bebora.swecker.data.AlarmType
 import dev.bebora.swecker.ui.alarm_browser.AlarmBrowserEvent
@@ -58,8 +60,8 @@ fun AlarmDetails(
                 ClickableOutlinedDetails(
                     modifier = Modifier
                         .weight(0.5f),
-                    label = "Time",
-                    placeHolder = "Select time",
+                    label = stringResource(R.string.time),
+                    placeHolder = stringResource(R.string.select_time),
                     value = alarm.localTime!!.format(DateTimeFormatter.ofPattern("hh:mm a")),
                     leadingIcon = {
                         Icon(
@@ -74,7 +76,7 @@ fun AlarmDetails(
                     ClickableOutlinedDetails(
                         modifier = Modifier
                             .weight(0.5f),
-                        label = "Date",
+                        label = stringResource(R.string.date),
                         placeHolder = "Select date",
                         value = alarm.localDate!!.format(
                             DateTimeFormatter.ofLocalizedDate(
@@ -92,7 +94,7 @@ fun AlarmDetails(
                 }
             }
             OutlinedTextField(
-                label = { Text("Name") },
+                label = { Text(stringResource(R.string.name)) },
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.Outlined.Label,
@@ -118,7 +120,7 @@ fun AlarmDetails(
             Divider()
 
             Text(
-                text = "Repeat on",
+                text = stringResource(R.string.repeat_on),
                 textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.labelMedium,
                 color = MaterialTheme.colorScheme.onSurface
@@ -149,7 +151,7 @@ fun AlarmDetails(
                 Icon(imageVector = Icons.Outlined.Message, contentDescription = null)
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    text = "Enable chat",
+                    text = stringResource(R.string.enable_chat),
                     style = MaterialTheme.typography.labelLarge,
                     textAlign = TextAlign.Center,
                 )
@@ -190,7 +192,7 @@ fun AlarmDetails(
                 OutlinedButton(
                     modifier = Modifier.fillMaxWidth(1f),
                     onClick = { showDeleteAlert = true }) {
-                    Text(text = "Delete alarm")
+                    Text(text = stringResource(R.string.delete_alarm))
                 }
             }
 
@@ -243,7 +245,7 @@ fun AlarmDetails(
                         )
                     })
                 ) {
-                    Text("Ok")
+                    Text(stringResource(R.string.ok))
                 }
             }
 
@@ -270,16 +272,16 @@ fun AlarmDetails(
             })
         if (showDeleteAlert) {
             AlertDialog(onDismissRequest = { showDeleteAlert = false },
-                title = { Text(text = "Delete alarm") },
-                text = { Text(text = "Do you really want to delete this alarm? The operation is irreversible") },
+                title = { Text(text = stringResource(R.string.delete_alarm_dialog_title)) },
+                text = { Text(text = stringResource(R.string.delete_alarm_dialog_body)) },
                 confirmButton = {
                     OutlinedButton(onClick = { onAlarmDeleted(alarm) }) {
-                        Text(text = "Yes")
+                        Text(text = stringResource(R.string.yes))
                     }
                 },
                 dismissButton = {
                     OutlinedButton(onClick = { showDeleteAlert = false }) {
-                        Text(text = "No")
+                        Text(text = stringResource(R.string.no))
                     }
                 })
         }

@@ -74,4 +74,24 @@
     <string name="friend_correctly_removed">Friend successfully removed</string>
     <string name="remove_friend_error">An error has occurred while removing your friend</string>
     <string name="no_users_found">No users found</string>
+    <string name="channels">Channels</string>
+    <string name="time">Time</string>
+    <string name="date">Date</string>
+    <string name="name">Name</string>
+    <string name="repeat_on">Repeat on</string>
+    <string name="enable_chat">Enable chat</string>
+    <string name="select_time">Select time</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="delete_alarm_dialog_title">Delete alarm</string>
+    <string name="delete_alarm_dialog_body">Do you really want to delete this alarm? The operation is irreversible</string>
+    <string name="ok">OK</string>
+    <string name="delete_alarm">Delete alarm</string>
+    <string name="select_date">Select date</string>
+    <string name="cancel">Cancel</string>
+    <string name="members">\ members\</string>
+    <string name="home">Home</string>
+    <string name="personal">Personal</string>
+    <string name="groups">Groups</string>
+    <string name="suggest_selection">Select something</string>
 </resources>

@@ -12,8 +12,10 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import dev.bebora.swecker.R
 import dev.bebora.swecker.ui.alarm_browser.AlarmBrowserEvent
 import dev.bebora.swecker.ui.alarm_browser.AlarmBrowserSearchBar
 import dev.bebora.swecker.ui.alarm_browser.AlarmBrowserUIState
@@ -49,7 +51,7 @@ fun ChannelListScreen(
                     containerColor = MaterialTheme.colorScheme.surfaceVariant
                 ),
                 modifier = Modifier,
-                title = { Text(text = "Channels", textAlign = TextAlign.Center) },
+                title = { Text(text = stringResource(R.string.channels), textAlign = TextAlign.Center) },
                 navigationIcon = {
                     IconButton(onClick = { navigationAction() }) {
                         Icon(

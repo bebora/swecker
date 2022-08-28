@@ -15,6 +15,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.SubcomposeAsyncImage
+import dev.bebora.swecker.R
 import dev.bebora.swecker.data.Group
 import dev.bebora.swecker.ui.settings.account.PropicPlaceholder
 
@@ -43,7 +44,7 @@ fun GroupTopAppBar(
                 )
                 Text(
                     modifier = modifier.padding(horizontal = 10.dp),
-                    text = group.members.size.toString().plus(" members"),
+                    text = group.members.size.toString().plus(R.string.members),
                     style = MaterialTheme.typography.labelSmall
                 )
 
