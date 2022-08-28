@@ -87,7 +87,7 @@ fun TimePicker(
                     colors = ButtonDefaults.textButtonColors(),
                 ) {
                     Text(
-                        text = stringResource(dev.bebora.swecker.R.string.ok),
+                        text = stringResource(dev.bebora.swecker.R.string.confirm_dialog),
                     )
                 }
 

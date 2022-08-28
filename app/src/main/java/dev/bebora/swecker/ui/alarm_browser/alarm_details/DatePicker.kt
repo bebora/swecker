@@ -106,7 +106,7 @@ fun DatePicker(
                     colors = ButtonDefaults.textButtonColors(),
                 ) {
                     Text(
-                        text = stringResource(R.string.ok),
+                        text = stringResource(R.string.confirm_dialog),
                     )
                 }
 

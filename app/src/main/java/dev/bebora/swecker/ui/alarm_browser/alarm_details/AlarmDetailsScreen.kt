@@ -14,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
@@ -25,6 +26,7 @@ import dev.bebora.swecker.data.AlarmType
 import dev.bebora.swecker.ui.alarm_browser.AlarmBrowserEvent
 import dev.bebora.swecker.ui.alarm_browser.AlarmBrowserUIState
 import dev.bebora.swecker.ui.theme.SweckerTheme
+import dev.bebora.swecker.util.TestConstants
 import java.time.*
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
@@ -248,7 +250,7 @@ fun AlarmDetails(
                         )
                     })
                 ) {
-                    Text(stringResource(R.string.ok))
+                    Text(stringResource(R.string.confirm_dialog))
                 }
             }
 
@@ -308,7 +310,9 @@ fun RepetitionDaysSelection(
         days.forEachIndexed { index, day ->
 
             OutlinedButton(
-                modifier = Modifier.size(40.dp),
+                modifier = Modifier
+                    .size(40.dp).
+                testTag(if (enabledDays[index]) TestConstants.dayEnabled else TestConstants.dayDisabled),
                 onClick = {
                     onClick(index, !enabledDays[index])
                 },
@@ -466,5 +470,4 @@ fun AlarmDetailsScreen(
             onAlarmDeleted = { al -> onEvent(AlarmBrowserEvent.AlarmDeleted(al)) },
         )
     }
-
 }

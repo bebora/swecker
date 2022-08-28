@@ -7,11 +7,13 @@ import androidx.compose.material.icons.outlined.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
+import dev.bebora.swecker.R
 import dev.bebora.swecker.data.AlarmType
 import dev.bebora.swecker.data.Group
 import dev.bebora.swecker.data.alarm_browser.FakeAlarmRepository
@@ -52,7 +54,7 @@ fun AddAlarmAppBar(
     SmallTopAppBar(
         colors = colors,
         modifier = modifier,
-        title = { Text(text = "Add alarm", textAlign = TextAlign.Center) },
+        title = { Text(text = stringResource(R.string.add_alarm_title), textAlign = TextAlign.Center) },
         navigationIcon = {
             IconButton(onClick = { onBackPressed() }) {
                 Icon(

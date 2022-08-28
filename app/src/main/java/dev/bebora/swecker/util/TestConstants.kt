@@ -13,4 +13,6 @@ object TestConstants {
     val name = "name"
     val proceed = "proceed"
     val confirm = "confirm"
+    val dayEnabled = "dayEnabled"
+    val dayDisabled = "dayDisabled"
 }
