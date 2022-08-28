@@ -40,6 +40,7 @@ fun DualPaneContentList(
                         group.name.contains(uiState.searchKey, ignoreCase = true)
                     },
                     onEvent = { group -> onEvent(AlarmBrowserEvent.GroupSelected(group)) },
+                    selectedGroupId = uiState.selectedGroup?.id?:""
                 )
             }
             NavBarDestination.CHANNELS -> {
@@ -51,7 +52,8 @@ fun DualPaneContentList(
                     } + uiState.extraChannels,
                     onEvent = { channel -> onEvent(AlarmBrowserEvent.ChannelSelected(channel)) },
                     myId = uiState.me.id,
-                    onChannelJoin = {channel -> onEvent(AlarmBrowserEvent.JoinChannel(channel))}
+                    onChannelJoin = {channel -> onEvent(AlarmBrowserEvent.JoinChannel(channel))},
+                    selectedChannelId = uiState.selectedChannel?.id?:""
                 )
             }
         }

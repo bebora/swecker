@@ -139,7 +139,7 @@ fun ChannelAlarmListScreen(
     ) {
         Box(modifier = Modifier.padding(it)) {
             AlarmList(
-                alarms = uiState.filteredAlarms!!,
+                alarms = uiState.filteredAlarms?: emptyList(),
                 onEvent = onEvent,
                 selectedAlarm = uiState.selectedAlarm
             )

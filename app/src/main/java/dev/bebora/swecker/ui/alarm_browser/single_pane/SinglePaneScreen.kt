@@ -77,8 +77,8 @@ fun SinglePaneScreen(
             }
             AnimatedVisibility(
                 visibleState = uiState.mutableTransitionState,
-                enter = slideInHorizontally { it } + fadeIn(),
-                exit = slideOutHorizontally { -it } + fadeOut()
+                enter = slideInHorizontally { it/2 } + fadeIn(),
+                exit = slideOutHorizontally { -it/2 } + fadeOut()
             ) {
                 ChannelDetailsScreen(
                     modifier = modifier,

@@ -3,16 +3,9 @@ package dev.bebora.swecker.ui.alarm_browser
 import android.app.Application
 import android.util.Log
 import androidx.compose.animation.core.MutableTransitionState
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
-import androidx.compose.material.icons.outlined.Campaign
-import androidx.compose.material.icons.outlined.Groups
-import androidx.compose.material.icons.outlined.Home
-import androidx.compose.material.icons.outlined.Person
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -28,7 +21,6 @@ import dev.bebora.swecker.ui.alarm_notification.scheduleExactAlarm
 import dev.bebora.swecker.ui.utils.onError
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.catch
-import java.time.Clock
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
@@ -84,14 +76,6 @@ class AlarmBrowserViewModel @Inject constructor(
                         uiState = uiState.copy(
                             groups = groupsList.map { thinGroup ->
                                 thinGroup.toGroup()
-                            }.map { group ->
-                                val firstGroupAlarm = uiState.alarms.firstOrNull { alarm ->
-                                    alarm.groupId == group.id
-                                }
-                                group.copy(
-                                    firstAlarmDateTime = firstGroupAlarm?.dateTime,
-                                    firstAlarmName = firstGroupAlarm?.name ?: ""
-                                )
                             }
                         )
                     }
@@ -104,14 +88,6 @@ class AlarmBrowserViewModel @Inject constructor(
                         uiState = uiState.copy(
                             channels = channelsList.map {
                                 it.toGroup()
-                            }.map { channel ->
-                                val firstChannelAlarm = uiState.alarms.firstOrNull { alarm ->
-                                    alarm.groupId == channel.id
-                                }
-                                channel.copy(
-                                    firstAlarmDateTime = firstChannelAlarm?.dateTime,
-                                    firstAlarmName = firstChannelAlarm?.name ?: ""
-                                )
                             }
                         )
                     }
@@ -147,7 +123,25 @@ class AlarmBrowserViewModel @Inject constructor(
                                     selectedGroup = curState.selectedGroup
                                         ?: curState.selectedChannel,
                                     searchKey = curState.searchKey
-                                )
+                                ),
+                                channels = uiState.channels.map { channel ->
+                                    val firstChannelAlarm = alarms.firstOrNull { alarm ->
+                                        alarm.groupId == channel.id
+                                    }
+                                    channel.copy(
+                                        firstAlarmDateTime = firstChannelAlarm?.dateTime,
+                                        firstAlarmName = firstChannelAlarm?.name ?: ""
+                                    )
+                                },
+                                groups = uiState.groups.map { group ->
+                                    val firstGroupAlarm = alarms.firstOrNull { alarm ->
+                                        alarm.groupId == group.id
+                                    }
+                                    group.copy(
+                                        firstAlarmDateTime = firstGroupAlarm?.dateTime,
+                                        firstAlarmName = firstGroupAlarm?.name ?: ""
+                                    )
+                                }
                             )
                         }
                 }
@@ -205,7 +199,8 @@ class AlarmBrowserViewModel @Inject constructor(
                 }
 
                 if (selectedAlarm?.id.equals(event.alarm.id) &&
-                    detailsScreenContent == DetailsScreenContent.ALARM_DETAILS) {
+                    detailsScreenContent == DetailsScreenContent.ALARM_DETAILS
+                ) {
                     detailsScreenContent = detailsScreenContentOnGoBack()
                     if (uiState.detailsScreenContent != DetailsScreenContent.NONE) {
                         mutableTransitionState = MutableTransitionState(true).apply {
@@ -227,7 +222,11 @@ class AlarmBrowserViewModel @Inject constructor(
                                 timeStamp = OffsetDateTime.now()
                                     .format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)
                             ),
-                            userId = if(shouldSendUserId()) {uiState.me.id} else {null}
+                            userId = if (shouldSendUserId()) {
+                                uiState.me.id
+                            } else {
+                                null
+                            }
                         )
                     }
                 }
@@ -273,14 +272,18 @@ class AlarmBrowserViewModel @Inject constructor(
                 viewModelScope.launch {
                     repository.deleteAlarm(
                         alarm = event.alarm,
-                        userId = if(shouldSendUserId()) {uiState.me.id} else {null}
+                        userId = if (shouldSendUserId()) {
+                            uiState.me.id
+                        } else {
+                            null
+                        }
                     )
                 }
                 var detailsScreenContent: DetailsScreenContent = DetailsScreenContent.NONE
 
-                if(uiState.selectedGroup != null){
+                if (uiState.selectedGroup != null) {
                     detailsScreenContent = DetailsScreenContent.GROUP_ALARM_LIST
-                }else if(uiState.selectedChannel != null){
+                } else if (uiState.selectedChannel != null) {
                     detailsScreenContent = DetailsScreenContent.CHANNEL_ALARM_LIST
                 }
                 uiState = uiState.copy(
@@ -517,14 +520,14 @@ class AlarmBrowserViewModel @Inject constructor(
         }
     }
 
-    private fun shouldSendUserId():Boolean{
-        if(uiState.selectedGroup != null){
+    private fun shouldSendUserId(): Boolean {
+        if (uiState.selectedGroup != null) {
             return uiState.selectedGroup!!.owner != uiState.me.id
         }
-        if(uiState.selectedChannel != null){
+        if (uiState.selectedChannel != null) {
             return uiState.selectedChannel!!.owner != uiState.me.id
         }
-        if(uiState.selectedAlarm != null){
+        if (uiState.selectedAlarm != null) {
             return uiState.selectedAlarm!!.alarmType == AlarmType.PERSONAL
         }
         return true
