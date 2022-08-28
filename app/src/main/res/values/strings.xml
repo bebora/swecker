@@ -96,4 +96,12 @@
     <string name="members">members</string>
     <string name="palette">Palette</string>
     <string name="example_alarm_name">Example alarm</string>
+    <string name="new_channel">New channel</string>
+    <string name="new_group">New group</string>
+    <string name="contacts">Contacts</string>
+    <string name="add_a_friend">Add a friend</string>
+    <string name="alarms_overview">Alarms overview</string>
+    <string name="contacts_management">Contacts management</string>
+    <string name="channel_handle">Handle</string>
+    <string name="channel_name">Name</string>
 </resources>

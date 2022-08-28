@@ -10,6 +10,7 @@ import androidx.compose.material.icons.outlined.Menu
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -24,6 +25,7 @@ import dev.bebora.swecker.ui.theme.SweckerTheme
 import dev.bebora.swecker.ui.utils.getNavbarIcon
 import dev.bebora.swecker.util.ADD_CHANNEL
 import dev.bebora.swecker.util.ADD_GROUP
+import dev.bebora.swecker.util.TestConstants
 
 @Composable
 fun AlarmBrowserNavRail(
@@ -44,6 +46,7 @@ fun AlarmBrowserNavRail(
                 Icon(imageVector = Icons.Outlined.Menu, contentDescription = "Open hamburger menu")
             }
             AlarmBrowserNavRailFab(
+                modifier = Modifier.testTag(TestConstants.fab),
                 destination = alarmBrowserUIState.selectedDestination,
                 onEvent = onEvent,
                 onNavigate = onNavigate
@@ -60,6 +63,7 @@ fun AlarmBrowserNavRail(
             var isSelected =
                 alarmBrowserUIState.selectedDestination == NavBarDestination.HOME
             NavigationRailItem(
+                modifier = Modifier.testTag(TestConstants.home),
                 icon = { Icon(getNavbarIcon("Home", isSelected), contentDescription = "Home") },
                 label = { Text(stringResource(R.string.home)) },
                 selected = isSelected,
@@ -69,6 +73,7 @@ fun AlarmBrowserNavRail(
             isSelected =
                 alarmBrowserUIState.selectedDestination == NavBarDestination.PERSONAL
             NavigationRailItem(
+                modifier = Modifier.testTag(TestConstants.personal),
                 icon = { Icon(getNavbarIcon("Personal", isSelected), contentDescription = "Personal") },
                 label = { Text(stringResource(R.string.personal)) },
                 selected = isSelected,
@@ -78,6 +83,7 @@ fun AlarmBrowserNavRail(
             isSelected =
                 alarmBrowserUIState.selectedDestination == NavBarDestination.GROUPS
             NavigationRailItem(
+                modifier = Modifier.testTag(TestConstants.groups),
                 icon = { Icon(getNavbarIcon("Groups", isSelected), contentDescription = "Groups") },
                 label = { Text(stringResource(R.string.groups)) },
                 selected = isSelected,
@@ -87,6 +93,7 @@ fun AlarmBrowserNavRail(
             isSelected =
                 alarmBrowserUIState.selectedDestination == NavBarDestination.CHANNELS
             NavigationRailItem(
+                modifier = Modifier.testTag(TestConstants.channels),
                 icon = { Icon(getNavbarIcon("Channels", isSelected), contentDescription = "Channels") },
                 label = { Text(stringResource(R.string.channels)) },
                 selected = isSelected,

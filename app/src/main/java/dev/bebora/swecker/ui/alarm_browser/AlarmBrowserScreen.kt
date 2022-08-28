@@ -13,9 +13,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import dev.bebora.swecker.R
 import dev.bebora.swecker.data.alarm_browser.PreviewAlarmRepository
 import dev.bebora.swecker.data.service.impl.AlarmProviderServiceImpl
 import dev.bebora.swecker.data.service.impl.ChatServiceImpl
@@ -37,6 +39,13 @@ fun AlarmBrowserScreen(
     val uiState = viewModel.uiState
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val scope = rememberCoroutineScope()
+    val newGroup = stringResource(R.string.new_group)
+    val newChannel = stringResource(R.string.new_channel)
+    val contacts = stringResource(R.string.contacts)
+    val addAFriend = stringResource(R.string.add_a_friend)
+    val alarmsOverview = stringResource(R.string.alarms_overview)
+    val contactsManagement = stringResource(R.string.contacts_management)
+    val settings = stringResource(R.string.settings_title)
 // icons to mimic drawer destinations
     val items = remember {
         listOf(
@@ -44,19 +53,19 @@ fun AlarmBrowserScreen(
                 title = "Alarms management",
                 subsections = listOf(
                     DrawerSubSection(
-                        title = "Alarms overview",
+                        title = alarmsOverview,
                         icon = Icons.Outlined.Home,
                         selected = true
                     ) { scope.launch { drawerState.close() } },
                     DrawerSubSection(
-                        title = "New group",
+                        title = newGroup,
                         icon = Icons.Outlined.Groups
                     ) {
                         scope.launch { drawerState.close() }
                         onNavigate(ADD_GROUP)
                     },
                     DrawerSubSection(
-                        title = "New channel",
+                        title = newChannel,
                         icon = Icons.Outlined.Campaign
                     ) {
                         scope.launch { drawerState.close() }
@@ -67,17 +76,17 @@ fun AlarmBrowserScreen(
                 )
             ),
             DrawerSection(
-                title = "Contacts management",
+                title = contactsManagement,
                 subsections = listOf(
                     DrawerSubSection(
-                        title = "Contacts",
+                        title = contacts,
                         icon = Icons.Outlined.Contacts
                     ) {
                         scope.launch { drawerState.close() }
                         onNavigate(CONTACT_BROWSER)
                     },
                     DrawerSubSection(
-                        title = "Add a friend",
+                        title = addAFriend,
                         icon = Icons.Outlined.PersonAddAlt
                     ) {
                         scope.launch { drawerState.close() }
@@ -86,10 +95,10 @@ fun AlarmBrowserScreen(
                 )
             ),
             DrawerSection(
-                title = "Settings",
+                title = settings,
                 subsections = listOf(
                     DrawerSubSection(
-                        title = "Settings",
+                        title = settings,
                         icon = Icons.Outlined.Settings
                     ) {
                         scope.launch { drawerState.close() }
@@ -105,7 +114,7 @@ fun AlarmBrowserScreen(
         drawerContent = {
             ModalDrawerSheet {
                 Text(
-                    text = "Swecker",
+                    text = stringResource(R.string.app_name),
                     style = MaterialTheme.typography.titleMedium,
                     modifier = Modifier.padding(start = 16.dp, top = 18.dp),
                     color = MaterialTheme.colorScheme.onSurfaceVariant

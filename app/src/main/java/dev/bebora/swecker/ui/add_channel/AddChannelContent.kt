@@ -17,9 +17,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import coil.compose.SubcomposeAsyncImage
 import com.google.modernstorage.photopicker.PhotoPicker
+import dev.bebora.swecker.R
 import dev.bebora.swecker.ui.settings.account.PropicPlaceholder
 
 @SuppressLint("UnsafeOptInUsageError")
@@ -114,7 +116,7 @@ fun AddChannelContent(
                 leadingIcon = {
                     Icon(imageVector = Icons.Outlined.Label, contentDescription = null)
                 },
-                label = { Text("Name") },
+                label = { Text(stringResource(R.string.channel_name)) },
                 maxLines = 1,
                 value = channelName,
                 onValueChange = setChannelName,
@@ -130,7 +132,7 @@ fun AddChannelContent(
                     .imePadding()
                     .padding(horizontal = 16.dp),
                 maxLines = 1,
-                label = { Text("Handle") },
+                label = { Text(stringResource(R.string.channel_handle)) },
                 value = channelHandle,
                 onValueChange = setChannelHandle,
             )

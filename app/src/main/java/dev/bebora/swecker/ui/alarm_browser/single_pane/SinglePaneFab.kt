@@ -8,12 +8,14 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import dev.bebora.swecker.ui.alarm_browser.AlarmBrowserEvent
 import dev.bebora.swecker.ui.alarm_browser.DetailsScreenContent
 import dev.bebora.swecker.ui.alarm_browser.DialogContent
 import dev.bebora.swecker.ui.alarm_browser.NavBarDestination
 import dev.bebora.swecker.util.ADD_CHANNEL
 import dev.bebora.swecker.util.ADD_GROUP
+import dev.bebora.swecker.util.TestConstants
 
 @Composable
 fun AlarmBrowserSinglePaneFab(
@@ -25,7 +27,7 @@ fun AlarmBrowserSinglePaneFab(
 ) {
     when (detailsScreenContent) {
         DetailsScreenContent.NONE -> {
-            FloatingActionButton(modifier = modifier, onClick = {
+            FloatingActionButton(modifier = modifier.testTag(TestConstants.fab), onClick = {
                 when (destination) {
                     NavBarDestination.HOME, NavBarDestination.PERSONAL -> {
                         onEvent(AlarmBrowserEvent.DialogOpened(DialogContent.ADD_ALARM))

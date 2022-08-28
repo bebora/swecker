@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import dev.bebora.swecker.data.alarm_browser.PreviewAlarmRepository
@@ -16,6 +17,7 @@ import dev.bebora.swecker.ui.alarm_browser.*
 import dev.bebora.swecker.ui.theme.SweckerTheme
 import dev.bebora.swecker.ui.utils.getNavbarIcon
 import dev.bebora.swecker.R
+import dev.bebora.swecker.util.TestConstants
 
 @Composable
 fun AlarmBrowserNavBar(
@@ -28,6 +30,7 @@ fun AlarmBrowserNavBar(
             var isSelected =
                 alarmBrowserUIState.selectedDestination == NavBarDestination.HOME
             NavigationBarItem(
+                modifier = Modifier.testTag(TestConstants.home),
                 icon = {
                     Icon(
                         getNavbarIcon("Home", isSelected),
@@ -47,6 +50,7 @@ fun AlarmBrowserNavBar(
             isSelected =
                 alarmBrowserUIState.selectedDestination == NavBarDestination.PERSONAL
             NavigationBarItem(
+                modifier = Modifier.testTag(TestConstants.personal),
                 icon = {
                     Icon(
                         getNavbarIcon("Personal", isSelected),
@@ -66,6 +70,7 @@ fun AlarmBrowserNavBar(
             isSelected =
                 alarmBrowserUIState.selectedDestination == NavBarDestination.GROUPS
             NavigationBarItem(
+                modifier = Modifier.testTag(TestConstants.groups),
                 icon = { Icon(getNavbarIcon("Groups", isSelected), contentDescription = "Groups") },
                 label = { Text(stringResource(id = R.string.groups)) },
                 selected = isSelected,
@@ -80,6 +85,7 @@ fun AlarmBrowserNavBar(
             isSelected =
                 alarmBrowserUIState.selectedDestination == NavBarDestination.CHANNELS
             NavigationBarItem(
+                modifier = Modifier.testTag(TestConstants.channels),
                 icon = {
                     Icon(
                         getNavbarIcon("Channels", isSelected),
