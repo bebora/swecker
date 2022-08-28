@@ -9,44 +9,58 @@ import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
+import dev.bebora.swecker.data.service.testimpl.FakeAccountsService
+import dev.bebora.swecker.data.service.testimpl.FakeAlarmProviderService
+import dev.bebora.swecker.data.service.testimpl.FakeAuthService
+import dev.bebora.swecker.data.service.testimpl.FakeImageStorageService
 import dev.bebora.swecker.ui.settings.account.SuggestLogin
+import dev.bebora.swecker.ui.theme.SweckerTheme
+import kotlinx.coroutines.Dispatchers
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddChannelScreen(
     modifier: Modifier = Modifier,
     onGoBack: () -> Unit = {},
+    viewModel: AddChannelViewModel = hiltViewModel(),
     onNavigate: (String) -> Unit
 ) {
-    val viewModel: AddChannelViewModel = hiltViewModel()
     val uiState = viewModel.uiState
 
     Scaffold(
         modifier = modifier,
         topBar = {
-            AddChannelTopBar(waitingForServiceResponse = uiState.waitingForServiceResponse, onGoBack = onGoBack)
+            AddChannelTopBar(
+                waitingForServiceResponse = uiState.waitingForServiceResponse,
+                onGoBack = onGoBack
+            )
         },
         floatingActionButton = {
-                    if (uiState.channelName.isNotEmpty() && uiState.channelHandle.isNotEmpty()) {
-                        FloatingActionButton(
-                            modifier = Modifier.imePadding(),
-                            onClick = {
-                                viewModel.confirmChannelCreation(
-                                    onSuccess = {
-                                        onGoBack()
-                                    }
-                                )
-                            }) {
-                            Icon(
-                                imageVector = Icons.Outlined.Check,
-                                contentDescription = "Finish channel creation"
-                            )
-                        }
-                    }
+            if (uiState.channelName.isNotEmpty() && uiState.channelHandle.isNotEmpty()) {
+                FloatingActionButton(
+                    modifier = Modifier.imePadding(),
+                    onClick = {
+                        viewModel.confirmChannelCreation(
+                            onSuccess = {
+                                onGoBack()
+                            }
+                        )
+                    }) {
+                    Icon(
+                        imageVector = Icons.Outlined.Check,
+                        contentDescription = "Finish channel creation"
+                    )
+                }
+            }
         }
     ) { paddingValues ->
-        Box(modifier = Modifier.padding(paddingValues).imePadding()) {
+        Box(
+            modifier = Modifier
+                .padding(paddingValues)
+                .imePadding()
+        ) {
             if (uiState.me.id.isBlank() && uiState.accountStatusLoaded) {
                 SuggestLogin(onNavigate = onNavigate)
             } else {
@@ -90,4 +104,21 @@ fun AddChannelTopBar(
             }
         }
     )
+}
+
+@Preview
+@Composable
+fun AddChannelScreenPreview() {
+    SweckerTheme {
+        AddChannelScreen(
+            onNavigate = {},
+            viewModel = AddChannelViewModel(
+                authService = FakeAuthService(),
+                accountsService = FakeAccountsService(),
+                imageStorageService = FakeImageStorageService(),
+                alarmProviderService = FakeAlarmProviderService(),
+                iODispatcher = Dispatchers.IO,
+            )
+        )
+    }
 }

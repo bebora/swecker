@@ -8,12 +8,15 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import dev.bebora.swecker.data.AlarmType
 import dev.bebora.swecker.data.Group
+import dev.bebora.swecker.data.alarm_browser.FakeAlarmRepository
 import dev.bebora.swecker.ui.alarm_browser.alarm_details.AlarmDetails
+import dev.bebora.swecker.ui.theme.SweckerTheme
 
 @Composable
 fun AddAlarmContent(
@@ -119,5 +122,21 @@ fun AddAlarmDialog(
                 alarmType = alarmType
             )
         }
+    }
+}
+
+@Preview(showBackground = true, locale = "en")
+@Composable
+fun AddAlarmContentPreview() {
+    SweckerTheme {
+        AddAlarmScreen(
+            addAlarmViewModel = AddAlarmViewModel(
+                repository = FakeAlarmRepository()
+            ),
+            group = null,
+            onGoBack = { /*TODO*/ },
+            userId = "luca",
+            alarmType = AlarmType.PERSONAL
+        )
     }
 }
