@@ -71,17 +71,21 @@ fun GroupItem(
 
             Row(
                 modifier = Modifier.fillMaxWidth(1f),
-                horizontalArrangement = Arrangement.SpaceBetween,
+                horizontalArrangement = Arrangement.End,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
                     text = group.firstAlarmName,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.widthIn(0.dp,120.dp).padding(all = 4.dp),
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(all = 4.dp),
                     style = MaterialTheme.typography.titleMedium,
+                    textAlign = TextAlign.Left,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
+                Spacer(modifier = Modifier.width(16.dp))
                 Text(
                     text = group.firstAlarmDateTime?.format(DateTimeFormatter.ofPattern("eee\n dd MMM uuuu")) ?: "",
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
