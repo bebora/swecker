@@ -119,12 +119,14 @@ fun SweckerNavigation(
                     dialog(route = ADD_GROUP, dialogProperties = DialogProperties(usePlatformDefaultWidth = false)) {
                         AddGroupDialog(
                             onGoBack = { navController.popBackStack() },
-                        )
+                            onNavigate = { navController.navigate(it) },
+                            )
                     }
                     dialog(route = ADD_CHANNEL, dialogProperties = DialogProperties(usePlatformDefaultWidth = false)) {
                         AddChannelDialog(
                             onGoBack = { navController.popBackStack() },
-                        )
+                            onNavigate = { navController.navigate(it) },
+                            )
                     }
                 }
             }

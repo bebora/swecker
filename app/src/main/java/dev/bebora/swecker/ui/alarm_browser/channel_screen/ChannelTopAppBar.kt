@@ -45,7 +45,7 @@ fun ChannelTopAppBar(
                 )
                 Text(
                     modifier = modifier.padding(horizontal = 10.dp),
-                    text = channel.members.size.toString().plus(stringResource(R.string.members)),
+                    text = channel.members.size.toString().plus(" ").plus(stringResource(R.string.members)),
                     style = MaterialTheme.typography.labelSmall
                 )
 

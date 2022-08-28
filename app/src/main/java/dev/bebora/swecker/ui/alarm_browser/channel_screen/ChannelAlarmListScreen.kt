@@ -72,7 +72,7 @@ fun ChannelAlarmListScreen(
                             )
                             Text(
                                 modifier = modifier.padding(horizontal = 10.dp),
-                                text = uiState.selectedChannel.members.size.toString()
+                                text = uiState.selectedChannel.members.size.toString().plus(" ")
                                     .plus(stringResource(R.string.members)),
                                 style = MaterialTheme.typography.labelSmall
                             )

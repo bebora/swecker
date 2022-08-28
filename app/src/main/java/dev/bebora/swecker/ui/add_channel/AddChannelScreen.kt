@@ -10,12 +10,14 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
+import dev.bebora.swecker.ui.settings.account.SuggestLogin
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddChannelScreen(
     modifier: Modifier = Modifier,
-    onGoBack: () -> Unit = {}
+    onGoBack: () -> Unit = {},
+    onNavigate: (String) -> Unit
 ) {
     val viewModel: AddChannelViewModel = hiltViewModel()
     val uiState = viewModel.uiState
@@ -45,13 +47,18 @@ fun AddChannelScreen(
         }
     ) { paddingValues ->
         Box(modifier = Modifier.padding(paddingValues).imePadding()) {
-            AddChannelContent(channelPicUrl = uiState.uploadedPicUrl,
-                channelName = uiState.channelName,
-                channelHandle = uiState.channelHandle,
-                setChannelName = viewModel::setChannelName,
-                setChannelPicUrl = viewModel::setChannelPic,
-                setChannelHandle = viewModel::setChannelHandle
-            )
+            if (uiState.me.id.isBlank() && uiState.accountStatusLoaded) {
+                SuggestLogin(onNavigate = onNavigate)
+            } else {
+                AddChannelContent(
+                    channelPicUrl = uiState.uploadedPicUrl,
+                    channelName = uiState.channelName,
+                    channelHandle = uiState.channelHandle,
+                    setChannelName = viewModel::setChannelName,
+                    setChannelPicUrl = viewModel::setChannelPic,
+                    setChannelHandle = viewModel::setChannelHandle
+                )
+            }
         }
     }
 }

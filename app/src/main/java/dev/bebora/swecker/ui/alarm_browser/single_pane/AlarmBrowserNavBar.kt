@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import dev.bebora.swecker.data.alarm_browser.PreviewAlarmRepository
 import dev.bebora.swecker.data.service.impl.ChatServiceImpl
@@ -14,6 +15,7 @@ import dev.bebora.swecker.data.service.testimpl.FakeAuthService
 import dev.bebora.swecker.ui.alarm_browser.*
 import dev.bebora.swecker.ui.theme.SweckerTheme
 import dev.bebora.swecker.ui.utils.getNavbarIcon
+import dev.bebora.swecker.R
 
 @Composable
 fun AlarmBrowserNavBar(
@@ -21,28 +23,80 @@ fun AlarmBrowserNavBar(
     alarmBrowserUIState: AlarmBrowserUIState,
     onEvent: (AlarmBrowserEvent) -> Unit
 ) {
-    val items = listOf("Home", "Personal", "Groups", "Channels")
-
     if (alarmBrowserUIState.detailsScreenContent == DetailsScreenContent.NONE) {
         NavigationBar(modifier = modifier) {
-            items.forEach { item ->
-                val isSelected =
-                    alarmBrowserUIState.selectedDestination == NavBarDestination.valueOf(item.uppercase())
-                NavigationBarItem(
-                    icon = { Icon(getNavbarIcon(item, isSelected), contentDescription = item) },
-                    label = { Text(item) },
-                    selected = isSelected,
-                    onClick = {
-                        onEvent(
-                            AlarmBrowserEvent.NavBarNavigate(
-                                NavBarDestination.valueOf(
-                                    item.uppercase()
-                                )
-                            )
+            var isSelected =
+                alarmBrowserUIState.selectedDestination == NavBarDestination.HOME
+            NavigationBarItem(
+                icon = {
+                    Icon(
+                        getNavbarIcon("Home", isSelected),
+                        contentDescription = "All alarms overview"
+                    )
+                },
+                label = { Text(stringResource(R.string.home)) },
+                selected = isSelected,
+                onClick = {
+                    onEvent(
+                        AlarmBrowserEvent.NavBarNavigate(
+                            NavBarDestination.HOME
                         )
-                    }
-                )
-            }
+                    )
+                }
+            )
+            isSelected =
+                alarmBrowserUIState.selectedDestination == NavBarDestination.PERSONAL
+            NavigationBarItem(
+                icon = {
+                    Icon(
+                        getNavbarIcon("Personal", isSelected),
+                        contentDescription = "Personal alarms"
+                    )
+                },
+                label = { Text(stringResource(R.string.personal)) },
+                selected = isSelected,
+                onClick = {
+                    onEvent(
+                        AlarmBrowserEvent.NavBarNavigate(
+                            NavBarDestination.PERSONAL
+                        )
+                    )
+                }
+            )
+            isSelected =
+                alarmBrowserUIState.selectedDestination == NavBarDestination.GROUPS
+            NavigationBarItem(
+                icon = { Icon(getNavbarIcon("Groups", isSelected), contentDescription = "Groups") },
+                label = { Text(stringResource(id = R.string.groups)) },
+                selected = isSelected,
+                onClick = {
+                    onEvent(
+                        AlarmBrowserEvent.NavBarNavigate(
+                            NavBarDestination.GROUPS
+                        )
+                    )
+                }
+            )
+            isSelected =
+                alarmBrowserUIState.selectedDestination == NavBarDestination.CHANNELS
+            NavigationBarItem(
+                icon = {
+                    Icon(
+                        getNavbarIcon("Channels", isSelected),
+                        contentDescription = "Channels"
+                    )
+                },
+                label = { Text(stringResource(id = R.string.channels)) },
+                selected = isSelected,
+                onClick = {
+                    onEvent(
+                        AlarmBrowserEvent.NavBarNavigate(
+                            NavBarDestination.CHANNELS
+                        )
+                    )
+                }
+            )
+
         }
     }
 }

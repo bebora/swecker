@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import dev.bebora.swecker.data.User
 import dev.bebora.swecker.ui.contact_browser.ContactRow
+import dev.bebora.swecker.ui.settings.account.SuggestLogin
 
 @Composable
 fun AddGroupContactsList(
@@ -181,7 +182,8 @@ fun AddGroupInputChip(
 @Composable
 fun AddGroupScreen(
     modifier: Modifier = Modifier,
-    onGoBack: () -> Unit = {}
+    onGoBack: () -> Unit = {},
+    onNavigate: (String) -> Unit
 ) {
     val viewModel: AddGroupViewModel = hiltViewModel()
     val uiState = viewModel.uiState
@@ -238,33 +240,37 @@ fun AddGroupScreen(
         }
     ) { paddingValues ->
         Box(modifier = Modifier.padding(paddingValues)) {
-            if (uiState.content == AddGroupContent.GROUP_SELECT_CONTACTS) {
-                var searchKey by remember {
-                    mutableStateOf("")
-                }
-                Column(modifier = Modifier.fillMaxWidth(1f)) {
-                    AddGroupInputField(
-                        searchKey = searchKey,
-                        selectedMembers = uiState.selectedMembers,
-                        onSearchKeyChanged = { newSearchKey -> searchKey = newSearchKey },
-                        onChipClicked = viewModel::toggleContactSelection
-                    )
-                    AddGroupContactsList(
-                        selectedMembers = uiState.selectedMembers,
-                        contacts = uiState.allContacts,
-                        onContactPressed = viewModel::toggleContactSelection,
-                        searchKey = searchKey
-                    )
-                }
+            if (uiState.me.id.isBlank() && uiState.accountStatusLoaded) {
+                SuggestLogin(onNavigate = onNavigate)
+            } else {
+                if (uiState.content == AddGroupContent.GROUP_SELECT_CONTACTS) {
+                    var searchKey by remember {
+                        mutableStateOf("")
+                    }
+                    Column(modifier = Modifier.fillMaxWidth(1f)) {
+                        AddGroupInputField(
+                            searchKey = searchKey,
+                            selectedMembers = uiState.selectedMembers,
+                            onSearchKeyChanged = { newSearchKey -> searchKey = newSearchKey },
+                            onChipClicked = viewModel::toggleContactSelection
+                        )
+                        AddGroupContactsList(
+                            selectedMembers = uiState.selectedMembers,
+                            contacts = uiState.allContacts,
+                            onContactPressed = viewModel::toggleContactSelection,
+                            searchKey = searchKey
+                        )
+                    }
 
-            } else if (uiState.content == AddGroupContent.GROUP_SELECT_NAME) {
-                AddGroupSelectNameScreen(
-                    selectedMembers = uiState.selectedMembers,
-                    groupName = uiState.groupName,
-                    groupPicUrl = uiState.tempGroupData.picture,
-                    setGroupName = viewModel::setGroupName,
-                    setGroupPicUrl = viewModel::setGroupPic,
-                )
+                } else if (uiState.content == AddGroupContent.GROUP_SELECT_NAME) {
+                    AddGroupSelectNameScreen(
+                        selectedMembers = uiState.selectedMembers,
+                        groupName = uiState.groupName,
+                        groupPicUrl = uiState.tempGroupData.picture,
+                        setGroupName = viewModel::setGroupName,
+                        setGroupPicUrl = viewModel::setGroupPic,
+                    )
+                }
             }
         }
     }

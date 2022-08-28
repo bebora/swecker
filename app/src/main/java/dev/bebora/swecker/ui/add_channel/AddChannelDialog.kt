@@ -10,12 +10,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import dev.bebora.swecker.R
+import dev.bebora.swecker.ui.settings.account.SuggestLogin
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddChannelDialog(
     modifier: Modifier = Modifier,
-    onGoBack: () -> Unit = {}
+    onGoBack: () -> Unit = {},
+    onNavigate: (String) -> Unit
 ) {
     val viewModel: AddChannelViewModel = hiltViewModel()
     val uiState = viewModel.uiState
@@ -34,65 +36,69 @@ fun AddChannelDialog(
                     modifier = Modifier
                         .padding(16.dp)
                 ) {
-
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(60.dp)
-                            .padding(4.dp)
-                    ) {
-                        if (uiState.waitingForServiceResponse) {
-                            CircularProgressIndicator()
+                    if (uiState.me.id.isBlank() && uiState.accountStatusLoaded) {
+                        SuggestLogin(onNavigate = onNavigate)
+                    } else {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(60.dp)
+                                .padding(4.dp)
+                        ) {
+                            if (uiState.waitingForServiceResponse) {
+                                CircularProgressIndicator()
+                            }
+                            Spacer(modifier = Modifier.weight(1f))
+                            IconButton(onClick = { viewModel.discardChannelCreation(onGoBack) }) {
+                                Icon(
+                                    Icons.Outlined.Close,
+                                    contentDescription = stringResource(id = R.string.go_back)
+                                )
+                            }
                         }
+
+                        AddChannelContent(
+                            channelName = uiState.channelName,
+                            channelHandle = uiState.channelHandle,
+                            channelPicUrl = uiState.uploadedPicUrl,
+                            setChannelName = viewModel::setChannelName,
+                            setChannelPicUrl = viewModel::setChannelPic,
+                            setChannelHandle = viewModel::setChannelHandle
+                        )
+
+
                         Spacer(modifier = Modifier.weight(1f))
-                        IconButton(onClick = { viewModel.discardChannelCreation(onGoBack) }) {
-                            Icon(
-                                Icons.Outlined.Close,
-                                contentDescription = stringResource(id = R.string.go_back)
+
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(4.dp)
+                        ) {
+                            Spacer(modifier = Modifier.weight(1f))
+                            AssistChip(onClick = { viewModel.discardChannelCreation(onGoBack) },
+                                label = { Text("Cancel") })
+
+                            Spacer(modifier = Modifier.width(8.dp))
+
+                            AssistChip(
+                                onClick = {
+                                    viewModel.confirmChannelCreation(
+                                        onSuccess = {
+                                            onGoBack()
+                                        }
+                                    )
+                                },
+                                label = { Text("Ok") },
+                                enabled = uiState.channelName.isNotEmpty() && uiState.channelHandle.isNotEmpty()
                             )
                         }
-                    }
-
-                    AddChannelContent(
-                        channelName = uiState.channelName,
-                        channelHandle = uiState.channelHandle,
-                        channelPicUrl = uiState.uploadedPicUrl,
-                        setChannelName = viewModel::setChannelName,
-                        setChannelPicUrl = viewModel::setChannelPic,
-                        setChannelHandle = viewModel::setChannelHandle
-                    )
-
-
-                    Spacer(modifier = Modifier.weight(1f))
-
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(4.dp)
-                    ) {
-                        Spacer(modifier = Modifier.weight(1f))
-                        AssistChip(onClick = { viewModel.discardChannelCreation(onGoBack) },
-                            label = { Text("Cancel") })
-
-                        Spacer(modifier = Modifier.width(8.dp))
-
-                        AssistChip(
-                            onClick = {
-                                viewModel.confirmChannelCreation(
-                                    onSuccess = {
-                                        onGoBack()
-                                    }
-                                )
-                            },
-                            label = { Text("Ok") },
-                            enabled = uiState.channelName.isNotEmpty() && uiState.channelHandle.isNotEmpty()
-                        )
                     }
                 }
             }
         } else {
             AddChannelScreen(
-                onGoBack = onGoBack
+                onGoBack = onGoBack,
+                onNavigate = onNavigate
             )
         }
     }

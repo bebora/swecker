@@ -89,9 +89,9 @@
     <string name="delete_alarm">Delete alarm</string>
     <string name="select_date">Select date</string>
     <string name="cancel">Cancel</string>
-    <string name="members">\ members\</string>
     <string name="home">Home</string>
     <string name="personal">Personal</string>
     <string name="groups">Groups</string>
     <string name="suggest_selection">Select something</string>
+    <string name="members">members</string>
 </resources>

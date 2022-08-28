@@ -6,13 +6,15 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import dev.bebora.swecker.ui.settings.account.SuggestLogin
 
 //TODO display something when the profile picture is being uploaded (similar to what is done in AddGroupScreen)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddGroupDialog(
     modifier: Modifier = Modifier,
-    onGoBack: () -> Unit = {}
+    onGoBack: () -> Unit = {},
+    onNavigate: (String) -> Unit
 ) {
     val viewModel: AddGroupViewModel = hiltViewModel()
     val uiState = viewModel.uiState
@@ -30,75 +32,81 @@ fun AddGroupDialog(
                     modifier = Modifier
                         .padding(16.dp)
                 ) {
-                    if (uiState.content == AddGroupContent.GROUP_SELECT_CONTACTS) {
-                        var searchKey by remember {
-                            mutableStateOf("")
-                        }
-                        Column(modifier = Modifier.fillMaxWidth(1f)) {
-                            AddGroupInputField(
-                                searchKey = searchKey,
-                                selectedMembers = uiState.selectedMembers,
-                                onSearchKeyChanged = { newSearchKey -> searchKey = newSearchKey },
-                                onChipClicked = viewModel::toggleContactSelection
-                            )
-                            AddGroupContactsList(
-                                selectedMembers = uiState.selectedMembers,
-                                contacts = uiState.allContacts,
-                                onContactPressed = viewModel::toggleContactSelection,
-                                searchKey = searchKey
-                            )
-                        }
-
-                    } else if (uiState.content == AddGroupContent.GROUP_SELECT_NAME) {
-                        AddGroupSelectNameScreen(
-                            selectedMembers = uiState.selectedMembers,
-                            groupName = uiState.groupName,
-                            groupPicUrl = uiState.tempGroupData.picture,
-                            setGroupName = viewModel::setGroupName,
-                            setGroupPicUrl = viewModel::setGroupPic,
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.weight(1f))
-
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(4.dp)
-                    ) {
+                    if (uiState.me.id.isBlank() && uiState.accountStatusLoaded) {
+                        SuggestLogin(onNavigate = onNavigate)
+                    } else {
                         if (uiState.content == AddGroupContent.GROUP_SELECT_CONTACTS) {
-                            Spacer(modifier = Modifier.weight(1f))
-                            AssistChip(
-                                onClick = {
-                                    viewModel.discardGroupCreation(onGoBack)
-                                },
-                                label = { Text("Cancel") })
+                            var searchKey by remember {
+                                mutableStateOf("")
+                            }
+                            Column(modifier = Modifier.fillMaxWidth(1f)) {
+                                AddGroupInputField(
+                                    searchKey = searchKey,
+                                    selectedMembers = uiState.selectedMembers,
+                                    onSearchKeyChanged = { newSearchKey ->
+                                        searchKey = newSearchKey
+                                    },
+                                    onChipClicked = viewModel::toggleContactSelection
+                                )
+                                AddGroupContactsList(
+                                    selectedMembers = uiState.selectedMembers,
+                                    contacts = uiState.allContacts,
+                                    onContactPressed = viewModel::toggleContactSelection,
+                                    searchKey = searchKey
+                                )
+                            }
 
-                            Spacer(modifier = Modifier.width(8.dp))
-
-                            AssistChip(
-                                onClick = viewModel::nextScreen,
-                                label = { Text("Next") },
-                                enabled = uiState.selectedMembers.isNotEmpty()
-                            )
                         } else if (uiState.content == AddGroupContent.GROUP_SELECT_NAME) {
-                            Spacer(modifier = Modifier.weight(1f))
-                            AssistChip(onClick = viewModel::previousScreen,
-                                label = { Text("Back") })
-
-                            Spacer(modifier = Modifier.width(8.dp))
-
-                            AssistChip(
-                                onClick = {
-                                    viewModel.confirmGroupCreation(
-                                        onSuccess = {
-                                            onGoBack()
-                                        }
-                                    )
-                                },
-                                label = { Text("Ok") },
-                                enabled = uiState.groupName.isNotEmpty()
+                            AddGroupSelectNameScreen(
+                                selectedMembers = uiState.selectedMembers,
+                                groupName = uiState.groupName,
+                                groupPicUrl = uiState.tempGroupData.picture,
+                                setGroupName = viewModel::setGroupName,
+                                setGroupPicUrl = viewModel::setGroupPic,
                             )
+                        }
+
+                        Spacer(modifier = Modifier.weight(1f))
+
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(4.dp)
+                        ) {
+                            if (uiState.content == AddGroupContent.GROUP_SELECT_CONTACTS) {
+                                Spacer(modifier = Modifier.weight(1f))
+                                AssistChip(
+                                    onClick = {
+                                        viewModel.discardGroupCreation(onGoBack)
+                                    },
+                                    label = { Text("Cancel") })
+
+                                Spacer(modifier = Modifier.width(8.dp))
+
+                                AssistChip(
+                                    onClick = viewModel::nextScreen,
+                                    label = { Text("Next") },
+                                    enabled = uiState.selectedMembers.isNotEmpty()
+                                )
+                            } else if (uiState.content == AddGroupContent.GROUP_SELECT_NAME) {
+                                Spacer(modifier = Modifier.weight(1f))
+                                AssistChip(onClick = viewModel::previousScreen,
+                                    label = { Text("Back") })
+
+                                Spacer(modifier = Modifier.width(8.dp))
+
+                                AssistChip(
+                                    onClick = {
+                                        viewModel.confirmGroupCreation(
+                                            onSuccess = {
+                                                onGoBack()
+                                            }
+                                        )
+                                    },
+                                    label = { Text("Ok") },
+                                    enabled = uiState.groupName.isNotEmpty()
+                                )
+                            }
                         }
                     }
                 }
@@ -106,7 +114,8 @@ fun AddGroupDialog(
         }
         else{
             AddGroupScreen(
-                onGoBack = onGoBack
+                onGoBack = onGoBack,
+                onNavigate = onNavigate
             )
         }
     }
