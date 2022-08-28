@@ -84,7 +84,7 @@ fun ThemeDummyScreen(
                 alarm = Alarm(
                     id = "fakeid",
                     enabled = ui.exampleAlarmActive,
-                    name = "Example alarm",
+                    name = stringResource(R.string.example_alarm_name),
                     alarmType = AlarmType.PERSONAL,
                     localDate = LocalDate.now(),
                     localTime = LocalTime.now()
@@ -95,7 +95,7 @@ fun ThemeDummyScreen(
             )
             Spacer(modifier = Modifier.height(16.dp))
             Text(
-                text = "Palette",
+                text = stringResource(R.string.palette),
                 style = MaterialTheme.typography.headlineSmall,
                 modifier = Modifier.padding(horizontal = 16.dp)
             )

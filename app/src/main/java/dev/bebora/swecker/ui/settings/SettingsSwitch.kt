@@ -13,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import dev.bebora.swecker.ui.theme.SweckerTheme
@@ -39,7 +40,10 @@ fun SettingsSwitch(
         Spacer(modifier = Modifier.width(20.dp))
         Text(text = title, style = MaterialTheme.typography.titleMedium)
         Spacer(modifier = Modifier.weight(1f))
-        Switch(checked = checked, onCheckedChange = { _ -> onToggle() })
+        Switch(
+            modifier = Modifier.testTag("settingsSwitch"),
+            checked = checked,
+            onCheckedChange = { _ -> onToggle() })
     }
 }
 

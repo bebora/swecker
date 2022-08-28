@@ -16,7 +16,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import dev.bebora.swecker.R
 import dev.bebora.swecker.data.settings.Ringtone
@@ -137,6 +141,7 @@ fun SoundsDummyScreen(
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier
+                                .semantics { testTag = "popupOption" }
                                 .fillMaxWidth()
                                 .clickable {
                                     onEvent(
@@ -176,6 +181,7 @@ fun SoundsDummyScreen(
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier
+                                .semantics { testTag = "popupOption" }
                                 .fillMaxWidth()
                                 .clickable {
                                     onEvent(
@@ -221,6 +227,7 @@ fun SoundsDummyScreen(
                         color = MaterialTheme.colorScheme.onSurface
                     )
                     Slider(
+                        modifier = Modifier.testTag("volumeSlider"),
                         value = ui.currentRingtoneVolume / 100F,
                         onValueChange = {
                             onEvent(

@@ -94,4 +94,6 @@
     <string name="groups">Groups</string>
     <string name="suggest_selection">Select something</string>
     <string name="members">members</string>
+    <string name="palette">Palette</string>
+    <string name="example_alarm_name">Example alarm</string>
 </resources>
