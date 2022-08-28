@@ -7,6 +7,8 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AddPhotoAlternate
 import androidx.compose.material.icons.outlined.Label
@@ -16,7 +18,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import coil.compose.SubcomposeAsyncImage
 import com.google.modernstorage.photopicker.PhotoPicker
@@ -35,6 +39,7 @@ fun AddGroupSelectNameScreen(
     setGroupName: (String) -> Unit = {},
     setGroupPicUrl: (Uri) -> Unit = {},
 ) {
+    val focusManager = LocalFocusManager.current
     val photoPicker = rememberLauncherForActivityResult(PhotoPicker()) { uris ->
         if (uris.isNotEmpty()) {
             val imageUri = uris[0]
@@ -115,9 +120,14 @@ fun AddGroupSelectNameScreen(
                     Icon(imageVector = Icons.Outlined.Label, contentDescription = null)
                 },
                 maxLines = 1,
+                singleLine = true,
                 label = { Text("Name") },
                 value = groupName,
                 onValueChange = setGroupName,
+                keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    imeAction = ImeAction.Done,
+                ),
             )
 
         }

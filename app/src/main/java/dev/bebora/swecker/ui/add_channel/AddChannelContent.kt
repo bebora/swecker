@@ -7,6 +7,8 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AddPhotoAlternate
 import androidx.compose.material.icons.outlined.AlternateEmail
@@ -17,8 +19,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import coil.compose.SubcomposeAsyncImage
 import com.google.modernstorage.photopicker.PhotoPicker
@@ -38,6 +42,7 @@ fun AddChannelContent(
     setChannelPicUrl: (Uri) -> Unit = {},
     setChannelHandle: (String) -> Unit = {}
 ) {
+    val focusManager = LocalFocusManager.current
     val photoPicker = rememberLauncherForActivityResult(PhotoPicker()) { uris ->
         if (uris.isNotEmpty()) {
             val imageUri = uris[0]
@@ -123,6 +128,10 @@ fun AddChannelContent(
                 maxLines = 1,
                 value = channelName,
                 onValueChange = setChannelName,
+                keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    imeAction = ImeAction.Done,
+                ),
             )
             Spacer(modifier = Modifier.height(8.dp))
 
@@ -139,6 +148,10 @@ fun AddChannelContent(
                 label = { Text(stringResource(R.string.channel_handle)) },
                 value = channelHandle,
                 onValueChange = setChannelHandle,
+                keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    imeAction = ImeAction.Done,
+                ),
             )
 
             Spacer(modifier = Modifier.height(8.dp))
