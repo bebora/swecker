@@ -45,45 +45,7 @@ class AddGroupViewModelTest {
         alarmProviderService = FakeAlarmProviderService()
         authService = FakeAuthService(initialUserId = initialUserId)
         accountsService = FakeAccountsService(
-            initialUsers = mutableMapOf(
-                "luca" to UserWithFriends(
-                    id = "luca",
-                    name = "Luca",
-                    username = "luca",
-                    friends = listOf(
-                        User(
-                            id = "carm",
-                            name = "Carm",
-                            username = "carm"
-                        )
-                    )
-                ),
-                "carm" to UserWithFriends(
-                    id = "carm",
-                    name = "Carm",
-                    username = "carm",
-                    friends = listOf(
-                        User(
-                            id = "luca",
-                            name = "Luca",
-                            username = "carm"
-                        )
-                    )
-                ),
-                "me" to UserWithFriends(
-                    id = "me",
-                    name = "Me",
-                    username = "me",
-                    friends = emptyList()
-                ),
-                "you" to UserWithFriends(
-                    id = "you",
-                    name = "You",
-                    username = "you",
-                    friends = emptyList()
-                )
-            ),
-            initialFriendshipRequests = mutableMapOf("luca" to listOf("me"))
+            initialFriendshipRequests = mutableMapOf("luca" to listOf(FakeAuthService.validUserId))
         )
         imageStorageService = FakeImageStorageService()
         alarmProviderService = FakeAlarmProviderService()

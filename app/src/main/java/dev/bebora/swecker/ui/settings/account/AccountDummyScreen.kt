@@ -33,6 +33,7 @@ import dev.bebora.swecker.util.UiEvent
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
 import com.google.modernstorage.photopicker.PhotoPicker
+import dev.bebora.swecker.util.TestConstants
 
 @SuppressLint("UnsafeOptInUsageError")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -94,7 +95,7 @@ fun AccountDummyScreen(
                         IconButton(onClick = { onEvent(SettingsEvent.LogOut) }) {
                             Icon(
                                 imageVector = Icons.Default.Logout,
-                                contentDescription = "Log out"
+                                contentDescription = TestConstants.logout
                             )
                         }
                     }

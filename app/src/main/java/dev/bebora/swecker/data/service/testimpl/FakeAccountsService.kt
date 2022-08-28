@@ -7,10 +7,46 @@ import dev.bebora.swecker.data.service.impl.toUser
 import kotlinx.coroutines.flow.*
 
 class FakeAccountsService(
-    initialUsers: MutableMap<String, UserWithFriends> = mutableMapOf(),
     initialFriendshipRequests: MutableMap<String, List<String>> = mutableMapOf()
 ) : AccountsService {
-    private val users = initialUsers
+    private val users = mutableMapOf(
+        "luca" to UserWithFriends(
+            id = "luca",
+            name = "Luca",
+            username = "luca",
+            friends = listOf(
+                User(
+                    id = "carm",
+                    name = "Carm",
+                    username = "carm"
+                )
+            )
+        ),
+        "carm" to UserWithFriends(
+            id = "carm",
+            name = "Carm",
+            username = "carm",
+            friends = listOf(
+                User(
+                    id = "luca",
+                    name = "Luca",
+                    username = "carm"
+                )
+            )
+        ),
+        FakeAuthService.validUserId to UserWithFriends(
+            id = FakeAuthService.validUserId,
+            name = "Me",
+            username = FakeAuthService.validUserId,
+            friends = emptyList()
+        ),
+        "you" to UserWithFriends(
+            id = "you",
+            name = "You",
+            username = "you",
+            friends = emptyList()
+        )
+    )
     private val friendshipRequests = initialFriendshipRequests // to, from
     private val userUpdates = MutableStateFlow(0)
     private val friendshipRequestsUpdates = MutableStateFlow(0)

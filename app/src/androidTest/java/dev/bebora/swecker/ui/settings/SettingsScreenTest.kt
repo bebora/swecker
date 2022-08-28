@@ -18,8 +18,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import dev.bebora.swecker.R
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.runBlocking
+import dev.bebora.swecker.util.SETTINGS
 
 @HiltAndroidTest
 @UninstallModules(AppModule::class)
@@ -37,8 +36,8 @@ class SettingsScreenTest {
         composeRule.activity.setContent {
             SweckerTheme {
                 val navController = rememberAnimatedNavController()
-                AnimatedNavHost(navController = navController, startDestination = "SETTINGS") {
-                    composable(route = "SETTINGS") {
+                AnimatedNavHost(navController = navController, startDestination = SETTINGS) {
+                    composable(route = SETTINGS) {
                         SettingsScreen()
                     }
                 }

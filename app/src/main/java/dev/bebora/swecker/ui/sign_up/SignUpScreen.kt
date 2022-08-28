@@ -19,6 +19,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
@@ -28,6 +29,7 @@ import dev.bebora.swecker.R
 import dev.bebora.swecker.common.composable.PasswordField
 import dev.bebora.swecker.data.service.testimpl.FakeAccountsService
 import dev.bebora.swecker.data.service.testimpl.FakeAuthService
+import dev.bebora.swecker.util.TestConstants
 import dev.bebora.swecker.util.UiEvent
 
 @Composable
@@ -118,6 +120,7 @@ fun SignUpScreen(
                         )
                     },
                     modifier = Modifier
+                        .testTag(TestConstants.email)
                         .padding(
                             horizontal = 32.dp,
                             vertical = 8.dp
@@ -138,6 +141,7 @@ fun SignUpScreen(
                         viewModel.onEvent(SignUpEvent.SetTempPassword(newValue))
                     },
                     modifier = Modifier
+                        .testTag(TestConstants.password)
                         .padding(
                             horizontal = 32.dp,
                             vertical = 8.dp
