@@ -72,4 +72,37 @@ class AddChannelScreenTest {
         composeRule.onNodeWithTag(TestConstants.fab).performClick()
         composeRule.onNodeWithText(handle).assertIsDisplayed()
     }
+
+    @Test
+    fun createChannel_ChannelCreated() {
+        // Initial login
+        val login = composeRule.activity.getString(R.string.log_in_button)
+        composeRule.onNodeWithTag(TestConstants.channels).performClick()
+        composeRule.onNodeWithTag(TestConstants.fab).performClick()
+        composeRule.onNodeWithText(login).performClick()
+        composeRule.onNodeWithTag(TestConstants.email).performTextInput(
+            FakeAuthService.validLoginEmail
+        )
+        composeRule.onNodeWithTag(TestConstants.password).performTextInput(
+            FakeAuthService.validPassword
+        )
+        composeRule.onNodeWithText(login).performClick()
+        // Open dialog with text fields
+        val handlePlaceholder = composeRule.activity.getString(R.string.channel_handle)
+        composeRule.onNodeWithTag(TestConstants.channels).performClick()
+        composeRule.onNodeWithTag(TestConstants.fab).performClick()
+        composeRule.onNodeWithText(handlePlaceholder).assertIsDisplayed()
+        // Create channel
+        val name = "Klamitos"
+        val handle = "speros"
+        val confirm = composeRule.activity.getString(R.string.confirm_dialog)
+        composeRule.onNodeWithTag(TestConstants.name).performTextInput(
+            name
+        )
+        composeRule.onNodeWithTag(TestConstants.handle).performTextInput(
+            handle
+        )
+        composeRule.onNodeWithText(confirm).performClick()
+        composeRule.onNodeWithText(name).assertIsDisplayed()
+    }
 }

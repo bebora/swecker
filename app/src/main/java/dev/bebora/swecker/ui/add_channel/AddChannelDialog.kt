@@ -88,7 +88,7 @@ fun AddChannelDialog(
                                         }
                                     )
                                 },
-                                label = { Text("Ok") },
+                                label = { Text(stringResource(id = R.string.confirm_dialog)) },
                                 enabled = uiState.channelName.isNotEmpty() && uiState.channelHandle.isNotEmpty()
                             )
                         }

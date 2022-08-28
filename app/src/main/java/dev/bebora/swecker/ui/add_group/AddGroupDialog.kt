@@ -4,8 +4,10 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import dev.bebora.swecker.R
 import dev.bebora.swecker.ui.settings.account.SuggestLogin
 
 //TODO display something when the profile picture is being uploaded (similar to what is done in AddGroupScreen)
@@ -103,7 +105,7 @@ fun AddGroupDialog(
                                             }
                                         )
                                     },
-                                    label = { Text("Ok") },
+                                    label = { Text(stringResource(id = R.string.confirm_dialog)) },
                                     enabled = uiState.groupName.isNotEmpty()
                                 )
                             }

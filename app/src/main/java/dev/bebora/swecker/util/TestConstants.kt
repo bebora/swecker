@@ -9,4 +9,6 @@ object TestConstants {
     val groups = "groups"
     val channels = "channel"
     val fab = "fab"
+    val handle = "handle"
+    val name = "name"
 }

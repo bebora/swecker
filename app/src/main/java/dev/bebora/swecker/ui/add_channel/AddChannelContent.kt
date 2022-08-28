@@ -17,12 +17,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import coil.compose.SubcomposeAsyncImage
 import com.google.modernstorage.photopicker.PhotoPicker
 import dev.bebora.swecker.R
 import dev.bebora.swecker.ui.settings.account.PropicPlaceholder
+import dev.bebora.swecker.util.TestConstants
 
 @SuppressLint("UnsafeOptInUsageError")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -110,6 +112,7 @@ fun AddChannelContent(
         Column(modifier = modifier) {
             OutlinedTextField(
                 modifier = Modifier
+                    .testTag(TestConstants.name)
                     .fillMaxWidth(1f)
                     .imePadding()
                     .padding(horizontal = 16.dp),
@@ -128,6 +131,7 @@ fun AddChannelContent(
                     Icon(imageVector = Icons.Outlined.AlternateEmail, contentDescription = null)
                 },
                 modifier = Modifier
+                    .testTag(TestConstants.handle)
                     .fillMaxWidth(1f)
                     .imePadding()
                     .padding(horizontal = 16.dp),
