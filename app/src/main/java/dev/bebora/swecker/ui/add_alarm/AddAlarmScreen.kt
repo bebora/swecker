@@ -6,7 +6,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -24,11 +23,12 @@ fun AddAlarmContent(
     onBackPressed: () -> Unit,
     userId: String?,
     alarmType: AlarmType,
-    ) {
+) {
     val alarm = viewModel.vmAlarm
     AlarmDetails(
         modifier = modifier,
         alarm = alarm,
+        showEnableChat = group != null,
         canDelete = false,
         onAlarmPartiallyUpdated = viewModel::onAlarmPartiallyUpdate,
         onUpdateCompleted = { al, b ->
@@ -88,8 +88,9 @@ fun AddAlarmScreen(
             viewModel = addAlarmViewModel,
             onBackPressed = onGoBack,
             group = group,
-            userId= userId,
-            alarmType = alarmType)
+            userId = userId,
+            alarmType = alarmType
+        )
     }
 }
 
@@ -114,7 +115,7 @@ fun AddAlarmDialog(
                 viewModel = addAlarmViewModel,
                 onBackPressed = onGoBack,
                 group = group,
-                userId= userId,
+                userId = userId,
                 alarmType = alarmType
             )
         }

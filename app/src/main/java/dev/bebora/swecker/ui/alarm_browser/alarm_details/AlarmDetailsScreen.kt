@@ -37,6 +37,7 @@ fun AlarmDetails(
     modifier: Modifier = Modifier,
     alarm: Alarm,
     canDelete: Boolean,
+    showEnableChat: Boolean = true,
     onAlarmPartiallyUpdated: (Alarm) -> Unit,
     onUpdateCompleted: (Alarm, Boolean) -> Unit,
     onAlarmDeleted: (Alarm) -> Unit = {}
@@ -139,52 +140,54 @@ fun AlarmDetails(
             Spacer(modifier = Modifier.height(4.dp))
             Divider()
 
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth(1f)
-                    .clickable {
-                        onAlarmPartiallyUpdated(alarm.copy(enableChat = !alarm.enableChat))
-                    }
-                    .padding(8.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Icon(imageVector = Icons.Outlined.Message, contentDescription = null)
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(
-                    text = stringResource(R.string.enable_chat),
-                    style = MaterialTheme.typography.labelLarge,
-                    textAlign = TextAlign.Center,
-                )
-                Spacer(modifier = Modifier.weight(1f))
-                OutlinedIconToggleButton(
-                    modifier = Modifier.size(30.dp),
-                    checked = alarm.enableChat,
-                    border = if (alarm.enableChat) {
-                        null
-                    } else {
-                        BorderStroke(4.dp, MaterialTheme.colorScheme.outlineVariant)
-                    },
-                    colors = if (alarm.enableChat) {
-                        IconButtonDefaults.iconToggleButtonColors(
-                            checkedContainerColor = MaterialTheme.colorScheme.primaryContainer,
-                            checkedContentColor = MaterialTheme.colorScheme.onPrimaryContainer
-                        )
-                    } else {
-                        IconButtonDefaults.iconToggleButtonColors(
-                            containerColor = MaterialTheme.colorScheme.surface
-                        )
-                    },
-                    onCheckedChange = {
-                        onAlarmPartiallyUpdated(
-                            alarm.copy(
-                                enableChat = !alarm.enableChat
-                            )
-
-                        )
-                    },
+            if(showEnableChat) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth(1f)
+                        .clickable {
+                            onAlarmPartiallyUpdated(alarm.copy(enableChat = !alarm.enableChat))
+                        }
+                        .padding(8.dp),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    if (alarm.enableChat) {
-                        Icon(imageVector = Icons.Outlined.Check, contentDescription = null)
+                    Icon(imageVector = Icons.Outlined.Message, contentDescription = null)
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = stringResource(R.string.enable_chat),
+                        style = MaterialTheme.typography.labelLarge,
+                        textAlign = TextAlign.Center,
+                    )
+                    Spacer(modifier = Modifier.weight(1f))
+                    OutlinedIconToggleButton(
+                        modifier = Modifier.size(30.dp),
+                        checked = alarm.enableChat,
+                        border = if (alarm.enableChat) {
+                            null
+                        } else {
+                            BorderStroke(4.dp, MaterialTheme.colorScheme.outlineVariant)
+                        },
+                        colors = if (alarm.enableChat) {
+                            IconButtonDefaults.iconToggleButtonColors(
+                                checkedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                                checkedContentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                            )
+                        } else {
+                            IconButtonDefaults.iconToggleButtonColors(
+                                containerColor = MaterialTheme.colorScheme.surface
+                            )
+                        },
+                        onCheckedChange = {
+                            onAlarmPartiallyUpdated(
+                                alarm.copy(
+                                    enableChat = !alarm.enableChat
+                                )
+
+                            )
+                        },
+                    ) {
+                        if (alarm.enableChat) {
+                            Icon(imageVector = Icons.Outlined.Check, contentDescription = null)
+                        }
                     }
                 }
             }
@@ -444,10 +447,13 @@ fun AlarmDetailsScreen(
         }?.owner == myId || uiState.groups.firstOrNull { group ->
             group.id == selectedAlarm?.groupId
         }?.owner == myId || uiState.selectedAlarm?.alarmType == AlarmType.PERSONAL
+        
+        val showEnableChat = selectedAlarm?.alarmType != AlarmType.PERSONAL
 
         AlarmDetails(
             modifier = modifier.padding(it),
             alarm = uiState.selectedAlarm!!,
+            showEnableChat = showEnableChat,
             canDelete = canDeleteAlarm,
             onAlarmPartiallyUpdated = { al ->
                 onEvent(
