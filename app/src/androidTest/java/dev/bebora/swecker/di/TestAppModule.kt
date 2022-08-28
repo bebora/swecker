@@ -11,9 +11,12 @@ import dev.bebora.swecker.data.alarm_browser.AlarmRepository
 import dev.bebora.swecker.data.alarm_browser.AlarmRepositoryImpl
 import dev.bebora.swecker.data.service.*
 import dev.bebora.swecker.data.service.impl.*
+import dev.bebora.swecker.data.service.testimpl.*
 import dev.bebora.swecker.data.settings.*
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.StandardTestDispatcher
 import javax.inject.Singleton
 
 @Module
@@ -49,36 +52,38 @@ object TestAppModule {
     @Provides
     @Singleton
     fun provideAuthService(): AuthService {
-        return AuthServiceImpl()
+        return FakeAuthService()
     }
 
     @Provides
     @Singleton
     fun provideImageStorageService(): ImageStorageService {
-        return ImageStorageServiceImpl()
+        return FakeImageStorageService()
     }
 
     @Provides
     @Singleton
     fun provideAccountsService(): AccountsService {
-        return AccountsServiceImpl()
+        // TODO Add some data?
+        return FakeAccountsService()
     }
 
     @Provides
     @Singleton
     fun provideChatService(): ChatService {
-        return ChatServiceImpl()
+        return FakeChatService()
     }
 
     @Provides
     @Singleton
     fun provideAlarmProviderService(): AlarmProviderService {
-        return AlarmProviderServiceImpl()
+        return FakeAlarmProviderService()
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Provides
     @Singleton
     fun provideIoDispatcher(): CoroutineDispatcher {
-        return Dispatchers.IO
+        return StandardTestDispatcher()
     }
 }
