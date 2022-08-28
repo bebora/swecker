@@ -96,7 +96,6 @@ class AddChannelScreenTest {
         // Create channel
         val name = "Klamitos"
         val handle = "speros"
-        val confirm = composeRule.activity.getString(R.string.confirm_dialog)
         composeRule.onNodeWithTag(TestConstants.name).performTextInput(
             name
         )
@@ -105,7 +104,7 @@ class AddChannelScreenTest {
         )
         // Close keyboard and confirm
         Espresso.pressBack()
-        composeRule.onNodeWithText(confirm).performClick()
+        composeRule.onNodeWithTag(TestConstants.confirm).performClick()
         composeRule.onNodeWithText(name).assertIsDisplayed()
     }
 }

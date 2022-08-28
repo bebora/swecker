@@ -9,6 +9,7 @@ import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import dev.bebora.swecker.data.service.testimpl.FakeAccountsService
@@ -17,6 +18,7 @@ import dev.bebora.swecker.data.service.testimpl.FakeAuthService
 import dev.bebora.swecker.data.service.testimpl.FakeImageStorageService
 import dev.bebora.swecker.ui.settings.account.SuggestLogin
 import dev.bebora.swecker.ui.theme.SweckerTheme
+import dev.bebora.swecker.util.TestConstants
 import kotlinx.coroutines.Dispatchers
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -40,7 +42,9 @@ fun AddChannelScreen(
         floatingActionButton = {
             if (uiState.channelName.isNotEmpty() && uiState.channelHandle.isNotEmpty()) {
                 FloatingActionButton(
-                    modifier = Modifier.imePadding(),
+                    modifier = Modifier
+                        .imePadding()
+                        .testTag(TestConstants.confirm),
                     onClick = {
                         viewModel.confirmChannelCreation(
                             onSuccess = {

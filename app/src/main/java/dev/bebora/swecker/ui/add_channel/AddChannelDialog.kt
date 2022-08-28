@@ -6,11 +6,13 @@ import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import dev.bebora.swecker.R
 import dev.bebora.swecker.ui.settings.account.SuggestLogin
+import dev.bebora.swecker.util.TestConstants
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -81,6 +83,7 @@ fun AddChannelDialog(
                             Spacer(modifier = Modifier.width(8.dp))
 
                             AssistChip(
+                                modifier = Modifier.testTag(TestConstants.confirm),
                                 onClick = {
                                     viewModel.confirmChannelCreation(
                                         onSuccess = {
