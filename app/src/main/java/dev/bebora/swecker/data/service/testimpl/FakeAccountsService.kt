@@ -12,6 +12,8 @@ class FakeAccountsService(
 ) : AccountsService {
     private val users = initialUsers
     private val friendshipRequests = initialFriendshipRequests // to, from
+    private val userUpdates = MutableStateFlow(0)
+    private val friendshipRequestsUpdates = MutableStateFlow(0)
 
     override fun getUser(userId: String, onError: (Throwable) -> Unit, onSuccess: (User) -> Unit) {
         if (userId.isBlank()) {
@@ -54,6 +56,7 @@ class FakeAccountsService(
                     propicUrl = user.propicUrl, // Skip setting friend
                 )
             }
+            userUpdates.value += 1
             onResult(null)
             // In this fake implementation, friends will not be notified of changes
         }
@@ -63,8 +66,8 @@ class FakeAccountsService(
         return if (userId.isBlank()) {
             flow { emit(emptyList()) }
         } else {
-            flow {
-                emit(users[userId]?.friends ?: emptyList())
+            userUpdates.asStateFlow().map {
+                users[userId]?.friends ?: emptyList()
             }
         }
     }
@@ -79,6 +82,7 @@ class FakeAccountsService(
             onResult(FriendshipRequestAlreadySentException())
         } else {
             friendshipRequests[to.id] = (friendshipRequests[to.id] ?: emptyList()) + listOf(from.id)
+            friendshipRequestsUpdates.value += 1
             onResult(null)
         }
     }
@@ -88,8 +92,8 @@ class FakeAccountsService(
         if (requestToMe == null || !requestToMe.any { it == newFriend.id }) {
             onResult(FriendshipRequestNotExistingException())
         } else {
-            val updatedRequestToMe = requestToMe - newFriend.id
-            friendshipRequests[me.id] = updatedRequestToMe
+            val updatedRequestsToMe = requestToMe - newFriend.id
+            friendshipRequests[me.id] = updatedRequestsToMe
             // Beware that request should only be sent from and to valid users
             val meInDb = users[me.id]!!
             val friendInDb = users[newFriend.id]!!
@@ -99,6 +103,8 @@ class FakeAccountsService(
             users[newFriend.id] = friendInDb.copy(
                 friends = friendInDb.friends + me
             )
+            friendshipRequestsUpdates.value += 1
+            userUpdates.value += 1
             onResult(null)
         }
     }
@@ -107,9 +113,9 @@ class FakeAccountsService(
         if (userId.isBlank()) {
             return flow { emit(emptyList()) }
         }
-        return flow {
-            val requesterIds = friendshipRequests[userId] ?: emptyList()
-            emit(requesterIds.mapNotNull { users[it]?.toUser() })
+        val requesterIds = friendshipRequests[userId] ?: emptyList()
+        return friendshipRequestsUpdates.asStateFlow().map {
+            requesterIds.mapNotNull { users[it]?.toUser() }
         }
     }
 
@@ -147,6 +153,7 @@ class FakeAccountsService(
             users[friend.id] = friendInDb.copy(
                 friends = friendInDb.friends.filter { it.id != me.id }
             )
+            userUpdates.value += 1
             onResult(null)
         }
     }

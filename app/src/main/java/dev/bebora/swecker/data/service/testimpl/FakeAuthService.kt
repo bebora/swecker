@@ -2,12 +2,13 @@ package dev.bebora.swecker.data.service.testimpl
 
 import dev.bebora.swecker.data.service.*
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
 class FakeAuthService(val initialUserId: String? = null) : AuthService {
     private var userId: String? = initialUserId
-    private var infoChanges: Int = 0
     private var acceptSignUpCredentials: Boolean = false
+    private val settingsFlow = MutableStateFlow(0)
 
     override fun getUserId(): String {
         return userId ?: ""
@@ -23,7 +24,7 @@ class FakeAuthService(val initialUserId: String? = null) : AuthService {
         }
         else {
             userId = validUserId
-            infoChanges += 1
+            settingsFlow.value += 1
             onResult(null)
         }
     }
@@ -41,20 +42,18 @@ class FakeAuthService(val initialUserId: String? = null) : AuthService {
         else {
             acceptSignUpCredentials = true
             userId = validUserId
-            infoChanges += 1
+            settingsFlow.value += 1
             onResult(null)
         }
     }
 
     override fun logOut() {
         userId = null
-        infoChanges += 1
+        settingsFlow.value += 1
     }
 
     override fun getUserInfoChanges(): Flow<Int> {
-        return flow {
-            emit(infoChanges)
-        }
+        return settingsFlow.asStateFlow()
     }
 
     companion object {

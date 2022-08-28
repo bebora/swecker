@@ -4,8 +4,7 @@ import dev.bebora.swecker.data.StoredAlarm
 import dev.bebora.swecker.data.ThinGroup
 import dev.bebora.swecker.data.User
 import dev.bebora.swecker.data.service.AlarmProviderService
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.*
 import java.util.UUID
 
 class FakeAlarmProviderService : AlarmProviderService {
@@ -13,20 +12,23 @@ class FakeAlarmProviderService : AlarmProviderService {
     var channels = mutableMapOf<String, ThinGroup>()
     var alarms = mutableListOf<StoredAlarm>()
 
+    private val alarmUpdates = MutableStateFlow(0)
+    private val groupUpdates = MutableStateFlow(0)
+    private val channelUpdates = MutableStateFlow(0)
 
     override fun getUserGroups(userId: String): Flow<List<ThinGroup>> {
-        return flow {
-            emit(groups
+        return groupUpdates.asStateFlow().map {
+            groups
                 .filterValues { it.members.contains(userId) }
-                .map { it.value })
+                .map { it.value }
         }
     }
 
     override fun getUserChannels(userId: String): Flow<List<ThinGroup>> {
-        return flow {
-            emit(channels
+        return channelUpdates.asStateFlow().map {
+            channels
                 .filterValues { it.members.contains(userId) }
-                .map { it.value })
+                .map { it.value }
         }
     }
 
@@ -43,18 +45,21 @@ class FakeAlarmProviderService : AlarmProviderService {
             owner = ownerId
         )
         groups[randomId] = newGroup
+        groupUpdates.value += 1
         onSuccess(newGroup)
     }
 
     // Test do not notify listeners
     override fun updateGroup(newGroupData: ThinGroup, onComplete: (Throwable?) -> Unit) {
         groups[newGroupData.id] = newGroupData
+        groupUpdates.value += 1
         onComplete(null)
     }
 
     // Test do not notify listeners
     override fun deleteGroup(groupId: String, onComplete: (Throwable?) -> Unit) {
         groups.remove(groupId)
+        groupUpdates.value += 1
         onComplete(null)
     }
 
@@ -64,18 +69,21 @@ class FakeAlarmProviderService : AlarmProviderService {
         onComplete: (Throwable?) -> Unit
     ) {
         channels[channel.id] = channel.copy(lowerName = channel.name.lowercase())
+        channelUpdates.value += 1
         onComplete(null)
     }
 
     // Test do not notify listeners
     override fun updateChannel(newChannelData: ThinGroup, onComplete: (Throwable?) -> Unit) {
         channels[newChannelData.id] = newChannelData
+        channelUpdates.value += 1
         onComplete(null)
     }
 
     // Test do not notify listeners
     override fun deleteChannel(channelId: String, onComplete: (Throwable?) -> Unit) {
         channels.remove(channelId)
+        channelUpdates.value += 1
         onComplete(null)
     }
 
@@ -98,6 +106,8 @@ class FakeAlarmProviderService : AlarmProviderService {
         channels[channelId] = originChannel!!.copy(
             members = originChannel.members.plus(userId)
         )
+        channelUpdates.value += 1
+        alarmUpdates.value += 1
         onComplete(null)
     }
 
@@ -107,6 +117,8 @@ class FakeAlarmProviderService : AlarmProviderService {
         channels[channelId] = originChannel!!.copy(
             members = originChannel.members.minus(userId)
         )
+        channelUpdates.value += 1
+        alarmUpdates.value += 1 // Nothing actually changes now
         onComplete(null)
     }
 
@@ -116,6 +128,7 @@ class FakeAlarmProviderService : AlarmProviderService {
         groups[groupId] = originGroup!!.copy(
             members = originGroup.members.minus(userId)
         )
+        groupUpdates.value += 1
         onComplete(null)
     }
 
@@ -123,12 +136,13 @@ class FakeAlarmProviderService : AlarmProviderService {
     override fun createAlarm(alarm: StoredAlarm, onComplete: (Throwable?) -> Unit) {
         assert(alarm.id.isNotEmpty())
         alarms.add(alarm)
+        alarmUpdates.value += 1
         onComplete(null)
     }
 
     override fun getUserAlarms(userId: String): Flow<List<StoredAlarm>> {
-        return flow {
-            emit(alarms.filter { it.userId == userId })
+        return alarmUpdates.asStateFlow().map {
+            alarms.filter { it.userId == userId }
         }
     }
 
@@ -139,6 +153,7 @@ class FakeAlarmProviderService : AlarmProviderService {
         }
         alarms.removeAt(oldAlarmIndex)
         alarms.add(alarm)
+        alarmUpdates.value += 1
         onComplete(null)
     }
 
@@ -147,6 +162,7 @@ class FakeAlarmProviderService : AlarmProviderService {
             it.id == alarm.id && it.userId == alarm.userId
         }
         alarms.removeAt(oldAlarmIndex)
+        alarmUpdates.value += 1
         onComplete(null)
     }
 }

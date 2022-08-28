@@ -4,15 +4,15 @@ import dev.bebora.swecker.data.Message
 import dev.bebora.swecker.data.service.ChatService
 import dev.bebora.swecker.data.service.InvalidChatException
 import dev.bebora.swecker.data.service.InvalidSenderException
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.*
 
 class FakeChatService : ChatService {
     private val messagesMap: MutableMap<String, List<Message>> = mutableMapOf()
+    private val chatUpdates = MutableStateFlow(0)
 
     override fun getMessages(chatId: String): Flow<List<Message>> {
-        return flow {
-            emit(messagesMap[chatId] ?: emptyList())
+        return chatUpdates.asStateFlow().map {
+            messagesMap[chatId] ?: emptyList()
         }
     }
 
@@ -34,6 +34,7 @@ class FakeChatService : ChatService {
                 text = text,
                 time = System.currentTimeMillis()
             ))
+            chatUpdates.value += 1
             onResult(null)
         }
     }
