@@ -42,7 +42,8 @@ fun AlarmDetails(
     showEnableChat: Boolean = true,
     onAlarmPartiallyUpdated: (Alarm) -> Unit,
     onUpdateCompleted: (Alarm, Boolean) -> Unit,
-    onAlarmDeleted: (Alarm) -> Unit = {}
+    onAlarmDeleted: (Alarm) -> Unit = {},
+    showButtons: Boolean = true
 ) {
     var showDatePicker by remember { mutableStateOf(false) }
     var showTimePicker by remember { mutableStateOf(false) }
@@ -142,7 +143,7 @@ fun AlarmDetails(
             Spacer(modifier = Modifier.height(4.dp))
             Divider()
 
-            if(showEnableChat) {
+            if (showEnableChat) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth(1f)
@@ -203,57 +204,58 @@ fun AlarmDetails(
 
             Spacer(modifier = Modifier.weight(1f))
 
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth(1f)
-                    .padding(4.dp),
-                horizontalArrangement = Arrangement.End
-            ) {
-                OutlinedButton(
+            if (showButtons) {
+                Row(
                     modifier = Modifier
+                        .fillMaxWidth(1f)
                         .padding(4.dp),
-                    onClick = ({
-                        onUpdateCompleted(
-
-                            alarm,
-                            false
-
-                        )
-                    })
+                    horizontalArrangement = Arrangement.End
                 ) {
-                    Text("Cancel")
-                }
-                Spacer(modifier = Modifier.width(4.dp))
-                OutlinedButton(
-                    modifier = Modifier
-                        .padding(4.dp),
-                    onClick = ({
-                        val date = if (!enabledRepetition) {
-                            alarm.localDate
-                        } else {
-                            nextEnabledDate(
-                                enabledDays = alarm.enabledDays,
-                                time = alarm.localTime!!
-                            ).toLocalDate()
-                        }
-                        onUpdateCompleted(
-                            alarm.copy(
-                                localDate = date,
-                                dateTime = ZonedDateTime.of(
-                                    date,
-                                    alarm.localTime,
-                                    ZoneId.systemDefault()
-                                ).toOffsetDateTime()
-                            ),
-                            true
+                    OutlinedButton(
+                        modifier = Modifier
+                            .padding(4.dp),
+                        onClick = ({
+                            onUpdateCompleted(
 
-                        )
-                    })
-                ) {
-                    Text(stringResource(R.string.confirm_dialog))
+                                alarm,
+                                false
+
+                            )
+                        })
+                    ) {
+                        Text("Cancel")
+                    }
+                    Spacer(modifier = Modifier.width(4.dp))
+                    OutlinedButton(
+                        modifier = Modifier
+                            .padding(4.dp),
+                        onClick = ({
+                            val date = if (!enabledRepetition) {
+                                alarm.localDate
+                            } else {
+                                nextEnabledDate(
+                                    enabledDays = alarm.enabledDays,
+                                    time = alarm.localTime!!
+                                ).toLocalDate()
+                            }
+                            onUpdateCompleted(
+                                alarm.copy(
+                                    localDate = date,
+                                    dateTime = ZonedDateTime.of(
+                                        date,
+                                        alarm.localTime,
+                                        ZoneId.systemDefault()
+                                    ).toOffsetDateTime()
+                                ),
+                                true
+
+                            )
+                        })
+                    ) {
+                        Text(stringResource(R.string.confirm_dialog))
+                    }
                 }
             }
-
         }
         if (showDatePicker)
             DatePicker(onDateSelected = { newDate ->
@@ -311,8 +313,8 @@ fun RepetitionDaysSelection(
 
             OutlinedButton(
                 modifier = Modifier
-                    .size(40.dp).
-                testTag(if (enabledDays[index]) TestConstants.dayEnabled else TestConstants.dayDisabled),
+                    .size(40.dp)
+                    .testTag(if (enabledDays[index]) TestConstants.dayEnabled else TestConstants.dayDisabled),
                 onClick = {
                     onClick(index, !enabledDays[index])
                 },
@@ -451,7 +453,7 @@ fun AlarmDetailsScreen(
         }?.owner == myId || uiState.groups.firstOrNull { group ->
             group.id == selectedAlarm?.groupId
         }?.owner == myId || uiState.selectedAlarm?.alarmType == AlarmType.PERSONAL
-        
+
         val showEnableChat = selectedAlarm?.alarmType != AlarmType.PERSONAL
 
         AlarmDetails(

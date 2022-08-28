@@ -1,12 +1,15 @@
 package dev.bebora.swecker.ui.add_alarm
 
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ArrowBack
+import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -19,6 +22,7 @@ import dev.bebora.swecker.data.Group
 import dev.bebora.swecker.data.alarm_browser.FakeAlarmRepository
 import dev.bebora.swecker.ui.alarm_browser.alarm_details.AlarmDetails
 import dev.bebora.swecker.ui.theme.SweckerTheme
+import dev.bebora.swecker.util.TestConstants
 
 @Composable
 fun AddAlarmContent(
@@ -28,6 +32,7 @@ fun AddAlarmContent(
     onBackPressed: () -> Unit,
     userId: String?,
     alarmType: AlarmType,
+    showButtons: Boolean
 ) {
     val alarm = viewModel.vmAlarm
     AlarmDetails(
@@ -39,7 +44,8 @@ fun AddAlarmContent(
         onUpdateCompleted = { al, b ->
             viewModel.onUpdateCompleted(al, b, group, userId, alarmType)
             onBackPressed()
-        }
+        },
+        showButtons = showButtons
     )
 }
 
@@ -54,7 +60,12 @@ fun AddAlarmAppBar(
     SmallTopAppBar(
         colors = colors,
         modifier = modifier,
-        title = { Text(text = stringResource(R.string.add_alarm_title), textAlign = TextAlign.Center) },
+        title = {
+            Text(
+                text = stringResource(R.string.add_alarm_title),
+                textAlign = TextAlign.Center
+            )
+        },
         navigationIcon = {
             IconButton(onClick = { onBackPressed() }) {
                 Icon(
@@ -86,6 +97,27 @@ fun AddAlarmScreen(
                     onGoBack()
                 }
             )
+        },
+        floatingActionButton = {
+            FloatingActionButton(
+                modifier = Modifier
+                    .imePadding()
+                    .testTag(TestConstants.confirm),
+                onClick = {
+                    addAlarmViewModel.onUpdateCompleted(
+                        alarm = addAlarmViewModel.vmAlarm,
+                        alarmType = alarmType,
+                        group = group,
+                        userId = userId,
+                        success = true
+                    )
+                    onGoBack()
+                }) {
+                Icon(
+                    imageVector = Icons.Outlined.Check,
+                    contentDescription = "Finish alarm creation"
+                )
+            }
         }
     ) {
         AddAlarmContent(
@@ -94,7 +126,8 @@ fun AddAlarmScreen(
             onBackPressed = onGoBack,
             group = group,
             userId = userId,
-            alarmType = alarmType
+            alarmType = alarmType,
+            showButtons = false
         )
     }
 }
@@ -121,7 +154,8 @@ fun AddAlarmDialog(
                 onBackPressed = onGoBack,
                 group = group,
                 userId = userId,
-                alarmType = alarmType
+                alarmType = alarmType,
+                showButtons = true
             )
         }
     }
