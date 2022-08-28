@@ -4,11 +4,13 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import dev.bebora.swecker.R
 import dev.bebora.swecker.ui.settings.account.SuggestLogin
+import dev.bebora.swecker.util.TestConstants
 
 //TODO display something when the profile picture is being uploaded (similar to what is done in AddGroupScreen)
 @OptIn(ExperimentalMaterial3Api::class)
@@ -86,18 +88,21 @@ fun AddGroupDialog(
                                 Spacer(modifier = Modifier.width(8.dp))
 
                                 AssistChip(
+                                    modifier = Modifier.testTag(TestConstants.proceed),
                                     onClick = viewModel::nextScreen,
-                                    label = { Text("Next") },
+                                    label = { Text(stringResource(R.string.next_group_creation)) },
                                     enabled = uiState.selectedMembers.isNotEmpty()
                                 )
                             } else if (uiState.content == AddGroupContent.GROUP_SELECT_NAME) {
                                 Spacer(modifier = Modifier.weight(1f))
-                                AssistChip(onClick = viewModel::previousScreen,
-                                    label = { Text("Back") })
+                                AssistChip(
+                                    onClick = viewModel::previousScreen,
+                                    label = { Text(stringResource(R.string.back_group_creation)) })
 
                                 Spacer(modifier = Modifier.width(8.dp))
 
                                 AssistChip(
+                                    modifier = Modifier.testTag(TestConstants.confirm),
                                     onClick = {
                                         viewModel.confirmGroupCreation(
                                             onSuccess = {

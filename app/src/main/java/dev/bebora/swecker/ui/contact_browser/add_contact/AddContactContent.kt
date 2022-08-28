@@ -51,7 +51,7 @@ fun AddContactContent(
             OutlinedTextField(
                 modifier = Modifier.fillMaxWidth(),
                 placeholder = {
-                    Text(text = stringResource(R.string.search_contact_placeholder))
+                    Text(text = stringResource(R.string.search_contact_by_username_placeholder))
                 },
                 value = ui.currentQuery,
                 onValueChange = {

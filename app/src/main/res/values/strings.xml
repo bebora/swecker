@@ -66,7 +66,7 @@
     <string name="friendship_request_correctly_sent">The friendship request has been sent</string>
     <string name="title_activity_notification">NotificationActivity</string>
     <string name="add_contact_title">Add contacts</string>
-    <string name="search_contact_placeholder">Search by username</string>
+    <string name="search_contact_by_username_placeholder">Search by username</string>
     <string name="friendship_request_to_yourself">You cannot add yourself as a friend</string>
     <string name="friendship_request_correctly_accepted">You have successfully accepted the friendship request</string>
     <string name="friendship_request_not_exists">Friendship request not found</string>
@@ -104,4 +104,7 @@
     <string name="contacts_management">Contacts management</string>
     <string name="channel_handle">Handle</string>
     <string name="channel_name">Name</string>
+    <string name="search_contacts">Search contacts</string>
+    <string name="next_group_creation">Next</string>
+    <string name="back_group_creation">Back</string>
 </resources>

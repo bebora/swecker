@@ -38,13 +38,31 @@ class FakeAccountsService(
             id = FakeAuthService.validUserId,
             name = "Me",
             username = FakeAuthService.validUserId,
-            friends = emptyList()
+            friends = listOf(
+                User(
+                    id = "friend",
+                    name = "Friend",
+                    username = "friend"
+                )
+            )
         ),
         "you" to UserWithFriends(
             id = "you",
             name = "You",
             username = "you",
             friends = emptyList()
+        ),
+        friendId to UserWithFriends(
+            id = friendId,
+            name = friendName,
+            username = friendId,
+            friends = listOf(
+                User(
+                    id = FakeAuthService.validUserId,
+                    name = "Me",
+                    username = FakeAuthService.validUserId
+                )
+            )
         )
     )
     private val friendshipRequests = initialFriendshipRequests // to, from
@@ -192,5 +210,10 @@ class FakeAccountsService(
             userUpdates.value += 1
             onResult(null)
         }
+    }
+
+    companion object {
+        const val friendId = "friend"
+        const val friendName = "Friend"
     }
 }

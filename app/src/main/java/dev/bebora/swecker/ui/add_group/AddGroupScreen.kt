@@ -14,11 +14,15 @@ import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import dev.bebora.swecker.R
 import dev.bebora.swecker.data.User
 import dev.bebora.swecker.ui.contact_browser.ContactRow
 import dev.bebora.swecker.ui.settings.account.SuggestLogin
+import dev.bebora.swecker.util.TestConstants
 
 @Composable
 fun AddGroupContactsList(
@@ -129,7 +133,7 @@ fun AddGroupInputField(
                 modifier = Modifier
                     .fillMaxWidth(1f)
                     .padding(4.dp),
-                label = { Text("Search contacts") },
+                label = { Text(stringResource(R.string.search_contacts)) },
                 value = searchKey,
                 singleLine = true,
                 onValueChange = onSearchKeyChanged,
@@ -211,7 +215,9 @@ fun AddGroupScreen(
             when (uiState.content) {
                 AddGroupContent.GROUP_SELECT_CONTACTS -> {
                     if (uiState.selectedMembers.isNotEmpty()) {
-                        FloatingActionButton(onClick = { viewModel.nextScreen() }) {
+                        FloatingActionButton(
+                            modifier = Modifier.testTag(TestConstants.proceed),
+                            onClick = { viewModel.nextScreen() }) {
                             Icon(
                                 imageVector = Icons.Outlined.ArrowForward,
                                 contentDescription = "Go forward"
@@ -222,6 +228,7 @@ fun AddGroupScreen(
                 AddGroupContent.GROUP_SELECT_NAME -> {
                     if (uiState.groupName.isNotEmpty()) {
                         FloatingActionButton(
+                            modifier = Modifier.testTag(TestConstants.confirm),
                             onClick = {
                                 viewModel.confirmGroupCreation(
                                     onSuccess = {

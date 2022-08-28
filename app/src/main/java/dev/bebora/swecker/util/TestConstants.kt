@@ -11,4 +11,6 @@ object TestConstants {
     val fab = "fab"
     val handle = "handle"
     val name = "name"
+    val proceed = "proceed"
+    val confirm = "confirm"
 }

@@ -1,4 +1,4 @@
-package dev.bebora.swecker.ui.add_channel
+package dev.bebora.swecker.ui.add_group
 
 import androidx.activity.compose.setContent
 import androidx.compose.animation.ExperimentalAnimationApi
@@ -12,19 +12,23 @@ import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.UninstallModules
 import dev.bebora.swecker.MainActivity
 import dev.bebora.swecker.R
+import dev.bebora.swecker.data.service.testimpl.FakeAccountsService
 import dev.bebora.swecker.data.service.testimpl.FakeAuthService
 import dev.bebora.swecker.di.AppModule
 import dev.bebora.swecker.ui.sweckerGraph
 import dev.bebora.swecker.ui.theme.SweckerTheme
 import dev.bebora.swecker.util.ALARM_BROWSER
 import dev.bebora.swecker.util.TestConstants
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 
+
 @HiltAndroidTest
 @UninstallModules(AppModule::class)
-class AddChannelScreenTest {
+class AddGroupScreenTest {
     @get:Rule(order = 0)
     val hiltRule = HiltAndroidRule(this)
 
@@ -46,18 +50,18 @@ class AddChannelScreenTest {
     }
 
     @Test
-    fun openAddChannelNotLogged_SuggestLogin() {
+    fun openAddGroupNotLogged_SuggestLogin() {
         val login = composeRule.activity.getString(R.string.log_in_button)
-        composeRule.onNodeWithTag(TestConstants.channels).performClick()
+        composeRule.onNodeWithTag(TestConstants.groups).performClick()
         composeRule.onNodeWithTag(TestConstants.fab).performClick()
         composeRule.onNodeWithText(login).assertIsDisplayed()
     }
 
     @Test
-    fun openAddChannelFromFABLogged_DialogOpened() {
+    fun openAddGroupFromFABLogged_DialogOpened() {
         // Initial login
         val login = composeRule.activity.getString(R.string.log_in_button)
-        composeRule.onNodeWithTag(TestConstants.channels).performClick()
+        composeRule.onNodeWithTag(TestConstants.groups).performClick()
         composeRule.onNodeWithTag(TestConstants.fab).performClick()
         composeRule.onNodeWithText(login).performClick()
         composeRule.onNodeWithTag(TestConstants.email).performTextInput(
@@ -68,17 +72,17 @@ class AddChannelScreenTest {
         )
         composeRule.onNodeWithText(login).performClick()
         // Open dialog with text fields
-        val handle = composeRule.activity.getString(R.string.channel_handle)
-        composeRule.onNodeWithTag(TestConstants.channels).performClick()
+        val searchContacts = composeRule.activity.getString(R.string.search_contacts)
+        composeRule.onNodeWithTag(TestConstants.groups).performClick()
         composeRule.onNodeWithTag(TestConstants.fab).performClick()
-        composeRule.onNodeWithText(handle).assertIsDisplayed()
+        composeRule.onNodeWithText(searchContacts).assertIsDisplayed()
     }
 
     @Test
-    fun createChannel_ChannelCreated() {
+    fun createGroup_GroupCreated() {
         // Initial login
         val login = composeRule.activity.getString(R.string.log_in_button)
-        composeRule.onNodeWithTag(TestConstants.channels).performClick()
+        composeRule.onNodeWithTag(TestConstants.groups).performClick()
         composeRule.onNodeWithTag(TestConstants.fab).performClick()
         composeRule.onNodeWithText(login).performClick()
         composeRule.onNodeWithTag(TestConstants.email).performTextInput(
@@ -89,23 +93,27 @@ class AddChannelScreenTest {
         )
         composeRule.onNodeWithText(login).performClick()
         // Open dialog with text fields
-        val handlePlaceholder = composeRule.activity.getString(R.string.channel_handle)
-        composeRule.onNodeWithTag(TestConstants.channels).performClick()
+        val searchBarPlaceholder = composeRule.activity.getString(R.string.search_contacts)
+        composeRule.onNodeWithTag(TestConstants.groups).performClick()
         composeRule.onNodeWithTag(TestConstants.fab).performClick()
-        composeRule.onNodeWithText(handlePlaceholder).assertIsDisplayed()
-        // Create channel
-        val name = "Klamitos"
-        val handle = "speros"
-        val confirm = composeRule.activity.getString(R.string.confirm_dialog)
+        composeRule.onNodeWithText(searchBarPlaceholder).assertIsDisplayed()
+        // Select friend
+        composeRule.onNodeWithText(FakeAccountsService.friendName)
+            .assertIsDisplayed()
+            .performClick()
+
+        composeRule.onNodeWithTag(TestConstants.proceed).performClick()
+        // Create group
+        val name = "Jemangohoist"
+
         composeRule.onNodeWithTag(TestConstants.name).performTextInput(
             name
         )
-        composeRule.onNodeWithTag(TestConstants.handle).performTextInput(
-            handle
-        )
         // Close keyboard and confirm
         Espresso.pressBack()
-        composeRule.onNodeWithText(confirm).performClick()
+        composeRule.onNodeWithTag(TestConstants.confirm).performClick()
+        // Group is displayed
+        runBlocking { delay(1500) }
         composeRule.onNodeWithText(name).assertIsDisplayed()
     }
 }
