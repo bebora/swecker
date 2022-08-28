@@ -100,6 +100,7 @@ fun PersonalAlarmListScreen(
             }
 
             AlarmList(
+                modifier = Modifier.padding(horizontal = 4.dp),
                 alarms = uiState.filteredAlarms ?: uiState.alarms,
                 onEvent = onEvent,
                 selectedAlarm = uiState.selectedAlarm

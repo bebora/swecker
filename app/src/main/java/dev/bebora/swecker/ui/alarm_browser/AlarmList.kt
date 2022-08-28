@@ -22,7 +22,6 @@ fun AlarmList(
     LazyColumn(
         contentPadding = PaddingValues(vertical = 8.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(12.dp),
         modifier = modifier.fillMaxWidth(1f)
     ) {
         items(items = alarms, key = { al -> al.id }) { al ->
@@ -31,7 +30,16 @@ fun AlarmList(
                 selected =
                     al.id == selectedAlarm.id
             }
-            AlarmCard(alarm = al, modifier = modifier, onEvent = onEvent, selected = selected)
+            AlarmCard(
+                alarm = al, modifier = if (selected) {
+                    modifier
+                } else {
+                    modifier.padding(horizontal = 8.dp)
+                }, onEvent = onEvent, selected = selected
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
         }
         item() {
             Spacer(modifier = Modifier.height(64.dp))

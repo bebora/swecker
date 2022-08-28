@@ -11,6 +11,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -182,7 +183,7 @@ fun AlarmBrowserScreen(
 
                     if (uiState.dialogContent == DialogContent.NONE) {
                         SinglePaneScreen(
-                            modifier = modifier.systemBarsPadding(),
+                            modifier = modifier.systemBarsPadding().rotate(0f),
                             onEvent = viewModel::onEvent,
                             uiState = uiState,
                             onOpenDrawer = {

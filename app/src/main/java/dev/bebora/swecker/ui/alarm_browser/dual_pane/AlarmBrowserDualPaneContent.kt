@@ -23,7 +23,7 @@ fun AlarmBrowserDualPaneContent(
         modifier = modifier
             .fillMaxWidth(1f)
             .background(MaterialTheme.colorScheme.surface)
-            .padding(horizontal = 8.dp)
+            .padding(top = 8.dp, start = 8.dp, end = 8.dp)
     ) {
         AlarmBrowserNavRail(
             alarmBrowserUIState = uiState,
