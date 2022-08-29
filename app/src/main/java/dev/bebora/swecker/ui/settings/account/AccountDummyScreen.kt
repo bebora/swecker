@@ -210,10 +210,6 @@ fun AccountDummyScreen(
                         onClick = section.onClick
                     )
                 }
-                // TODO remove this button
-                Button(onClick = { onNavigate(LOGIN) }) {
-                    Text(text = stringResource(id = R.string.log_in_button))
-                }
             }
         }
     }
