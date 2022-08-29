@@ -228,7 +228,8 @@ fun AlarmDetails(
                     Spacer(modifier = Modifier.width(4.dp))
                     OutlinedButton(
                         modifier = Modifier
-                            .padding(4.dp),
+                            .padding(4.dp)
+                            .testTag(TestConstants.confirm),
                         onClick = ({
                             val date = if (!enabledRepetition) {
                                 alarm.localDate

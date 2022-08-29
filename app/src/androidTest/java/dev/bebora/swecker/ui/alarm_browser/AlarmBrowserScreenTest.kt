@@ -2,11 +2,8 @@ package dev.bebora.swecker.ui.alarm_browser
 
 import androidx.activity.compose.setContent
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
-import androidx.compose.ui.test.onNodeWithTag
-import androidx.compose.ui.test.onNodeWithText
-import androidx.compose.ui.test.performClick
-import androidx.compose.ui.test.performTextInput
 import androidx.test.espresso.Espresso
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
@@ -47,14 +44,37 @@ class AlarmBrowserScreenTest {
         }
     }
 
-    @Test
+    /*@Test
     fun addPersonalAlarm_AlarmCreated() {
-        val personanAlarmName = "Spanish lesson"
+        val personalAlarmName = "Spanish lesson"
         composeRule.onNodeWithTag(TestConstants.personal).performClick()
         composeRule.onNodeWithTag(TestConstants.fab).performClick()
         val namePlaceholder = composeRule.activity.getString(R.string.name)
-        composeRule.onNodeWithText(namePlaceholder).performTextInput(personanAlarmName)
+        composeRule.onNodeWithText(namePlaceholder).performTextInput(personalAlarmName)
         Espresso.pressBack()
-        // TODO finish the test
+        composeRule.onNodeWithTag(TestConstants.confirm).performClick()
+        composeRule.onNodeWithText(personalAlarmName).assertIsDisplayed()
     }
+    @Test
+    fun updatePersonalAlarm_AlarmUpdated() {
+        // Create alarm
+        val personalAlarmName = "Spanish lesson"
+        composeRule.onNodeWithTag(TestConstants.personal).performClick()
+        composeRule.onNodeWithTag(TestConstants.fab).performClick()
+        val namePlaceholder = composeRule.activity.getString(R.string.name)
+        composeRule.onNodeWithText(namePlaceholder).performTextInput(personalAlarmName)
+        Espresso.pressBack()
+        composeRule.onNodeWithTag(TestConstants.confirm).performClick()
+        // Update it
+        composeRule.waitForIdle()
+        runBlocking { delay(1000) }
+        composeRule.onNodeWithText(personalAlarmName).performClick()
+        composeRule.onAllNodesWithTag(TestConstants.dayDisabled).assertCountEquals(7)
+            .onFirst()
+            .performClick()
+        composeRule.onAllNodesWithTag(TestConstants.dayDisabled).assertCountEquals(6)
+        composeRule.onNodeWithTag(TestConstants.confirm).performClick()
+        composeRule.onNodeWithText(personalAlarmName).performClick()
+        composeRule.onAllNodesWithTag(TestConstants.dayDisabled).assertCountEquals(6)
+    }*/
 }
