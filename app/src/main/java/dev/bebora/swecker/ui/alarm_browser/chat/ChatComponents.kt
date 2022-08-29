@@ -223,7 +223,7 @@ fun MessageInputBar(
                     Icon(
                         imageVector = Icons.Filled.Send,
                         contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        tint = MaterialTheme.colorScheme.primary,
 
                         )
                 }
