@@ -6,66 +6,7 @@ import dev.bebora.swecker.data.service.impl.UserWithFriends
 import dev.bebora.swecker.data.service.impl.toUser
 import kotlinx.coroutines.flow.*
 
-class FakeAccountsService(
-    initialFriendshipRequests: MutableMap<String, List<String>> = mutableMapOf()
-) : AccountsService {
-    private val users = mutableMapOf(
-        "luca" to UserWithFriends(
-            id = "luca",
-            name = "Luca",
-            username = "luca",
-            friends = listOf(
-                User(
-                    id = "carm",
-                    name = "Carm",
-                    username = "carm"
-                )
-            )
-        ),
-        "carm" to UserWithFriends(
-            id = "carm",
-            name = "Carm",
-            username = "carm",
-            friends = listOf(
-                User(
-                    id = "luca",
-                    name = "Luca",
-                    username = "carm"
-                )
-            )
-        ),
-        FakeAuthService.validUserId to UserWithFriends(
-            id = FakeAuthService.validUserId,
-            name = "Me",
-            username = FakeAuthService.validUserId,
-            friends = listOf(
-                User(
-                    id = "friend",
-                    name = "Friend",
-                    username = "friend"
-                )
-            )
-        ),
-        "you" to UserWithFriends(
-            id = "you",
-            name = "You",
-            username = "you",
-            friends = emptyList()
-        ),
-        friendId to UserWithFriends(
-            id = friendId,
-            name = friendName,
-            username = friendId,
-            friends = listOf(
-                User(
-                    id = FakeAuthService.validUserId,
-                    name = "Me",
-                    username = FakeAuthService.validUserId
-                )
-            )
-        )
-    )
-    private val friendshipRequests = initialFriendshipRequests // to, from
+class FakeAccountsService() : AccountsService {
     private val userUpdates = MutableStateFlow(0)
     private val friendshipRequestsUpdates = MutableStateFlow(0)
 
@@ -215,5 +156,65 @@ class FakeAccountsService(
     companion object {
         const val friendId = "friend"
         const val friendName = "Friend"
+        val friendshipRequests = mutableMapOf(
+            "luca" to listOf(FakeAuthService.validUserId),
+            FakeAuthService.validUserId to listOf("carm")
+        ) // to, from
+        val users = mutableMapOf(
+            "luca" to UserWithFriends(
+                id = "luca",
+                name = "Luca",
+                username = "luca",
+                friends = listOf(
+                    User(
+                        id = "carm",
+                        name = "Carm",
+                        username = "carm"
+                    )
+                )
+            ),
+            "carm" to UserWithFriends(
+                id = "carm",
+                name = "Carm",
+                username = "carm",
+                friends = listOf(
+                    User(
+                        id = "luca",
+                        name = "Luca",
+                        username = "carm"
+                    )
+                )
+            ),
+            FakeAuthService.validUserId to UserWithFriends(
+                id = FakeAuthService.validUserId,
+                name = "Me",
+                username = FakeAuthService.validUserId,
+                friends = listOf(
+                    User(
+                        id = "friend",
+                        name = "Friend",
+                        username = "friend"
+                    )
+                )
+            ),
+            "you" to UserWithFriends(
+                id = "you",
+                name = "You",
+                username = "you",
+                friends = emptyList()
+            ),
+            friendId to UserWithFriends(
+                id = friendId,
+                name = friendName,
+                username = friendId,
+                friends = listOf(
+                    User(
+                        id = FakeAuthService.validUserId,
+                        name = "Me",
+                        username = FakeAuthService.validUserId
+                    )
+                )
+            )
+        )
     }
 }

@@ -97,7 +97,6 @@
     <string name="example_alarm_name">Example alarm</string>
     <string name="new_channel">New channel</string>
     <string name="new_group">New group</string>
-    <string name="contacts">Contacts</string>
     <string name="add_a_friend">Add a friend</string>
     <string name="alarms_overview">Alarms overview</string>
     <string name="contacts_management">Contacts management</string>
@@ -107,4 +106,6 @@
     <string name="next_group_creation">Next</string>
     <string name="back_group_creation">Back</string>
     <string name="add_alarm_title">Add alarm</string>
+    <string name="open_hamburger_menu">Open hamburger menu</string>
+    <string name="friendship_requests">Friendship requests</string>
 </resources>

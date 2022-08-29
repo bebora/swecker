@@ -13,8 +13,10 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import dev.bebora.swecker.R
 import dev.bebora.swecker.ui.alarm_browser.*
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
@@ -50,7 +52,7 @@ fun PersonalAlarmListScreen(
                     IconButton(onClick = { navigationAction() }) {
                         Icon(
                             imageVector = Icons.Outlined.Menu,
-                            contentDescription = "Open hamburger menu"
+                            contentDescription = stringResource(R.string.open_hamburger_menu)
                         )
                     }
                 },

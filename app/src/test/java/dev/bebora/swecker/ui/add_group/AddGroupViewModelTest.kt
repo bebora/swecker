@@ -44,9 +44,7 @@ class AddGroupViewModelTest {
     fun setUp() {
         alarmProviderService = FakeAlarmProviderService()
         authService = FakeAuthService(initialUserId = initialUserId)
-        accountsService = FakeAccountsService(
-            initialFriendshipRequests = mutableMapOf("luca" to listOf(FakeAuthService.validUserId))
-        )
+        accountsService = FakeAccountsService()
         imageStorageService = FakeImageStorageService()
         alarmProviderService = FakeAlarmProviderService()
         viewModel = AddGroupViewModel(

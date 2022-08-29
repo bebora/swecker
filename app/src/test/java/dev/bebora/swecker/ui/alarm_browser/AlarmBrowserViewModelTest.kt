@@ -42,9 +42,7 @@ class AlarmBrowserViewModelTest {
     @Before
     fun setUp() {
         authService = FakeAuthService(initialUserId = initialUserId)
-        accountsService = FakeAccountsService(
-            initialFriendshipRequests = mutableMapOf("luca" to listOf(FakeAuthService.validUserId))
-        )
+        accountsService = FakeAccountsService()
         alarmProviderService = FakeAlarmProviderService()
         repository = FakeAlarmRepository(fakeAlarmProviderService = alarmProviderService)
         chatService = FakeChatService()

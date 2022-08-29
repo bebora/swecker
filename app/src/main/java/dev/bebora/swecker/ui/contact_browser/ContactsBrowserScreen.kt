@@ -15,6 +15,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -23,6 +24,7 @@ import dev.bebora.swecker.R
 import dev.bebora.swecker.data.service.testimpl.FakeAccountsService
 import dev.bebora.swecker.data.service.testimpl.FakeAuthService
 import dev.bebora.swecker.ui.settings.account.SuggestLogin
+import dev.bebora.swecker.util.TestConstants
 import dev.bebora.swecker.util.UiEvent
 
 // TODO This screen and the corresponding dialog have a lot in common, the content should be a common composable
@@ -98,6 +100,7 @@ fun ContactBrowserScreen(
                             }
                         ) {
                             Icon(
+                                modifier = Modifier.testTag(TestConstants.removeFriend),
                                 imageVector = Icons.Default.PersonRemove,
                                 contentDescription = "Remove friend"
                             )
@@ -105,7 +108,7 @@ fun ContactBrowserScreen(
                     }
                 }
                 Text(
-                    text = "Friendship requests",
+                    text = stringResource(R.string.friendship_requests),
                     style = MaterialTheme.typography.headlineSmall
                 )
                 ui.friendshipRequests.forEachIndexed { idx, friend ->
@@ -114,6 +117,7 @@ fun ContactBrowserScreen(
                     }
                     ContactRow(user = friend) {
                         IconButton(
+                            modifier = Modifier.testTag(TestConstants.acceptFriend),
                             onClick = {
                                 viewModel.onEvent(
                                     ContactsEvent.AcceptFriendshipRequest(
@@ -226,6 +230,7 @@ fun ContactBrowserDialog(
                                         }
                                     ) {
                                         Icon(
+                                            modifier = Modifier.testTag(TestConstants.removeFriend),
                                             imageVector = Icons.Default.PersonRemove,
                                             contentDescription = "Remove friend"
                                         )
@@ -233,7 +238,7 @@ fun ContactBrowserDialog(
                                 }
                             }
                             Text(
-                                text = "Friendship requests",
+                                text = stringResource(R.string.friendship_requests),
                                 style = MaterialTheme.typography.headlineSmall
                             )
                             ui.friendshipRequests.forEachIndexed { idx, friend ->
@@ -242,6 +247,7 @@ fun ContactBrowserDialog(
                                 }
                                 ContactRow(user = friend) {
                                     IconButton(
+                                        modifier = Modifier.testTag(TestConstants.acceptFriend),
                                         onClick = {
                                             viewModel.onEvent(
                                                 ContactsEvent.AcceptFriendshipRequest(

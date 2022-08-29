@@ -40,7 +40,7 @@ fun AlarmBrowserScreen(
     val scope = rememberCoroutineScope()
     val newGroup = stringResource(R.string.new_group)
     val newChannel = stringResource(R.string.new_channel)
-    val contacts = stringResource(R.string.contacts)
+    val contacts = stringResource(R.string.contacts_title)
     val addAFriend = stringResource(R.string.add_a_friend)
     val alarmsOverview = stringResource(R.string.alarms_overview)
     val contactsManagement = stringResource(R.string.contacts_management)
