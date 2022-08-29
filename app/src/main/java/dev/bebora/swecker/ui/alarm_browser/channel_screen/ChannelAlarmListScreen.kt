@@ -129,8 +129,7 @@ fun ChannelAlarmListScreen(
             if(uiState.selectedChannel?.owner == uiState.me.id) {
                 AlarmBrowserSinglePaneFab(
                     destination = NavBarDestination.CHANNELS,
-                    modifier = Modifier
-                        .padding(32.dp),
+                    modifier = Modifier,
                     detailsScreenContent = uiState.detailsScreenContent,
                     onEvent = onEvent
                 )

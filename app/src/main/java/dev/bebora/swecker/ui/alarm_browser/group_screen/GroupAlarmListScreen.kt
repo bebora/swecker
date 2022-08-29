@@ -48,8 +48,7 @@ fun GroupAlarmListScreen(
         floatingActionButton = {
             AlarmBrowserSinglePaneFab(
                 destination = NavBarDestination.GROUPS,
-                modifier = Modifier
-                    .padding(32.dp),
+                modifier = Modifier,
                 detailsScreenContent = uiState.detailsScreenContent,
                 onEvent = onEvent
             )

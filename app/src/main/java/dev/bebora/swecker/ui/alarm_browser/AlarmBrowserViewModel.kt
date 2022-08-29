@@ -192,7 +192,7 @@ class AlarmBrowserViewModel @Inject constructor(
             }
 
             is AlarmBrowserEvent.AlarmUpdated -> {
-                val selectedAlarm = uiState.selectedAlarm
+                var selectedAlarm = uiState.selectedAlarm
                 var detailsScreenContent = uiState.detailsScreenContent
                 var mutableTransitionState = MutableTransitionState(true).apply {
                     targetState = true
@@ -201,6 +201,9 @@ class AlarmBrowserViewModel @Inject constructor(
                 if (selectedAlarm?.id.equals(event.alarm.id) &&
                     detailsScreenContent == DetailsScreenContent.ALARM_DETAILS
                 ) {
+                    if(event.success) {
+                        selectedAlarm = event.alarm
+                    }
                     detailsScreenContent = detailsScreenContentOnGoBack()
                     if (uiState.detailsScreenContent != DetailsScreenContent.NONE) {
                         mutableTransitionState = MutableTransitionState(true).apply {
