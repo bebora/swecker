@@ -174,7 +174,10 @@ class AlarmBrowserViewModelTest {
             )
         )
 
-        assertEquals(DetailsScreenContent.CHANNEL_ALARM_LIST, viewModel.uiState.detailsScreenContent)
+        assertEquals(
+            DetailsScreenContent.CHANNEL_ALARM_LIST,
+            viewModel.uiState.detailsScreenContent
+        )
 
         assertNotNull(viewModel.uiState.filteredAlarms)
         assertNotNull(viewModel.uiState.selectedChannel)
@@ -230,6 +233,7 @@ class AlarmBrowserViewModelTest {
 
         assertEquals(testDetailsScreenContent, viewModel.uiState.detailsScreenContent)
     }
+
     @Test
     fun alarmBrowserViewModel_DialogSelection_StateUpdated() {
         val testDialogContent = DialogContent.ADD_ALARM
@@ -275,9 +279,11 @@ class AlarmBrowserViewModelTest {
         dispatcher.scheduler.advanceUntilIdle()
 
         assertEquals(1, viewModel.uiState.channels.size)
-        assertEquals(channel.copy(
-            members = channel.members.plus(viewModel.uiState.me.id)
-        ), viewModel.uiState.channels.first())
+        assertEquals(
+            channel.copy(
+                members = channel.members.plus(viewModel.uiState.me.id)
+            ), viewModel.uiState.channels.first()
+        )
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -345,21 +351,62 @@ class AlarmBrowserViewModelTest {
         viewModel.onEvent(AlarmBrowserEvent.DetailsOpened(testDetailsScreenContent))
         viewModel.onEvent(AlarmBrowserEvent.BackButtonPressed)
 
-        assertEquals(DetailsScreenContent.NONE,viewModel.uiState.detailsScreenContent)
+        assertEquals(DetailsScreenContent.NONE, viewModel.uiState.detailsScreenContent)
 
         testDetailsScreenContent = DetailsScreenContent.CHANNEL_DETAILS
 
         viewModel.onEvent(AlarmBrowserEvent.DetailsOpened(testDetailsScreenContent))
         viewModel.onEvent(AlarmBrowserEvent.BackButtonPressed)
 
-        assertEquals(DetailsScreenContent.CHANNEL_ALARM_LIST,viewModel.uiState.detailsScreenContent)
+        assertEquals(
+            DetailsScreenContent.CHANNEL_ALARM_LIST,
+            viewModel.uiState.detailsScreenContent
+        )
 
         testDetailsScreenContent = DetailsScreenContent.GROUP_DETAILS
 
         viewModel.onEvent(AlarmBrowserEvent.DetailsOpened(testDetailsScreenContent))
         viewModel.onEvent(AlarmBrowserEvent.BackButtonPressed)
 
-        assertEquals(DetailsScreenContent.GROUP_ALARM_LIST,viewModel.uiState.detailsScreenContent)
+        assertEquals(DetailsScreenContent.GROUP_ALARM_LIST, viewModel.uiState.detailsScreenContent)
+
+        testDetailsScreenContent = DetailsScreenContent.NONE
+
+        viewModel.onEvent(AlarmBrowserEvent.DetailsOpened(testDetailsScreenContent))
+        viewModel.onEvent(AlarmBrowserEvent.BackButtonPressed)
+
+        assertEquals(DetailsScreenContent.NONE, viewModel.uiState.detailsScreenContent)
+
+        testDetailsScreenContent = DetailsScreenContent.CHAT
+
+        val testSelectedChannel =  Group(
+            id = "2",
+            name = "testChannel",
+            handle = "test",
+            owner = "test",
+            members = listOf("test")
+        )
+        viewModel.onEvent(AlarmBrowserEvent.ChannelSelected(testSelectedChannel))
+        viewModel.onEvent(AlarmBrowserEvent.DetailsOpened(testDetailsScreenContent))
+        viewModel.onEvent(AlarmBrowserEvent.BackButtonPressed)
+
+        assertEquals(DetailsScreenContent.CHANNEL_ALARM_LIST, viewModel.uiState.detailsScreenContent)
+
+        val testSelectedGroup =  Group(
+            id = "2",
+            name = "testChannel",
+            handle = "test",
+            owner = "test",
+            members = listOf("test")
+        )
+
+        testDetailsScreenContent = DetailsScreenContent.CHAT
+
+        viewModel.onEvent(AlarmBrowserEvent.GroupSelected(testSelectedGroup))
+        viewModel.onEvent(AlarmBrowserEvent.DetailsOpened(testDetailsScreenContent))
+        viewModel.onEvent(AlarmBrowserEvent.BackButtonPressed)
+
+        assertEquals(DetailsScreenContent.GROUP_ALARM_LIST, viewModel.uiState.detailsScreenContent)
     }
 
     @Test
@@ -380,7 +427,7 @@ class AlarmBrowserViewModelTest {
 
         viewModel.onEvent(
             AlarmBrowserEvent.AlarmSelected(
-               alarm = alarmPersonal
+                alarm = alarmPersonal
             )
         )
 
@@ -394,14 +441,14 @@ class AlarmBrowserViewModelTest {
             )
         )
         assertNotNull(viewModel.uiState.selectedAlarm)
-        assertEquals(DetailsScreenContent.CHAT,viewModel.uiState.detailsScreenContent )
+        assertEquals(DetailsScreenContent.CHAT, viewModel.uiState.detailsScreenContent)
 
         viewModel.onEvent(
             AlarmBrowserEvent.AlarmSelected(
                 alarm = alarm.copy(enableChat = false)
             )
         )
-        assertEquals(DetailsScreenContent.ALARM_DETAILS, viewModel.uiState.detailsScreenContent )
+        assertEquals(DetailsScreenContent.ALARM_DETAILS, viewModel.uiState.detailsScreenContent)
     }
 
     @Test
@@ -432,8 +479,8 @@ class AlarmBrowserViewModelTest {
         )
 
         assertNotNull(viewModel.uiState.filteredAlarms)
-        assertEquals(1,viewModel.uiState.filteredAlarms?.size)
-        assertEquals(alarmMatchingSearch.name,viewModel.uiState.filteredAlarms!![0].name)
+        assertEquals(1, viewModel.uiState.filteredAlarms?.size)
+        assertEquals(alarmMatchingSearch.name, viewModel.uiState.filteredAlarms!![0].name)
     }
 
 
@@ -475,4 +522,44 @@ class AlarmBrowserViewModelTest {
         assertEquals(name, newAlarms[0].name)
         assertEquals(alarmType, newAlarms[0].alarmType)
     }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun alarmBrowserViewModel_UpdateAlarm_SelectedAlarmUpdated() = runBlocking {
+        val id = "verylegitid"
+        val name = "Ding"
+
+
+        val alarmType = AlarmType.PERSONAL
+        val oldAlarm = Alarm(
+            id = id,
+            name = name + "oldname",
+            alarmType = alarmType
+        )
+
+        viewModel.onEvent(AlarmBrowserEvent.AlarmSelected(oldAlarm))
+
+        repository.insertAlarm(oldAlarm, userId = initialUserId)
+        val newAlarm = Alarm(
+            id = id,
+            name = name,
+            alarmType = alarmType
+        )
+
+        viewModel.onEvent(
+            AlarmBrowserEvent.AlarmUpdated(
+                alarm = newAlarm,
+                success = true
+            )
+        )
+        dispatcher.scheduler.advanceUntilIdle()
+        // Old selected alarm has been updated
+        assertNotNull(viewModel.uiState.selectedAlarm)
+        assertEquals(id, viewModel.uiState.selectedAlarm?.id)
+        assertEquals(name, viewModel.uiState.selectedAlarm?.name)
+        assertEquals(alarmType, viewModel.uiState.selectedAlarm?.alarmType)
+    }
 }
+
+
+

@@ -201,9 +201,7 @@ class AlarmBrowserViewModel @Inject constructor(
                 if (selectedAlarm?.id.equals(event.alarm.id) &&
                     detailsScreenContent == DetailsScreenContent.ALARM_DETAILS
                 ) {
-                    if(event.success) {
-                        selectedAlarm = event.alarm
-                    }
+                    if(event.success) { selectedAlarm = event.alarm }
                     detailsScreenContent = detailsScreenContentOnGoBack()
                     if (uiState.detailsScreenContent != DetailsScreenContent.NONE) {
                         mutableTransitionState = MutableTransitionState(true).apply {
