@@ -113,7 +113,8 @@ class NotificationActivity(
 
         val audioResource = when (settings.ringtone) {
             Ringtone.DEFAULT -> dev.bebora.swecker.R.raw.nuclear
-            else -> dev.bebora.swecker.R.raw.nuclear
+            Ringtone.VARIATION1 -> dev.bebora.swecker.R.raw.morning_joy
+            Ringtone.VARIATION2 -> dev.bebora.swecker.R.raw.alarm_clock
         }
         mediaPlayer = MediaPlayer.create(this, audioResource).apply {
             isLooping = true
