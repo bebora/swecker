@@ -10,7 +10,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material.icons.outlined.ArrowBack
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -56,8 +56,8 @@ fun MessageItem(
             AsyncImage(
                 model = propicUrl,
                 contentDescription = "Profile picture",
-                placeholder = painterResource(dev.bebora.swecker.R.drawable.temp_icon),
-                error = painterResource(dev.bebora.swecker.R.drawable.temp_icon),
+                placeholder = painterResource(R.drawable.temp_icon),
+                error = painterResource(R.drawable.temp_icon),
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .size(40.dp)
@@ -190,9 +190,9 @@ fun MessageItemPreview() {
 fun MessageInputBar(
     modifier: Modifier = Modifier,
     messageBody: String,
-    onSendMessage: (String) -> Unit = {}
+    onSendMessage: (String) -> Unit = {},
+    onMessageValueChange: (String) -> Unit = {}
 ) {
-    var msg by remember { mutableStateOf(messageBody) }
 
     Surface(
         modifier = modifier
@@ -211,19 +211,19 @@ fun MessageInputBar(
         ) {
             TextField(
                 modifier = Modifier.weight(1f),
-                value = msg,
-                onValueChange = { msg = it },
+                value = messageBody,
+                onValueChange = { onMessageValueChange(it) },
                 placeholder = { Text(stringResource(R.string.message_placeholder)) },
                 readOnly = false,
                 maxLines = 10,
             )
-            if (msg.isNotEmpty()) {
+            if (messageBody.isNotEmpty()) {
                 IconButton(modifier = Modifier
                     .testTag(TestConstants.sendMessage)
                     .padding(vertical = 4.dp),
                     onClick = {
-                        onSendMessage(msg)
-                        msg = ""
+                        onSendMessage(messageBody)
+                        onMessageValueChange("")
                     }) {
                     Icon(
                         imageVector = Icons.Filled.Send,
@@ -290,7 +290,7 @@ fun ChatTopAppBar(
         title = {
             Column() {
                 Text(
-                    modifier = Modifier.padding(0.dp,0.dp,8.dp,0.dp),
+                    modifier = Modifier.padding(0.dp, 0.dp, 8.dp, 0.dp),
                     text = title,
                     textAlign = TextAlign.Left,
                     maxLines = 1,

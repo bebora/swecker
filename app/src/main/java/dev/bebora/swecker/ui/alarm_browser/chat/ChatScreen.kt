@@ -29,7 +29,9 @@ fun ChatScreenContent(
     messages: List<Message>,
     usersData: Map<String, User>,
     ownerId: String,
-    onSendMessage: (String) -> Unit = {}
+    messageBody: String = "",
+    onSendMessage: (String) -> Unit = {},
+    onMessageValueChanged: (String) -> Unit = {}
 ) {
     val lazyListState = rememberLazyListState(
         initialFirstVisibleItemIndex = 0
@@ -71,7 +73,7 @@ fun ChatScreenContent(
         }
 
         Spacer(modifier = Modifier.height(4.dp))
-        MessageInputBar(messageBody = "", onSendMessage = onSendMessage)
+        MessageInputBar(messageBody = messageBody, onSendMessage = onSendMessage, onMessageValueChange = onMessageValueChanged)
     }
 }
 
@@ -194,8 +196,13 @@ fun ChatScreen(
                 messages = uiState.messages,
                 ownerId = uiState.me.id,
                 usersData = uiState.usersData,
+                messageBody = uiState.messageBody,
                 onSendMessage = {message ->
                     onEvent(AlarmBrowserEvent.SendMessage(message))
+                },
+                onMessageValueChanged = {
+                    message ->
+                    onEvent(AlarmBrowserEvent.MessageValueChanged(message))
                 }
             )
         }

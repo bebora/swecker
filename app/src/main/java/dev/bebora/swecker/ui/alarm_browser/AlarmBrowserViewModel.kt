@@ -404,6 +404,12 @@ class AlarmBrowserViewModel @Inject constructor(
                 )
             }
 
+            is AlarmBrowserEvent.MessageValueChanged -> {
+                uiState = uiState.copy(
+                    messageBody = event.text
+                )
+            }
+
             is AlarmBrowserEvent.OnTransitionCompleted -> {
                 val mutableTransitionState = uiState.mutableTransitionState
                 if (!mutableTransitionState.targetState) {
@@ -558,7 +564,8 @@ data class AlarmBrowserUIState(
     val usersData: Map<String, User> = emptyMap(),
     val mutableTransitionState: MutableTransitionState<Boolean> = MutableTransitionState(false),
     val animatedDetailsScreenContent: DetailsScreenContent = DetailsScreenContent.NONE,
-    val loadingComplete: Boolean = false
+    val loadingComplete: Boolean = false,
+    val messageBody: String = ""
 )
 
 enum class DetailsScreenContent {
