@@ -45,7 +45,7 @@ class AlarmNotificationReceiver : BroadcastReceiver() {
 
         val notificationBuilder =
             NotificationCompat.Builder(context, "swecker__01")
-                .setSmallIcon(R.drawable.ic_launcher_foreground)
+                .setSmallIcon(R.drawable.ic_stat_name)
                 .setAutoCancel(true)
                 .setContentTitle(intent.getStringExtra("Name"))
                 .setContentText(

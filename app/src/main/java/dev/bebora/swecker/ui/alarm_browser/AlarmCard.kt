@@ -14,6 +14,8 @@ import dev.bebora.swecker.data.Alarm
 import dev.bebora.swecker.data.AlarmType
 import dev.bebora.swecker.data.alarmTypeToIcon
 import dev.bebora.swecker.ui.theme.SweckerTheme
+import java.time.LocalDate
+import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 
@@ -127,7 +129,9 @@ fun AlarmPreview() {
                 Alarm(
                     id = "@monesi#1",
                     name = "Alarm test",
-                    alarmType = AlarmType.PERSONAL
+                    alarmType = AlarmType.PERSONAL,
+                    localDate = LocalDate.now().minusDays(13),
+                    localTime = LocalTime.now().minusHours(2)
                 )
             )
         }
