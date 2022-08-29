@@ -26,10 +26,12 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import dev.bebora.swecker.util.TestConstants
 
 @Composable
 fun AlarmNotificationFullScreen(
@@ -183,7 +185,9 @@ fun AlarmNotificationFullScreen(
                 Spacer(modifier = Modifier.width(16.dp))
 
                 //detect drag from center
-                Box(modifier = Modifier.pointerInput(Unit) {
+                Box(modifier = Modifier
+                    .testTag(TestConstants.dragRingingAlarm)
+                    .pointerInput(Unit) {
                     detectHorizontalDragGestures(
                         onDragEnd = {
                             if (isSnoozeSelected) {

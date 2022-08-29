@@ -17,4 +17,5 @@ object TestConstants {
     const val dayDisabled = "dayDisabled"
     const val removeFriend = "removeFriend"
     const val acceptFriend = "acceptFriend"
+    const val dragRingingAlarm = "dragRingingAlarm"
 }
