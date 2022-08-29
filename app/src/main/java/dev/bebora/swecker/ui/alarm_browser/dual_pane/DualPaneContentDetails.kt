@@ -14,6 +14,8 @@ import dev.bebora.swecker.R
 import dev.bebora.swecker.ui.alarm_browser.AlarmBrowserEvent
 import dev.bebora.swecker.ui.alarm_browser.AlarmBrowserUIState
 import dev.bebora.swecker.ui.alarm_browser.DetailsScreenContent
+import dev.bebora.swecker.ui.alarm_browser.NavBarDestination
+import dev.bebora.swecker.ui.alarm_browser.NavBarDestination.*
 import dev.bebora.swecker.ui.alarm_browser.alarm_details.AlarmDetailsScreen
 import dev.bebora.swecker.ui.alarm_browser.channel_screen.ChannelAlarmListScreen
 import dev.bebora.swecker.ui.alarm_browser.channel_screen.ChannelDetailsScreen
@@ -36,10 +38,16 @@ fun DualPaneContentDetails(
         ) {
             Box(modifier = Modifier.fillMaxSize(1f), contentAlignment = Alignment.Center) {
                 Text(
-                    text = stringResource(R.string.suggest_selection),
+                    text = (
+                            when (uiState.selectedDestination) {
+                                HOME, PERSONAL -> stringResource(R.string.suggest_alarm_selection)
+                                GROUPS -> stringResource(R.string.suggest_group_selection)
+                                CHANNELS -> stringResource(R.string.suggest_channel_selection)
+                            }),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     style = MaterialTheme.typography.displayMedium
                 )
+
             }
         }
     } else {

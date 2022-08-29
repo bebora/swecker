@@ -52,7 +52,7 @@
     <string name="password_lock">Lock</string>
     <string name="invalid_email">The entered email is not valid</string>
     <string name="invalid_password">Your password should have at least six letters and include one digit, one lower case letter and one upper case letter.</string>
-    <string name="unknown_error">Unknown error</string>
+    <string name="unknown_error">Unknown error. Are you using a working Internet connection?</string>
     <string name="invalid_user">The user does not exist or has been disabled</string>
     <string name="wrong_password">The entered password does not match</string>
     <string name="email_already_exists">An account is already registered with the entered email</string>
@@ -91,7 +91,9 @@
     <string name="home">Home</string>
     <string name="personal">Personal</string>
     <string name="groups">Groups</string>
-    <string name="suggest_selection">Select something</string>
+    <string name="suggest_alarm_selection">Select an alarm</string>
+    <string name="suggest_group_selection">Select a group</string>
+    <string name="suggest_channel_selection">Select a channel</string>
     <string name="members">members</string>
     <string name="palette">Palette</string>
     <string name="example_alarm_name">Example alarm</string>
