@@ -18,4 +18,7 @@ object TestConstants {
     const val removeFriend = "removeFriend"
     const val acceptFriend = "acceptFriend"
     const val dragRingingAlarm = "dragRingingAlarm"
+    const val addChannelAlarm = "addChannelAlarm"
+    const val sendMessage = "sendMessage"
+    const val alarmCardTime = "alarmCardTime"
 }

@@ -20,6 +20,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import dev.bebora.swecker.R
+import dev.bebora.swecker.data.service.testimpl.FakeAuthService
 
 @HiltAndroidTest
 @UninstallModules(AppModule::class)
@@ -76,5 +77,56 @@ class AlarmBrowserScreenTest {
         composeRule.onNodeWithTag(TestConstants.confirm).performClick()
         composeRule.onNodeWithText(personalAlarmName).performClick()
         composeRule.onAllNodesWithTag(TestConstants.dayDisabled).assertCountEquals(6)
+    }
+
+    @Test
+    fun sendMessageInChannelAlarm_MessageDisplayed() {
+        // Initial login
+        val login = composeRule.activity.getString(R.string.log_in_button)
+        composeRule.onNodeWithTag(TestConstants.channels).performClick()
+        composeRule.onNodeWithTag(TestConstants.fab).performClick()
+        composeRule.onNodeWithText(login).performClick()
+        composeRule.onNodeWithTag(TestConstants.email).performTextInput(
+            FakeAuthService.validLoginEmail
+        )
+        composeRule.onNodeWithTag(TestConstants.password).performTextInput(
+            FakeAuthService.validPassword
+        )
+        composeRule.onNodeWithText(login).performClick()
+        // Open dialog with text fields
+        val handlePlaceholder = composeRule.activity.getString(R.string.channel_handle)
+        composeRule.onNodeWithTag(TestConstants.channels).performClick()
+        composeRule.onNodeWithTag(TestConstants.fab).performClick()
+        composeRule.onNodeWithText(handlePlaceholder).assertIsDisplayed()
+        // Create channel
+        val name = "Klamitos"
+        val handle = "speros"
+        composeRule.onNodeWithTag(TestConstants.name).performTextInput(
+            name
+        )
+        composeRule.onNodeWithTag(TestConstants.handle).performTextInput(
+            handle
+        )
+        // Close keyboard and confirm
+        Espresso.pressBack()
+        composeRule.onNodeWithTag(TestConstants.confirm).performClick()
+        composeRule.onNodeWithText(name).assertIsDisplayed()
+        composeRule.onNodeWithText(name).performClick()
+        composeRule.onNodeWithTag(TestConstants.addChannelAlarm).performClick()
+        val newChannelAlarmName = "Marzipan"
+        val namePlaceholder = composeRule.activity.getString(R.string.name)
+        composeRule.onNodeWithText(namePlaceholder).performTextInput(newChannelAlarmName)
+        // Close keyboard and confirm
+        Espresso.pressBack()
+        composeRule.onNodeWithTag(TestConstants.confirm).performClick()
+        // Go the new alarm
+        composeRule.onNodeWithTag(TestConstants.alarmCardTime, useUnmergedTree = true).performClick()
+        val chatBarPlaceholder = composeRule.activity.getString(R.string.message_placeholder)
+        val newMessageText = "The best part of instrumented testing is waiting"
+        // Write and send text
+        composeRule.onNodeWithText(chatBarPlaceholder).performTextInput(newMessageText)
+        composeRule.onNodeWithTag(TestConstants.sendMessage).performClick()
+        // Text is displayed in the chat
+        composeRule.onNodeWithText(newMessageText).assertIsDisplayed()
     }
 }

@@ -113,4 +113,5 @@
     <string name="no_contact_warning">You do not have any contacs</string>
     <string name="friends_section_title">Friends</string>
     <string name="no_friendship_requests_warning">You do not have any friendship requests</string>
+    <string name="message_placeholder">Message</string>
 </resources>

@@ -15,15 +15,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import dev.bebora.swecker.R
 import dev.bebora.swecker.ui.alarm_browser.AlarmBrowserEvent
 import dev.bebora.swecker.ui.alarm_browser.DetailsScreenContent
 import dev.bebora.swecker.ui.theme.SweckerTheme
+import dev.bebora.swecker.util.TestConstants
 
 @Composable
 fun MessageItem(
@@ -209,12 +213,13 @@ fun MessageInputBar(
                 modifier = Modifier.weight(1f),
                 value = msg,
                 onValueChange = { msg = it },
-                placeholder = { Text("Message") },
+                placeholder = { Text(stringResource(R.string.message_placeholder)) },
                 readOnly = false,
                 maxLines = 10,
             )
             if (msg.isNotEmpty()) {
                 IconButton(modifier = Modifier
+                    .testTag(TestConstants.sendMessage)
                     .padding(vertical = 4.dp),
                     onClick = {
                         onSendMessage(msg)

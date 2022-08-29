@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -23,6 +24,7 @@ import dev.bebora.swecker.R
 import dev.bebora.swecker.ui.alarm_browser.*
 import dev.bebora.swecker.ui.alarm_browser.single_pane.AlarmBrowserSinglePaneFab
 import dev.bebora.swecker.ui.settings.account.PropicPlaceholder
+import dev.bebora.swecker.util.TestConstants
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -128,8 +130,8 @@ fun ChannelAlarmListScreen(
         floatingActionButton = {
             if(uiState.selectedChannel?.owner == uiState.me.id) {
                 AlarmBrowserSinglePaneFab(
+                    modifier = Modifier.testTag(TestConstants.addChannelAlarm),
                     destination = NavBarDestination.CHANNELS,
-                    modifier = Modifier,
                     detailsScreenContent = uiState.detailsScreenContent,
                     onEvent = onEvent
                 )

@@ -6,6 +6,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -14,6 +15,7 @@ import dev.bebora.swecker.data.Alarm
 import dev.bebora.swecker.data.AlarmType
 import dev.bebora.swecker.data.alarmTypeToIcon
 import dev.bebora.swecker.ui.theme.SweckerTheme
+import dev.bebora.swecker.util.TestConstants
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
@@ -52,6 +54,7 @@ fun AlarmCard(
                 modifier = Modifier.fillMaxWidth(1.0f)
             ) {
                 Text(
+                    modifier = Modifier.testTag(TestConstants.alarmCardTime),
                     style = MaterialTheme.typography.displayLarge,
                     text = formattedTime.first()
                 )
