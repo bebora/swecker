@@ -66,7 +66,7 @@ fun AlarmDetails(
                         .weight(0.5f),
                     label = stringResource(R.string.time),
                     placeHolder = stringResource(R.string.select_time),
-                    value = alarm.localTime!!.format(DateTimeFormatter.ofPattern("hh:mm a")),
+                    value = alarm.localTime!!.format(DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT)),
                     leadingIcon = {
                         Icon(
                             imageVector = Icons.Outlined.Schedule,
