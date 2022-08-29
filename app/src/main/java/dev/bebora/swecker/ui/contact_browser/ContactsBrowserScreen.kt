@@ -85,6 +85,19 @@ fun ContactBrowserScreen(
             if (ui.me.id.isBlank() && ui.accountStatusLoaded) {
                 SuggestLogin(onNavigate = onNavigate)
             } else {
+                Text(
+                    modifier = Modifier.padding(16.dp),
+                    text = stringResource(R.string.friends_section_title),
+                    style = MaterialTheme.typography.headlineSmall
+                )
+                if(ui.friends.isEmpty()){
+                    Text(
+                        modifier = Modifier.padding(vertical = 4.dp,horizontal = 16.dp),
+                        text = stringResource(R.string.no_contact_warning),
+                        style = MaterialTheme.typography.labelLarge,
+                        color = MaterialTheme.colorScheme.outline
+                    )
+                }
                 ui.friends.forEachIndexed { idx, friend ->
                     if (idx != 0) {
                         Divider()
@@ -108,9 +121,18 @@ fun ContactBrowserScreen(
                     }
                 }
                 Text(
+                    modifier = Modifier.padding(16.dp),
                     text = stringResource(R.string.friendship_requests),
-                    style = MaterialTheme.typography.headlineSmall
+                    style = MaterialTheme.typography.headlineSmall,
                 )
+                if(ui.friendshipRequests.isEmpty()){
+                    Text(
+                        modifier = Modifier.padding(vertical = 4.dp,horizontal = 16.dp),
+                        text = stringResource(R.string.no_friendship_requests_warning),
+                        style = MaterialTheme.typography.labelLarge,
+                        color = MaterialTheme.colorScheme.outline
+                    )
+                }
                 ui.friendshipRequests.forEachIndexed { idx, friend ->
                     if (idx != 0) {
                         Divider()
@@ -218,6 +240,19 @@ fun ContactBrowserDialog(
                         if (ui.me.id.isBlank() && ui.accountStatusLoaded) {
                             SuggestLogin(onNavigate = onNavigate)
                         } else {
+                            Text(
+                                modifier = Modifier.padding(16.dp),
+                                text = stringResource(R.string.friends_section_title),
+                                style = MaterialTheme.typography.headlineSmall
+                            )
+                            if(ui.friends.isEmpty()){
+                                Text(
+                                    modifier = Modifier.padding(vertical = 4.dp,horizontal = 16.dp),
+                                    text = stringResource(R.string.no_contact_warning),
+                                    style = MaterialTheme.typography.labelLarge,
+                                    color = MaterialTheme.colorScheme.outline
+                                )
+                            }
                             ui.friends.forEachIndexed { idx, friend ->
                                 if (idx != 0) {
                                     Divider()
@@ -241,9 +276,18 @@ fun ContactBrowserDialog(
                                 }
                             }
                             Text(
+                                modifier = Modifier.padding(16.dp),
                                 text = stringResource(R.string.friendship_requests),
                                 style = MaterialTheme.typography.headlineSmall
                             )
+                            if(ui.friendshipRequests.isEmpty()){
+                                Text(
+                                    modifier = Modifier.padding(vertical = 4.dp,horizontal = 16.dp),
+                                    text = stringResource(R.string.no_friendship_requests_warning),
+                                    style = MaterialTheme.typography.labelLarge,
+                                    color = MaterialTheme.colorScheme.outline
+                                )
+                            }
                             ui.friendshipRequests.forEachIndexed { idx, friend ->
                                 if (idx != 0) {
                                     Divider()

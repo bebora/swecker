@@ -110,4 +110,7 @@
     <string name="add_alarm_title">Add alarm</string>
     <string name="open_hamburger_menu">Open hamburger menu</string>
     <string name="friendship_requests">Friendship requests</string>
+    <string name="no_contact_warning">You do not have any contacs</string>
+    <string name="friends_section_title">Friends</string>
+    <string name="no_friendship_requests_warning">You do not have any friendship requests</string>
 </resources>
