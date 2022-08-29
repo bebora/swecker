@@ -27,7 +27,10 @@ class SettingsViewModelTest {
     private lateinit var viewModel: SettingsViewModel
     private val repository = FakeSettingsRepository()
     private val authService = FakeAuthService()
-    private val accountsService = FakeAccountsService()
+    private val accountsService = FakeAccountsService(
+        users = FakeAccountsService.defaultUsers.toMutableMap(),
+        friendshipRequests = FakeAccountsService.defaultFriendshipRequests.toMutableMap()
+    )
     private val imageStorageService = FakeImageStorageService()
 
     @Before

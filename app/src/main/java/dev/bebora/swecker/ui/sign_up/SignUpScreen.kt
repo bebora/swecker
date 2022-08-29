@@ -185,7 +185,10 @@ fun SignupScreenPreview() {
     SignUpScreen(
         viewModel = SignUpViewModel(
             authService = FakeAuthService(),
-            accountsService = FakeAccountsService()
+            accountsService = FakeAccountsService(
+                users = FakeAccountsService.defaultUsers.toMutableMap(),
+                friendshipRequests = FakeAccountsService.defaultFriendshipRequests.toMutableMap()
+            )
         )
     )
 }

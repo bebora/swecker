@@ -38,7 +38,10 @@ class AddChannelViewModelTest {
     fun setUp() {
         alarmProviderService = FakeAlarmProviderService()
         authService = FakeAuthService(initialUserId = "validuser")
-        accountsService = FakeAccountsService()
+        accountsService = FakeAccountsService(
+            users = FakeAccountsService.defaultUsers.toMutableMap(),
+            friendshipRequests = FakeAccountsService.defaultFriendshipRequests.toMutableMap()
+        )
         imageStorageService = FakeImageStorageService()
         alarmProviderService = FakeAlarmProviderService()
         viewModel = AddChannelViewModel(

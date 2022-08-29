@@ -23,7 +23,10 @@ class SignUpViewModelTest {
 
     private lateinit var viewModel: SignUpViewModel
     private val authService = FakeAuthService()
-    private val accountsService = FakeAccountsService()
+    private val accountsService = FakeAccountsService(
+        users = FakeAccountsService.defaultUsers.toMutableMap(),
+        friendshipRequests = FakeAccountsService.defaultFriendshipRequests.toMutableMap()
+    )
 
     @Before
     fun setUp() {

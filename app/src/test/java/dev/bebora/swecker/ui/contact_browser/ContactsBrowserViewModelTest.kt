@@ -30,7 +30,10 @@ class ContactsBrowserViewModelTest {
     @Before
     fun setUp() {
         authService = FakeAuthService(initialUserId = "luca")
-        accountsService = FakeAccountsService()
+        accountsService = FakeAccountsService(
+            users = FakeAccountsService.defaultUsers.toMutableMap(),
+            friendshipRequests = FakeAccountsService.defaultFriendshipRequests.toMutableMap()
+        )
         viewModel = ContactsBrowserViewModel(
             authService = authService,
             accountsService = accountsService

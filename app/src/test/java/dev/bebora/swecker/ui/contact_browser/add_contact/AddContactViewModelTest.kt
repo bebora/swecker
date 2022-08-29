@@ -35,7 +35,10 @@ class AddContactViewModelTest {
     @Before
     fun setUp() {
         authService = FakeAuthService(initialUserId = "luca")
-        accountsService = FakeAccountsService()
+        accountsService = FakeAccountsService(
+            users = FakeAccountsService.defaultUsers.toMutableMap(),
+            friendshipRequests = FakeAccountsService.defaultFriendshipRequests.toMutableMap()
+        )
         viewModel = AddContactViewModel(
             authService = authService,
             accountsService = accountsService,

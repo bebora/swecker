@@ -144,7 +144,10 @@ fun ContactBrowserScreenPreview() {
     ContactBrowserScreen(
         viewModel = ContactsBrowserViewModel(
             authService = FakeAuthService(),
-            accountsService = FakeAccountsService()
+            accountsService = FakeAccountsService(
+                users = FakeAccountsService.defaultUsers.toMutableMap(),
+                friendshipRequests = FakeAccountsService.defaultFriendshipRequests.toMutableMap()
+            )
         ),
         onNavigate = {}
     )

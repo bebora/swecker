@@ -84,9 +84,9 @@ class ContactsBrowserScreenTest {
         composeRule.onNodeWithText(contacts).performClick()
         // Get the original friends
         val initialFriendsCount =
-            FakeAccountsService.users[FakeAuthService.validUserId]!!.friends.size
+            FakeAccountsService.defaultUsers[FakeAuthService.validUserId]!!.friends.size
         val initialRequestsCount =
-            FakeAccountsService.friendshipRequests[FakeAuthService.validUserId]!!.size
+            FakeAccountsService.defaultFriendshipRequests[FakeAuthService.validUserId]!!.size
         val friendshipRequestSection = composeRule.activity.getString(R.string.friendship_requests)
         composeRule.onNodeWithText(friendshipRequestSection).assertIsDisplayed()
         composeRule.onAllNodesWithTag(TestConstants.removeFriend, useUnmergedTree = true)
@@ -120,7 +120,7 @@ class ContactsBrowserScreenTest {
         composeRule.onNodeWithText(contacts).performClick()
         // Get the original friends
         val initialFriendsCount =
-            FakeAccountsService.users[FakeAuthService.validUserId]!!.friends.size
+            FakeAccountsService.defaultUsers[FakeAuthService.validUserId]!!.friends.size
         val friendshipRequestSection = composeRule.activity.getString(R.string.friendship_requests)
         composeRule.onNodeWithText(friendshipRequestSection).assertIsDisplayed()
         composeRule.onAllNodesWithTag(TestConstants.removeFriend, useUnmergedTree = true)

@@ -150,7 +150,10 @@ fun NavRailPreview() {
     val testViewModel = AlarmBrowserViewModel(
         PreviewAlarmRepository(),
         chatService = ChatServiceImpl(),
-        accountsService = FakeAccountsService(),
+        accountsService = FakeAccountsService(
+            users = FakeAccountsService.defaultUsers.toMutableMap(),
+            friendshipRequests = FakeAccountsService.defaultFriendshipRequests.toMutableMap()
+        ),
         authService = FakeAuthService(),
         alarmProviderService = FakeAlarmProviderService()
     )

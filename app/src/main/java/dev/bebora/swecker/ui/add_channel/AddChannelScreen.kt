@@ -118,7 +118,10 @@ fun AddChannelScreenPreview() {
             onNavigate = {},
             viewModel = AddChannelViewModel(
                 authService = FakeAuthService(),
-                accountsService = FakeAccountsService(),
+                accountsService = FakeAccountsService(
+                    users = FakeAccountsService.defaultUsers.toMutableMap(),
+                    friendshipRequests = FakeAccountsService.defaultFriendshipRequests.toMutableMap()
+                ),
                 imageStorageService = FakeImageStorageService(),
                 alarmProviderService = FakeAlarmProviderService(),
                 iODispatcher = Dispatchers.IO,

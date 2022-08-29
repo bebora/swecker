@@ -2,11 +2,15 @@ package dev.bebora.swecker.data.service.testimpl
 
 import dev.bebora.swecker.data.User
 import dev.bebora.swecker.data.service.*
+import dev.bebora.swecker.data.service.impl.FriendshipRequest
 import dev.bebora.swecker.data.service.impl.UserWithFriends
 import dev.bebora.swecker.data.service.impl.toUser
 import kotlinx.coroutines.flow.*
 
-class FakeAccountsService() : AccountsService {
+class FakeAccountsService(
+    private val users: MutableMap<String, UserWithFriends>,
+    private val friendshipRequests: MutableMap<String, List<String>>
+) : AccountsService {
     private val userUpdates = MutableStateFlow(0)
     private val friendshipRequestsUpdates = MutableStateFlow(0)
 
@@ -156,11 +160,11 @@ class FakeAccountsService() : AccountsService {
     companion object {
         const val friendId = "friend"
         const val friendName = "Friend"
-        val friendshipRequests = mutableMapOf(
+        val defaultFriendshipRequests = mapOf(
             "luca" to listOf(FakeAuthService.validUserId),
             FakeAuthService.validUserId to listOf("carm")
         ) // to, from
-        val users = mutableMapOf(
+        val defaultUsers = mapOf(
             "luca" to UserWithFriends(
                 id = "luca",
                 name = "Luca",

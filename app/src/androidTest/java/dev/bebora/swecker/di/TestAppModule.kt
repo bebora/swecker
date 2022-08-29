@@ -65,7 +65,10 @@ object TestAppModule {
     @Singleton
     fun provideAccountsService(): AccountsService {
         // TODO Add some data?
-        return FakeAccountsService()
+        return FakeAccountsService(
+            users = FakeAccountsService.defaultUsers.toMutableMap(),
+            friendshipRequests = FakeAccountsService.defaultFriendshipRequests.toMutableMap()
+        )
     }
 
     @Provides

@@ -129,7 +129,10 @@ fun SettingsScreenPreview() {
             viewModel = SettingsViewModel(
                 repository = FakeSettingsRepository(),
                 authService = FakeAuthService(),
-                accountsService = FakeAccountsService(),
+                accountsService = FakeAccountsService(
+                    users = FakeAccountsService.defaultUsers.toMutableMap(),
+                    friendshipRequests = FakeAccountsService.defaultFriendshipRequests.toMutableMap()
+                ),
                 imageStorageService = ImageStorageServiceImpl()
             )
         )
