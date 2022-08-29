@@ -15,6 +15,7 @@ import dev.bebora.swecker.data.AlarmType
 import dev.bebora.swecker.data.alarmTypeToIcon
 import dev.bebora.swecker.ui.theme.SweckerTheme
 import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -25,6 +26,9 @@ fun AlarmCard(
     selected: Boolean = false,
     onEvent: (AlarmBrowserEvent) -> Unit = {}
 ) {
+    val formattedTime =
+        alarm.localTime?.format(DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT))?.split(" ")
+            ?: listOf("", "")
     Card(
         onClick = { onEvent(AlarmBrowserEvent.AlarmSelected(alarm)) },
         enabled = alarm.enabled,
@@ -47,12 +51,16 @@ fun AlarmCard(
             ) {
                 Text(
                     style = MaterialTheme.typography.displayLarge,
-                    text = alarm.localTime?.format(DateTimeFormatter.ofPattern("hh:mm")) ?: ""
+                    text = formattedTime.first()
                 )
                 Spacer(modifier = Modifier.width(4.dp))
                 Text(
                     style = MaterialTheme.typography.displaySmall,
-                    text = alarm.localTime?.format(DateTimeFormatter.ofPattern("a")) ?: ""
+                    text = if (formattedTime.size == 2) {
+                        formattedTime.last()
+                    } else {
+                        ""
+                    }
                 )
 
                 Spacer(Modifier.weight(1f))

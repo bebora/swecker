@@ -569,10 +569,6 @@ enum class DetailsScreenContent {
 enum class DialogContent {
     NONE,
     ADD_ALARM,
-    ADD_GROUP,
-    ADD_CHANNEL,
-    ADD_CONTACT,
-    CONTACT_BROWSER,
 }
 
 enum class NavBarDestination {
