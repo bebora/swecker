@@ -112,7 +112,7 @@ class AlarmRepositoryImpl @Inject constructor(
                 }
                 alarmSavedOffline == null
             }
-            local.map { localAlarm ->
+            (local.map { localAlarm ->
                 val alarmSavedOnline = online.firstOrNull {
                     it.id == localAlarm.id
                 }
@@ -128,7 +128,7 @@ class AlarmRepositoryImpl @Inject constructor(
                 } else {
                     localAlarm
                 }
-            }.plus(onlineOnlyAlarms).sortedBy {
+            }.plus(onlineOnlyAlarms)).sortedBy {
                 it.dateTime
             }
         }

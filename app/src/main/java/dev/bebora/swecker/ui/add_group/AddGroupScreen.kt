@@ -153,7 +153,8 @@ fun AddGroupInputField(
                 .horizontalScroll(
                     state = scrollState,
                 )
-                .fillMaxWidth(1f),
+                .fillMaxWidth(1f)
+                .padding(4.dp),
             horizontalArrangement = Arrangement.spacedBy(4.dp)
         ) {
             selectedMembers.forEach {

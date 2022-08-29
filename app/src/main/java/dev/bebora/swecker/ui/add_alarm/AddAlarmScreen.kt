@@ -21,8 +21,11 @@ import dev.bebora.swecker.data.AlarmType
 import dev.bebora.swecker.data.Group
 import dev.bebora.swecker.data.alarm_browser.FakeAlarmRepository
 import dev.bebora.swecker.ui.alarm_browser.alarm_details.AlarmDetails
+import dev.bebora.swecker.ui.alarm_browser.alarm_details.nextEnabledDate
 import dev.bebora.swecker.ui.theme.SweckerTheme
 import dev.bebora.swecker.util.TestConstants
+import java.time.ZoneId
+import java.time.ZonedDateTime
 
 @Composable
 fun AddAlarmContent(
@@ -88,6 +91,7 @@ fun AddAlarmScreen(
     alarmType: AlarmType,
     addAlarmViewModel: AddAlarmViewModel = hiltViewModel()
 ) {
+    val alarm = addAlarmViewModel.vmAlarm
     Scaffold(
         topBar = {
             AddAlarmAppBar(
@@ -104,8 +108,24 @@ fun AddAlarmScreen(
                     .imePadding()
                     .testTag(TestConstants.confirm),
                 onClick = {
+                    val enabledRepetition = alarm.enabledDays.reduceRight { a, b -> a || b }
+                    val date = if (!enabledRepetition) {
+                        alarm.localDate
+                    } else {
+                        nextEnabledDate(
+                            enabledDays = alarm.enabledDays,
+                            time = alarm.localTime!!
+                        ).toLocalDate()
+                    }
                     addAlarmViewModel.onUpdateCompleted(
-                        alarm = addAlarmViewModel.vmAlarm,
+                        alarm.copy(
+                            localDate = date,
+                            dateTime = ZonedDateTime.of(
+                                date,
+                                alarm.localTime,
+                                ZoneId.systemDefault()
+                            ).toOffsetDateTime()
+                        ),
                         alarmType = alarmType,
                         group = group,
                         userId = userId,
