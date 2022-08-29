@@ -87,6 +87,6 @@ object TestAppModule {
     @Provides
     @Singleton
     fun provideIoDispatcher(): CoroutineDispatcher {
-        return StandardTestDispatcher()
+        return Dispatchers.Main // Weird, test dispatcher does not work as expected
     }
 }

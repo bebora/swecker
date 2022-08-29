@@ -1,16 +1,16 @@
 package dev.bebora.swecker.data.alarm_browser
 
 
+import android.util.Log
 import dev.bebora.swecker.data.Alarm
 import dev.bebora.swecker.data.service.AlarmProviderService
-import dev.bebora.swecker.data.service.testimpl.FakeAlarmProviderService
 import dev.bebora.swecker.data.toAlarm
 import dev.bebora.swecker.data.toStoredAlarm
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlin.coroutines.suspendCoroutine
 
-class FakeAlarmRepository(fakeAlarmProviderService: AlarmProviderService = FakeAlarmProviderService()) :
+class FakeAlarmRepository(fakeAlarmProviderService: AlarmProviderService) :
     AlarmRepository {
     val alarmProviderService = fakeAlarmProviderService
 
@@ -27,6 +27,7 @@ class FakeAlarmRepository(fakeAlarmProviderService: AlarmProviderService = FakeA
         suspendCoroutine { continuation ->
             alarmProviderService.createAlarm(alarm = alarm.toStoredAlarm().copy(userId = userId),
                 onComplete = {
+                    Log.d("SWECKER_CASPITO", it.toString())
                     continuation.resumeWith(Result.success(Unit))
                 })
         }

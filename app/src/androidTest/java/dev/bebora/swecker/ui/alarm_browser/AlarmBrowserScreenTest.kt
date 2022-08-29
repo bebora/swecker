@@ -44,7 +44,7 @@ class AlarmBrowserScreenTest {
         }
     }
 
-    /*@Test
+    @Test
     fun addPersonalAlarm_AlarmCreated() {
         val personalAlarmName = "Spanish lesson"
         composeRule.onNodeWithTag(TestConstants.personal).performClick()
@@ -55,6 +55,7 @@ class AlarmBrowserScreenTest {
         composeRule.onNodeWithTag(TestConstants.confirm).performClick()
         composeRule.onNodeWithText(personalAlarmName).assertIsDisplayed()
     }
+
     @Test
     fun updatePersonalAlarm_AlarmUpdated() {
         // Create alarm
@@ -67,7 +68,6 @@ class AlarmBrowserScreenTest {
         composeRule.onNodeWithTag(TestConstants.confirm).performClick()
         // Update it
         composeRule.waitForIdle()
-        runBlocking { delay(1000) }
         composeRule.onNodeWithText(personalAlarmName).performClick()
         composeRule.onAllNodesWithTag(TestConstants.dayDisabled).assertCountEquals(7)
             .onFirst()
@@ -76,5 +76,5 @@ class AlarmBrowserScreenTest {
         composeRule.onNodeWithTag(TestConstants.confirm).performClick()
         composeRule.onNodeWithText(personalAlarmName).performClick()
         composeRule.onAllNodesWithTag(TestConstants.dayDisabled).assertCountEquals(6)
-    }*/
+    }
 }

@@ -20,6 +20,7 @@ import dev.bebora.swecker.R
 import dev.bebora.swecker.data.AlarmType
 import dev.bebora.swecker.data.Group
 import dev.bebora.swecker.data.alarm_browser.FakeAlarmRepository
+import dev.bebora.swecker.data.service.testimpl.FakeAlarmProviderService
 import dev.bebora.swecker.ui.alarm_browser.alarm_details.AlarmDetails
 import dev.bebora.swecker.ui.alarm_browser.alarm_details.nextEnabledDate
 import dev.bebora.swecker.ui.theme.SweckerTheme
@@ -187,7 +188,9 @@ fun AddAlarmContentPreview() {
     SweckerTheme {
         AddAlarmScreen(
             addAlarmViewModel = AddAlarmViewModel(
-                repository = FakeAlarmRepository()
+                repository = FakeAlarmRepository(
+                    FakeAlarmProviderService()
+                )
             ),
             group = null,
             onGoBack = { /*TODO*/ },
