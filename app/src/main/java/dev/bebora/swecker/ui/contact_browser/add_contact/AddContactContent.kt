@@ -88,6 +88,7 @@ fun AddContactContent(
                     ContactRow(user = friend, trailingIcon = {
                         IconButton(
                             onClick = {
+                                keyboardController?.hide()
                                 onEvent(AddContactEvent.SendFriendshipRequest(to = friend))
                             }) {
                             Icon(
