@@ -20,9 +20,9 @@
     <string name="dark_mode_enabled">Enabled</string>
     <string name="dark_mode_dialog_title">Dark mode</string>
     <string name="dismiss_dialog">Dismiss</string>
-    <string name="ringtone_default">Default</string>
-    <string name="ringtone_variation_1">Variation 1</string>
-    <string name="ringtone_variation_2">Variation 2</string>
+    <string name="ringtone_default">Nuclear</string>
+    <string name="ringtone_variation_1">Morning Joy</string>
+    <string name="ringtone_variation_2">Alarm Clock</string>
     <string name="confirm_dialog">Confirm</string>
     <string name="duration_seconds_5">5 seconds</string>
     <string name="duration_seconds_30">30 seconds</string>
@@ -114,4 +114,7 @@
     <string name="friends_section_title">Friends</string>
     <string name="no_friendship_requests_warning">You do not have any friendship requests</string>
     <string name="message_placeholder">Message</string>
+    <string name="no_groups_warning">No groups</string>
+    <string name="no_channels_warning">No channels</string>
+    <string name="no_alarms_warning">No alarms</string>
 </resources>

@@ -3,10 +3,7 @@ package dev.bebora.swecker.ui.alarm_browser.dual_pane
 import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.AddAlarm
-import androidx.compose.material.icons.outlined.AddAlert
-import androidx.compose.material.icons.outlined.GroupAdd
-import androidx.compose.material.icons.outlined.Menu
+import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -58,7 +55,7 @@ fun AlarmBrowserNavRail(
         Column(
             modifier = Modifier.requiredHeightIn(300.dp, 400.dp)
         ) {
-        Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(20.dp))
 
             var isSelected =
                 alarmBrowserUIState.selectedDestination == NavBarDestination.HOME
@@ -74,7 +71,12 @@ fun AlarmBrowserNavRail(
                 alarmBrowserUIState.selectedDestination == NavBarDestination.PERSONAL
             NavigationRailItem(
                 modifier = Modifier.testTag(TestConstants.personal),
-                icon = { Icon(getNavbarIcon("Personal", isSelected), contentDescription = "Personal") },
+                icon = {
+                    Icon(
+                        getNavbarIcon("Personal", isSelected),
+                        contentDescription = "Personal"
+                    )
+                },
                 label = { Text(stringResource(R.string.personal)) },
                 selected = isSelected,
                 onClick = { onEvent(AlarmBrowserEvent.NavBarNavigate(NavBarDestination.PERSONAL)) },
@@ -94,7 +96,12 @@ fun AlarmBrowserNavRail(
                 alarmBrowserUIState.selectedDestination == NavBarDestination.CHANNELS
             NavigationRailItem(
                 modifier = Modifier.testTag(TestConstants.channels),
-                icon = { Icon(getNavbarIcon("Channels", isSelected), contentDescription = "Channels") },
+                icon = {
+                    Icon(
+                        getNavbarIcon("Channels", isSelected),
+                        contentDescription = "Channels"
+                    )
+                },
                 label = { Text(stringResource(R.string.channels)) },
                 selected = isSelected,
                 onClick = { onEvent(AlarmBrowserEvent.NavBarNavigate(NavBarDestination.CHANNELS)) },
@@ -136,7 +143,7 @@ fun AlarmBrowserNavRailFab(
                 contentDescription = null
             )
             NavBarDestination.CHANNELS -> Icon(
-                imageVector = Icons.Outlined.AddAlert,
+                imageVector = Icons.Outlined.Add,
                 contentDescription = null
             )
         }

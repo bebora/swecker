@@ -2,19 +2,25 @@ package dev.bebora.swecker.ui.alarm_browser.dual_pane
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.*
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.AlarmOff
+import androidx.compose.material.icons.outlined.GroupOff
+import androidx.compose.material.icons.outlined.PublicOff
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import dev.bebora.swecker.R
 import dev.bebora.swecker.ui.alarm_browser.AlarmBrowserEvent
 import dev.bebora.swecker.ui.alarm_browser.AlarmBrowserUIState
 import dev.bebora.swecker.ui.alarm_browser.DetailsScreenContent
-import dev.bebora.swecker.ui.alarm_browser.NavBarDestination
 import dev.bebora.swecker.ui.alarm_browser.NavBarDestination.*
 import dev.bebora.swecker.ui.alarm_browser.alarm_details.AlarmDetailsScreen
 import dev.bebora.swecker.ui.alarm_browser.channel_screen.ChannelAlarmListScreen
@@ -29,25 +35,109 @@ fun DualPaneContentDetails(
     onEvent: (AlarmBrowserEvent) -> Unit,
     uiState: AlarmBrowserUIState
 ) {
+    val enterAnim = slideInHorizontally(
+        spring(
+            dampingRatio = Spring.DampingRatioNoBouncy,
+            stiffness = Spring.StiffnessHigh
+        )
+    ) { it } + fadeIn()
+
+    val exitAnim = fadeOut(
+        spring(
+            dampingRatio = Spring.DampingRatioNoBouncy,
+            stiffness = Spring.StiffnessHigh
+        )
+    )
 
     if (uiState.animatedDetailsScreenContent == DetailsScreenContent.NONE) {
         AnimatedVisibility(
             visibleState = uiState.mutableTransitionState,
-            enter = slideInHorizontally { it } + fadeIn(),
-            exit = slideOutHorizontally { it } + fadeOut()
+            enter = enterAnim,
+            exit = exitAnim
         ) {
             Box(modifier = Modifier.fillMaxSize(1f), contentAlignment = Alignment.Center) {
-                Text(
-                    text = (
-                            when (uiState.selectedDestination) {
-                                HOME, PERSONAL -> stringResource(R.string.suggest_alarm_selection)
-                                GROUPS -> stringResource(R.string.suggest_group_selection)
-                                CHANNELS -> stringResource(R.string.suggest_channel_selection)
-                            }),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.displayMedium
-                )
+                when (uiState.selectedDestination) {
+                    HOME, PERSONAL -> {
+                        if (uiState.loadingComplete && uiState.alarms.isEmpty()) {
+                            Column() {
+                                Icon(
+                                    modifier = Modifier
+                                        .size(128.dp),
+                                    imageVector = Icons.Outlined.AlarmOff,
+                                    contentDescription = "No alarms",
+                                    tint = MaterialTheme.colorScheme.outline
+                                )
+                                Spacer(modifier = Modifier.height(20.dp))
+                                Text(
+                                    text = stringResource(R.string.no_alarms_warning),
+                                    modifier = Modifier.align(Alignment.CenterHorizontally),
+                                    style = MaterialTheme.typography.titleMedium,
+                                    color = MaterialTheme.colorScheme.outline
+                                )
+                            }
 
+                        } else {
+                            Text(
+                                text = stringResource(R.string.suggest_alarm_selection),
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                style = MaterialTheme.typography.displayMedium
+                            )
+                        }
+                    }
+
+                    GROUPS -> {
+                        if (uiState.loadingComplete && uiState.groups.isEmpty()) {
+                            Column() {
+                                Icon(
+                                    modifier = Modifier
+                                        .size(128.dp),
+                                    imageVector = Icons.Outlined.GroupOff,
+                                    contentDescription = "No groups",
+                                    tint = MaterialTheme.colorScheme.outline
+                                )
+                                Spacer(modifier = Modifier.height(20.dp))
+                                Text(
+                                    text = stringResource(R.string.no_groups_warning),
+                                    modifier = Modifier.align(Alignment.CenterHorizontally),
+                                    style = MaterialTheme.typography.titleMedium,
+                                    color = MaterialTheme.colorScheme.outline
+                                )
+                            }
+                        } else {
+                            Text(
+                                text = stringResource(R.string.suggest_group_selection),
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                style = MaterialTheme.typography.displayMedium
+                            )
+                        }
+                    }
+                    CHANNELS -> {
+                        if (uiState.loadingComplete && uiState.channels.isEmpty()) {
+                            Column() {
+                                Icon(
+                                    modifier = Modifier
+                                        .size(128.dp),
+                                    imageVector = Icons.Outlined.PublicOff,
+                                    contentDescription = "No channels",
+                                    tint = MaterialTheme.colorScheme.outline
+                                )
+                                Spacer(modifier = Modifier.height(20.dp))
+                                Text(
+                                    text = stringResource(R.string.no_channels_warning),
+                                    modifier = Modifier.align(Alignment.CenterHorizontally),
+                                    style = MaterialTheme.typography.titleMedium,
+                                    color = MaterialTheme.colorScheme.outline
+                                )
+                            }
+                        } else {
+                            Text(
+                                text = stringResource(R.string.suggest_channel_selection),
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                style = MaterialTheme.typography.displayMedium
+                            )
+                        }
+                    }
+                }
             }
         }
     } else {
@@ -56,8 +146,8 @@ fun DualPaneContentDetails(
         }
         AnimatedVisibility(
             visibleState = uiState.mutableTransitionState,
-            enter = slideInHorizontally { it } + fadeIn(),
-            exit = slideOutHorizontally { it } + fadeOut()
+            enter = enterAnim,
+            exit = exitAnim
         ) {
             when (uiState.animatedDetailsScreenContent) {
                 DetailsScreenContent.ALARM_DETAILS -> {

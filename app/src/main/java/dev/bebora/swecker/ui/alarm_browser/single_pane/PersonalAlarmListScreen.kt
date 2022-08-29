@@ -6,10 +6,12 @@ import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.AlarmOff
 import androidx.compose.material.icons.outlined.Menu
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
@@ -85,28 +87,59 @@ fun PersonalAlarmListScreen(
         Column(
             modifier = Modifier.padding(it)
         ) {
-            AnimatedVisibility(
-                visible = showSearchBar || uiState.searchKey.isNotEmpty(),
-                enter = expandVertically(),
-                exit = shrinkVertically()
-            ) {
-                AlarmBrowserSearchBar(
-                    modifier = Modifier
-                        .padding(4.dp)
-                        .focusRequester(focusRequester),
-                    searchKey = uiState.searchKey,
-                    onValueChange = { newValue -> onEvent(AlarmBrowserEvent.SearchAlarms(newValue)) })
-                BackHandler() {
-                    showSearchBar = false
-                }
-            }
+            if (uiState.loadingComplete && uiState.alarms.isEmpty()) {
+                Box(
+                    modifier = Modifier.fillMaxSize(1f),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Column() {
+                        Icon(
+                            modifier = Modifier
+                                .size(128.dp),
+                            imageVector = Icons.Outlined.AlarmOff,
+                            contentDescription = "No alarms",
+                            tint = MaterialTheme.colorScheme.outline
+                        )
+                        Spacer(modifier = Modifier.height(20.dp))
+                        Text(
+                            text = stringResource(R.string.no_alarms_warning),
+                            modifier = Modifier.align(Alignment.CenterHorizontally),
+                            style = MaterialTheme.typography.titleMedium,
+                            color = MaterialTheme.colorScheme.outline
+                        )
+                    }
 
-            AlarmList(
-                modifier = Modifier.padding(horizontal = 4.dp),
-                alarms = uiState.filteredAlarms ?: uiState.alarms,
-                onEvent = onEvent,
-                selectedAlarm = uiState.selectedAlarm
-            )
+                }
+            } else {
+                AnimatedVisibility(
+                    visible = showSearchBar || uiState.searchKey.isNotEmpty(),
+                    enter = expandVertically(),
+                    exit = shrinkVertically()
+                ) {
+                    AlarmBrowserSearchBar(
+                        modifier = Modifier
+                            .padding(4.dp)
+                            .focusRequester(focusRequester),
+                        searchKey = uiState.searchKey,
+                        onValueChange = { newValue ->
+                            onEvent(
+                                AlarmBrowserEvent.SearchAlarms(
+                                    newValue
+                                )
+                            )
+                        })
+                    BackHandler() {
+                        showSearchBar = false
+                    }
+                }
+
+                AlarmList(
+                    modifier = Modifier.padding(horizontal = 4.dp),
+                    alarms = uiState.filteredAlarms ?: uiState.alarms,
+                    onEvent = onEvent,
+                    selectedAlarm = uiState.selectedAlarm
+                )
+            }
         }
     }
 }

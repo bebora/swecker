@@ -2,13 +2,12 @@ package dev.bebora.swecker.ui.alarm_browser.single_pane
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.*
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Menu
-import androidx.compose.material.icons.outlined.Search
+import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
@@ -51,7 +50,12 @@ fun ChannelListScreen(
                     containerColor = MaterialTheme.colorScheme.surfaceVariant
                 ),
                 modifier = Modifier,
-                title = { Text(text = stringResource(R.string.channels), textAlign = TextAlign.Center) },
+                title = {
+                    Text(
+                        text = stringResource(R.string.channels),
+                        textAlign = TextAlign.Center
+                    )
+                },
                 navigationIcon = {
                     IconButton(onClick = { navigationAction() }) {
                         Icon(
@@ -90,31 +94,62 @@ fun ChannelListScreen(
         Column(
             modifier = Modifier.padding(it)
         ) {
-            AnimatedVisibility(
-                visible = showSearchBar || uiState.searchKey.isNotEmpty(),
-                enter = expandVertically(),
-                exit = shrinkVertically()
-            ) {
-                AlarmBrowserSearchBar(
-                    modifier = Modifier
-                        .padding(4.dp)
-                        .focusRequester(focusRequester),
-                    searchKey = uiState.searchKey,
-                    onValueChange = { newValue -> onEvent(AlarmBrowserEvent.SearchGroups(newValue)) })
-                BackHandler() {
-                    showSearchBar = false
-                }
-            }
+            if (uiState.loadingComplete && uiState.channels.isEmpty()) {
+                Box(
+                    modifier = Modifier.fillMaxSize(1f),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Column() {
+                        Icon(
+                            modifier = Modifier
+                                .size(128.dp),
+                            imageVector = Icons.Outlined.PublicOff,
+                            contentDescription = "No channels",
+                            tint = MaterialTheme.colorScheme.outline
+                        )
+                        Spacer(modifier = Modifier.height(20.dp))
+                        Text(
+                            text = stringResource(R.string.no_channels_warning),
+                            modifier = Modifier.align(Alignment.CenterHorizontally),
+                            style = MaterialTheme.typography.titleMedium,
+                            color = MaterialTheme.colorScheme.outline
+                        )
+                    }
 
-            ChannelList(
-                channels = uiState.channels.filter { channel ->
-                    channel.name.contains(uiState.searchKey, ignoreCase = true)
-                } + uiState.extraChannels,
-                myId = uiState.me.id,
-                onEvent = { channel -> onEvent(AlarmBrowserEvent.ChannelSelected(channel)) },
-                onChannelJoin = { channel -> onEvent(AlarmBrowserEvent.JoinChannel(channel)) },
-                selectedChannelId = uiState.selectedChannel?.id
-            )
+                }
+            } else {
+                AnimatedVisibility(
+                    visible = showSearchBar || uiState.searchKey.isNotEmpty(),
+                    enter = expandVertically(),
+                    exit = shrinkVertically()
+                ) {
+                    AlarmBrowserSearchBar(
+                        modifier = Modifier
+                            .padding(4.dp)
+                            .focusRequester(focusRequester),
+                        searchKey = uiState.searchKey,
+                        onValueChange = { newValue ->
+                            onEvent(
+                                AlarmBrowserEvent.SearchGroups(
+                                    newValue
+                                )
+                            )
+                        })
+                    BackHandler() {
+                        showSearchBar = false
+                    }
+                }
+
+                ChannelList(
+                    channels = uiState.channels.filter { channel ->
+                        channel.name.contains(uiState.searchKey, ignoreCase = true)
+                    } + uiState.extraChannels,
+                    myId = uiState.me.id,
+                    onEvent = { channel -> onEvent(AlarmBrowserEvent.ChannelSelected(channel)) },
+                    onChannelJoin = { channel -> onEvent(AlarmBrowserEvent.JoinChannel(channel)) },
+                    selectedChannelId = uiState.selectedChannel?.id
+                )
+            }
         }
     }
 }

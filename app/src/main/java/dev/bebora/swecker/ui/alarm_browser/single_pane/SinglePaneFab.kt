@@ -1,8 +1,8 @@
 package dev.bebora.swecker.ui.alarm_browser.single_pane
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.AddAlarm
-import androidx.compose.material.icons.outlined.AddAlert
 import androidx.compose.material.icons.outlined.GroupAdd
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -52,7 +52,7 @@ fun AlarmBrowserSinglePaneFab(
                         contentDescription = null
                     )
                     NavBarDestination.CHANNELS -> Icon(
-                        imageVector = Icons.Outlined.AddAlert,
+                        imageVector = Icons.Outlined.Add,
                         contentDescription = null
                     )
                 }

@@ -2,6 +2,8 @@ package dev.bebora.swecker.ui.alarm_browser.single_pane
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.*
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import dev.bebora.swecker.ui.alarm_browser.AlarmBrowserEvent
@@ -23,35 +25,55 @@ fun SinglePaneScreen(
     onOpenDrawer: () -> Unit,
     onNavigate: (String) -> Unit
 ) {
+    val enterAnim = slideInHorizontally(
+        spring(
+            dampingRatio = Spring.DampingRatioNoBouncy,
+            stiffness = Spring.StiffnessHigh
+        )
+    ) { it } + fadeIn()
+
+    val exitAnim = fadeOut(
+        spring(
+            dampingRatio = Spring.DampingRatioNoBouncy,
+            stiffness = Spring.StiffnessHigh
+        )
+    )
+
     when (uiState.animatedDetailsScreenContent) {
         DetailsScreenContent.NONE -> {
-            when (uiState.selectedDestination) {
-                NavBarDestination.HOME -> HomeAlarmListScreen(
-                    modifier = modifier,
-                    onEvent = onEvent,
-                    uiState = uiState,
-                    navigationAction = onOpenDrawer
-                )
-                NavBarDestination.PERSONAL -> PersonalAlarmListScreen(
-                    modifier = modifier,
-                    onEvent = onEvent,
-                    uiState = uiState,
-                    navigationAction = onOpenDrawer
-                )
-                NavBarDestination.GROUPS -> GroupListScreen(
-                    modifier = modifier,
-                    onEvent = onEvent,
-                    uiState = uiState,
-                    navigationAction = onOpenDrawer,
-                    onNavigate = onNavigate
-                )
-                NavBarDestination.CHANNELS -> ChannelListScreen(
-                    modifier = modifier,
-                    onEvent = onEvent,
-                    uiState = uiState,
-                    navigationAction = onOpenDrawer,
-                    onNavigate = onNavigate
-                )
+            AnimatedVisibility(
+                visibleState = uiState.mutableTransitionState,
+                enter = enterAnim,
+                exit = exitAnim
+            ) {
+                when (uiState.selectedDestination) {
+                    NavBarDestination.HOME -> HomeAlarmListScreen(
+                        modifier = modifier,
+                        onEvent = onEvent,
+                        uiState = uiState,
+                        navigationAction = onOpenDrawer
+                    )
+                    NavBarDestination.PERSONAL -> PersonalAlarmListScreen(
+                        modifier = modifier,
+                        onEvent = onEvent,
+                        uiState = uiState,
+                        navigationAction = onOpenDrawer
+                    )
+                    NavBarDestination.GROUPS -> GroupListScreen(
+                        modifier = modifier,
+                        onEvent = onEvent,
+                        uiState = uiState,
+                        navigationAction = onOpenDrawer,
+                        onNavigate = onNavigate
+                    )
+                    NavBarDestination.CHANNELS -> ChannelListScreen(
+                        modifier = modifier,
+                        onEvent = onEvent,
+                        uiState = uiState,
+                        navigationAction = onOpenDrawer,
+                        onNavigate = onNavigate
+                    )
+                }
             }
         }
         DetailsScreenContent.GROUP_DETAILS -> {
@@ -60,8 +82,8 @@ fun SinglePaneScreen(
             }
             AnimatedVisibility(
                 visibleState = uiState.mutableTransitionState,
-                enter = slideInHorizontally { it } + fadeIn(),
-                exit = slideOutHorizontally { -it } + fadeOut()
+                enter = enterAnim,
+                exit = exitAnim
             ) {
                 GroupDetailsScreen(
                     modifier = modifier,
@@ -77,8 +99,8 @@ fun SinglePaneScreen(
             }
             AnimatedVisibility(
                 visibleState = uiState.mutableTransitionState,
-                enter = slideInHorizontally { it/2 } + fadeIn(),
-                exit = slideOutHorizontally { -it/2 } + fadeOut()
+                enter = enterAnim,
+                exit = exitAnim
             ) {
                 ChannelDetailsScreen(
                     modifier = modifier,
@@ -94,8 +116,8 @@ fun SinglePaneScreen(
             }
             AnimatedVisibility(
                 visibleState = uiState.mutableTransitionState,
-                enter = slideInHorizontally { it/2 } + fadeIn(),
-                exit = slideOutHorizontally { it/2 } + fadeOut()
+                enter = enterAnim,
+                exit = exitAnim
             ) {
                 AlarmDetailsScreen(
                     modifier = modifier,
@@ -111,8 +133,8 @@ fun SinglePaneScreen(
             }
             AnimatedVisibility(
                 visibleState = uiState.mutableTransitionState,
-                enter = slideInHorizontally { -it/2 } + fadeIn(),
-                exit = slideOutHorizontally { it/2 } + fadeOut()
+                enter = enterAnim,
+                exit = exitAnim
             ) {
                 GroupAlarmListScreen(
                     modifier = modifier,
@@ -129,8 +151,8 @@ fun SinglePaneScreen(
             }
             AnimatedVisibility(
                 visibleState = uiState.mutableTransitionState,
-                enter = slideInHorizontally { -it/2 } + fadeIn(),
-                exit = slideOutHorizontally { it/2 } + fadeOut()
+                enter = enterAnim,
+                exit = exitAnim
             ) {
                 ChannelAlarmListScreen(
                     modifier = modifier,
@@ -147,8 +169,8 @@ fun SinglePaneScreen(
             }
             AnimatedVisibility(
                 visibleState = uiState.mutableTransitionState,
-                enter = slideInHorizontally { it/2 } + fadeIn(),
-                exit = slideOutHorizontally { -it/2 } + fadeOut()
+                enter = enterAnim,
+                exit = exitAnim
             ) {
                 ChatScreen(
                     modifier = modifier,
@@ -160,7 +182,7 @@ fun SinglePaneScreen(
         }
     }
 
-    if(uiState.mutableTransitionState.isIdle){
+    if (uiState.mutableTransitionState.isIdle) {
         onEvent(AlarmBrowserEvent.OnTransitionCompleted)
     }
 }

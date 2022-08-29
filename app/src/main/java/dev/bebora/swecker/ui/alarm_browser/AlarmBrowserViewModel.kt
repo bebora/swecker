@@ -141,7 +141,8 @@ class AlarmBrowserViewModel @Inject constructor(
                                         firstAlarmDateTime = firstGroupAlarm?.dateTime,
                                         firstAlarmName = firstGroupAlarm?.name ?: ""
                                     )
-                                }
+                                },
+                                loadingComplete = true
                             )
                         }
                 }
@@ -201,7 +202,9 @@ class AlarmBrowserViewModel @Inject constructor(
                 if (selectedAlarm?.id.equals(event.alarm.id) &&
                     detailsScreenContent == DetailsScreenContent.ALARM_DETAILS
                 ) {
-                    if(event.success) { selectedAlarm = event.alarm }
+                    if (event.success) {
+                        selectedAlarm = event.alarm
+                    }
                     detailsScreenContent = detailsScreenContentOnGoBack()
                     if (uiState.detailsScreenContent != DetailsScreenContent.NONE) {
                         mutableTransitionState = MutableTransitionState(true).apply {
@@ -554,7 +557,8 @@ data class AlarmBrowserUIState(
     val messages: List<Message> = emptyList(),
     val usersData: Map<String, User> = emptyMap(),
     val mutableTransitionState: MutableTransitionState<Boolean> = MutableTransitionState(false),
-    val animatedDetailsScreenContent: DetailsScreenContent = DetailsScreenContent.NONE
+    val animatedDetailsScreenContent: DetailsScreenContent = DetailsScreenContent.NONE,
+    val loadingComplete: Boolean = false
 )
 
 enum class DetailsScreenContent {
