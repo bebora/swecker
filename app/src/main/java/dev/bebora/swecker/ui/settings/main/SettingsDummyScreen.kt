@@ -46,12 +46,12 @@ fun SettingsDummyScreen(
             stringResource(R.string.sounds_section_description),
             Icons.Outlined.NotificationsActive
         ) { onEvent(SettingsEvent.OpenSoundsSettings) },
-        SettingsSection(
+        /*SettingsSection(
             stringResource(R.string.about_section_title),
             stringResource(R.string.about_section_description),
             Icons.Outlined.Info
         ) {
-        }
+        }*/
     )
 
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
