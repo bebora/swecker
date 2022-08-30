@@ -69,13 +69,13 @@ fun SweckerNavigation(
                 val navController = rememberAnimatedNavController()
                 AnimatedNavHost(navController, startDestination = ALARM_BROWSER,
                     enterTransition = {
-                        slideInHorizontally(initialOffsetX = { it / 2 }) + scaleIn(initialScale = .8f)
+                        slideInHorizontally(initialOffsetX = { it / 2 }) //+ scaleIn(initialScale = .8f)
                     },
                     exitTransition = {
-                        slideOutHorizontally(targetOffsetX = { -it / 2 }) + scaleOut(targetScale = .8f)
+                        slideOutHorizontally(targetOffsetX = { -it / 2 }) //+ scaleOut(targetScale = .8f)
                     },
                     popEnterTransition = {
-                        slideInHorizontally(initialOffsetX = { -it / 2 }) + scaleIn(initialScale = .8f)
+                        slideInHorizontally(initialOffsetX = { -it / 2 }) //+ scaleIn(initialScale = .8f)
                     }
                 ) {
                     sweckerGraph(navController = navController)
