@@ -34,10 +34,10 @@ fun PasswordField(value: String, onNewValue: (String) -> Unit, modifier: Modifie
     PasswordField(value, R.string.password_placeholder, onNewValue, modifier)
 }
 
-@Composable
+/*@Composable
 fun RepeatPasswordField(value: String, onNewValue: (String) -> Unit, modifier: Modifier = Modifier) {
     PasswordField(value, R.string.repeat_password_placeholder, onNewValue, modifier)
-}
+}*/
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

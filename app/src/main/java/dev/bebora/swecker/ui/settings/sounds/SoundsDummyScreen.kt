@@ -241,7 +241,7 @@ fun SoundsDummyScreen(
                     )
                 }
             },
-            title = { Text(stringResource(R.string.sounds_ringtone_volume)) }
+            title = { Text(stringResource(R.string.sounds_volume)) }
         )
     }
 }

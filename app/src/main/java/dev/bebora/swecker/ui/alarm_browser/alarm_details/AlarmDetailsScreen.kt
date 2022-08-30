@@ -284,12 +284,12 @@ fun AlarmDetails(
                 text = { Text(text = stringResource(R.string.delete_alarm_dialog_body)) },
                 confirmButton = {
                     OutlinedButton(onClick = { onAlarmDeleted(alarm) }) {
-                        Text(text = stringResource(R.string.yes))
+                        Text(text = stringResource(R.string.confirm_dialog))
                     }
                 },
                 dismissButton = {
                     OutlinedButton(onClick = { showDeleteAlert = false }) {
-                        Text(text = stringResource(R.string.no))
+                        Text(text = stringResource(R.string.dismiss_dialog))
                     }
                 })
         }
