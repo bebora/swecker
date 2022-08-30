@@ -9,6 +9,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
@@ -17,6 +18,7 @@ import androidx.navigation.compose.dialog
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
+import dev.bebora.swecker.R
 import dev.bebora.swecker.data.settings.Settings
 import dev.bebora.swecker.ui.add_channel.AddChannelDialog
 import dev.bebora.swecker.ui.add_group.AddGroupDialog
@@ -43,7 +45,7 @@ fun SweckerNavigation(
         Scaffold(
             topBar = {
                 SmallTopAppBar(
-                    title = { Text(text = "Swecker") }
+                    title = { Text(text = stringResource(id = R.string.app_name)) }
                 )
             }
         ) { paddingValues ->

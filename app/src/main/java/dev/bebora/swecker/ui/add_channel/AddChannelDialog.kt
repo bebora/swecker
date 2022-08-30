@@ -78,7 +78,7 @@ fun AddChannelDialog(
                         ) {
                             Spacer(modifier = Modifier.weight(1f))
                             AssistChip(onClick = { viewModel.discardChannelCreation(onGoBack) },
-                                label = { Text("Cancel") })
+                                label = { Text(stringResource(id = R.string.cancel)) })
 
                             Spacer(modifier = Modifier.width(8.dp))
 

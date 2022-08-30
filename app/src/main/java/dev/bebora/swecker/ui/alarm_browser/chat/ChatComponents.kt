@@ -105,7 +105,7 @@ fun MessageItem(
             ) {
                 if (showContactName) {
                     Text(
-                        text = author ?: "Loading", //TODO add animation instead of fixed name?
+                        text = author ?: stringResource(id = R.string.loading), //TODO add animation instead of fixed name?
                         color = MaterialTheme.colorScheme.secondary,
                         style = MaterialTheme.typography.titleSmall,
                         textAlign = TextAlign.Center

@@ -21,4 +21,7 @@ object TestConstants {
     const val addChannelAlarm = "addChannelAlarm"
     const val sendMessage = "sendMessage"
     const val alarmCardTime = "alarmCardTime"
+    const val settingsSwitch = "settingsSwitch"
+    const val popupOption = "popupOption"
+    const val volumeSlider = "volumeSlider"
 }

@@ -83,7 +83,7 @@ fun AddGroupDialog(
                                     onClick = {
                                         viewModel.discardGroupCreation(onGoBack)
                                     },
-                                    label = { Text("Cancel") })
+                                    label = { Text(stringResource(id = R.string.cancel)) })
 
                                 Spacer(modifier = Modifier.width(8.dp))
 

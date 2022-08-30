@@ -223,7 +223,7 @@ fun AlarmDetails(
                             )
                         })
                     ) {
-                        Text("Cancel")
+                        Text(stringResource(id = R.string.cancel))
                     }
                     Spacer(modifier = Modifier.width(4.dp))
                     OutlinedButton(

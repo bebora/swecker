@@ -55,7 +55,7 @@ fun GroupListScreen(
                     containerColor = MaterialTheme.colorScheme.surfaceVariant
                 ),
                 modifier = modifier,
-                title = { Text(text = "Groups", textAlign = TextAlign.Center) },
+                title = { Text(text = stringResource(id = R.string.groups), textAlign = TextAlign.Center) },
                 navigationIcon = {
                     IconButton(onClick = { navigationAction() }) {
                         Icon(

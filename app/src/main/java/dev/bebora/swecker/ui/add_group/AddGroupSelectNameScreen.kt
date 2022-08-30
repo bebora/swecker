@@ -20,10 +20,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import coil.compose.SubcomposeAsyncImage
 import com.google.modernstorage.photopicker.PhotoPicker
+import dev.bebora.swecker.R
 import dev.bebora.swecker.data.User
 import dev.bebora.swecker.ui.settings.account.PropicPlaceholder
 import dev.bebora.swecker.util.TestConstants
@@ -121,7 +123,7 @@ fun AddGroupSelectNameScreen(
                 },
                 maxLines = 1,
                 singleLine = true,
-                label = { Text("Name") },
+                label = { Text(stringResource(id = R.string.group_name)) },
                 value = groupName,
                 onValueChange = setGroupName,
                 keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),

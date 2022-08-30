@@ -17,6 +17,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import dev.bebora.swecker.ui.theme.SweckerTheme
+import dev.bebora.swecker.util.TestConstants
 
 
 @Composable
@@ -41,7 +42,7 @@ fun SettingsSwitch(
         Text(text = title, style = MaterialTheme.typography.titleMedium)
         Spacer(modifier = Modifier.weight(1f))
         Switch(
-            modifier = Modifier.testTag("settingsSwitch"),
+            modifier = Modifier.testTag(TestConstants.settingsSwitch),
             checked = checked,
             onCheckedChange = { _ -> onToggle() })
     }

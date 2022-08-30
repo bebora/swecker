@@ -31,6 +31,7 @@ import dev.bebora.swecker.ui.theme.SweckerTheme
 import dev.bebora.swecker.ui.utils.feedbackVibrationEnabled
 import dev.bebora.swecker.ui.utils.ringtoneDurationToString
 import dev.bebora.swecker.ui.utils.ringtoneToString
+import dev.bebora.swecker.util.TestConstants
 import dev.bebora.swecker.util.UiEvent
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
@@ -141,7 +142,7 @@ fun SoundsDummyScreen(
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier
-                                .semantics { testTag = "popupOption" }
+                                .semantics { testTag = TestConstants.popupOption }
                                 .fillMaxWidth()
                                 .clickable {
                                     onEvent(
@@ -181,7 +182,7 @@ fun SoundsDummyScreen(
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier
-                                .semantics { testTag = "popupOption" }
+                                .semantics { testTag = TestConstants.popupOption }
                                 .fillMaxWidth()
                                 .clickable {
                                     onEvent(
@@ -227,7 +228,7 @@ fun SoundsDummyScreen(
                         color = MaterialTheme.colorScheme.onSurface
                     )
                     Slider(
-                        modifier = Modifier.testTag("volumeSlider"),
+                        modifier = Modifier.testTag(TestConstants.volumeSlider),
                         value = ui.currentRingtoneVolume / 100F,
                         onValueChange = {
                             onEvent(

@@ -49,7 +49,7 @@ fun PersonalAlarmListScreen(
                     containerColor = MaterialTheme.colorScheme.surfaceVariant
                 ),
                 modifier = Modifier,
-                title = { Text(text = "Personal", textAlign = TextAlign.Center) },
+                title = { Text(text = stringResource(id = R.string.personal), textAlign = TextAlign.Center) },
                 navigationIcon = {
                     IconButton(onClick = { navigationAction() }) {
                         Icon(

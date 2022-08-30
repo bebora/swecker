@@ -117,4 +117,6 @@
     <string name="no_groups_warning">No groups</string>
     <string name="no_channels_warning">No channels</string>
     <string name="no_alarms_warning">No alarms</string>
+    <string name="group_name">Name</string>
+    <string name="loading">Loading</string>
 </resources>

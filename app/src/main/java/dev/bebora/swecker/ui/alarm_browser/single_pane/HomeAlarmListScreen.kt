@@ -51,7 +51,7 @@ fun HomeAlarmListScreen(
                     containerColor = MaterialTheme.colorScheme.surfaceVariant
                 ),
                 modifier = Modifier,
-                title = { Text(text = "Home", textAlign = TextAlign.Center) },
+                title = { Text(text = stringResource(id = R.string.home), textAlign = TextAlign.Center) },
                 navigationIcon = {
                     IconButton(onClick = { navigationAction() }) {
                         Icon(
