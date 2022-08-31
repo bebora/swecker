@@ -94,6 +94,27 @@ fun GroupListScreen(
         Column(
             modifier = Modifier.padding(it)
         ) {
+            AnimatedVisibility(
+                visible = showSearchBar || uiState.searchKey.isNotEmpty(),
+                enter = expandVertically(),
+                exit = shrinkVertically()
+            ) {
+                AlarmBrowserSearchBar(
+                    modifier = Modifier
+                        .padding(4.dp)
+                        .focusRequester(focusRequester),
+                    searchKey = uiState.searchKey,
+                    onValueChange = { newValue ->
+                        onEvent(
+                            AlarmBrowserEvent.SearchGroups(
+                                newValue
+                            )
+                        )
+                    })
+                BackHandler() {
+                    showSearchBar = false
+                }
+            }
             if (uiState.loadingComplete && uiState.groups.isEmpty()) {
                 Box(
                     modifier = Modifier.fillMaxSize(1f),
@@ -118,27 +139,6 @@ fun GroupListScreen(
 
                 }
             } else {
-                AnimatedVisibility(
-                    visible = showSearchBar || uiState.searchKey.isNotEmpty(),
-                    enter = expandVertically(),
-                    exit = shrinkVertically()
-                ) {
-                    AlarmBrowserSearchBar(
-                        modifier = Modifier
-                            .padding(4.dp)
-                            .focusRequester(focusRequester),
-                        searchKey = uiState.searchKey,
-                        onValueChange = { newValue ->
-                            onEvent(
-                                AlarmBrowserEvent.SearchGroups(
-                                    newValue
-                                )
-                            )
-                        })
-                    BackHandler() {
-                        showSearchBar = false
-                    }
-                }
                 GroupList(
                     groups = uiState.groups.filter { group ->
                         group.name.contains(uiState.searchKey, ignoreCase = true)

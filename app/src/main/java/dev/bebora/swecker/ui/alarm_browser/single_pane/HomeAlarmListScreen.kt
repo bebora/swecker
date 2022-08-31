@@ -89,6 +89,27 @@ fun HomeAlarmListScreen(
         Column(
             modifier = Modifier.padding(it)
         ) {
+            AnimatedVisibility(
+                visible = showSearchBar || uiState.searchKey.isNotEmpty(),
+                enter = expandVertically(),
+                exit = shrinkVertically()
+            ) {
+                AlarmBrowserSearchBar(
+                    modifier = Modifier
+                        .padding(4.dp)
+                        .focusRequester(focusRequester),
+                    searchKey = uiState.searchKey,
+                    onValueChange = { newValue ->
+                        onEvent(
+                            AlarmBrowserEvent.SearchAlarms(
+                                newValue
+                            )
+                        )
+                    })
+                BackHandler() {
+                    showSearchBar = false
+                }
+            }
             if (uiState.loadingComplete && uiState.alarms.isEmpty()) {
                 Box(
                     modifier = Modifier.fillMaxSize(1f),
@@ -113,28 +134,6 @@ fun HomeAlarmListScreen(
 
                 }
             } else {
-                AnimatedVisibility(
-                    visible = showSearchBar || uiState.searchKey.isNotEmpty(),
-                    enter = expandVertically(),
-                    exit = shrinkVertically()
-                ) {
-                    AlarmBrowserSearchBar(
-                        modifier = Modifier
-                            .padding(4.dp)
-                            .focusRequester(focusRequester),
-                        searchKey = uiState.searchKey,
-                        onValueChange = { newValue ->
-                            onEvent(
-                                AlarmBrowserEvent.SearchAlarms(
-                                    newValue
-                                )
-                            )
-                        })
-                    BackHandler() {
-                        showSearchBar = false
-                    }
-                }
-
                 AlarmList(
                     modifier = Modifier.padding(horizontal = 4.dp),
                     alarms = uiState.filteredAlarms ?: uiState.alarms,
