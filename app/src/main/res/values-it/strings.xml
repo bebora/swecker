@@ -21,7 +21,7 @@
     <string name="dark_mode_dialog_title">Modalità scura</string>
     <string name="dismiss_dialog">Annulla</string>
     <string name="ringtone_default">Nucleare</string>
-    <string name="ringtone_variation_1">Gioia mattuttina</string>
+    <string name="ringtone_variation_1">Gioia mattutina</string>
     <string name="ringtone_variation_2">Sveglia</string>
     <string name="confirm_dialog">Conferma</string>
     <string name="duration_seconds_5">5 secondi</string>
@@ -112,4 +112,5 @@
     <string name="group_name">Nome</string>
     <string name="loading">Caricamento</string>
     <string name="visibility">Visibilità</string>
+    <string name="alarms_management">Gestione sveglie</string>
 </resources>

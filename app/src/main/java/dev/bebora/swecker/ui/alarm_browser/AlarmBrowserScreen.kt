@@ -45,11 +45,12 @@ fun AlarmBrowserScreen(
     val alarmsOverview = stringResource(R.string.alarms_overview)
     val contactsManagement = stringResource(R.string.contacts_management)
     val settings = stringResource(R.string.settings_title)
+    val title = stringResource(R.string.alarms_management)
 // icons to mimic drawer destinations
     val items = remember {
         listOf(
             DrawerSection(
-                title = "Alarms management",
+                title = title,
                 subsections = listOf(
                     DrawerSubSection(
                         title = alarmsOverview,

@@ -117,7 +117,7 @@ class SettingsScreenTest {
     @Test
     fun changeRingtoneVolume_StateUpdated() {
         val sounds = composeRule.activity.getString(R.string.sounds_section_title)
-        val volume = composeRule.activity.getString(R.string.sounds_ringtone_volume)
+        val volume = composeRule.activity.getString(R.string.sounds_volume)
         val confirm = composeRule.activity.getString(R.string.confirm_dialog)
         composeRule.onNodeWithText(sounds).performClick()
         //Set maximum
