@@ -103,10 +103,6 @@ class AccountsServiceImpl : AccountsService {
         }
     }*/
 
-    /*override fun addUserListener() {
-        TODO("Not yet implemented")
-    }*/
-
     override fun saveUser(requestedUser: User, oldUser: User?, onResult: (Throwable?) -> Unit) {
         var user = requestedUser.copy(
             username = requestedUser.username.lowercase()

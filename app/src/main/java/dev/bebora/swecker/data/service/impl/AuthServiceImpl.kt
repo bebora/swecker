@@ -10,14 +10,6 @@ import kotlinx.coroutines.flow.callbackFlow
 import javax.inject.Inject
 
 class AuthServiceImpl @Inject constructor() : AuthService {
-    /*override fun hasUser(): Boolean {
-        return Firebase.auth.currentUser != null
-    }
-
-    override fun isAnonymousUser(): Boolean {
-        return Firebase.auth.currentUser?.isAnonymous ?: true
-    }*/
-
     override fun getUserId(): String {
         return Firebase.auth.currentUser?.uid.orEmpty()
     }
@@ -52,28 +44,6 @@ class AuthServiceImpl @Inject constructor() : AuthService {
                 // onResult(it.exception)
             }
     }
-
-    /* override fun sendRecoveryEmail(email: String, onResult: (Throwable?) -> Unit) {
-         Firebase.auth.sendPasswordResetEmail(email)
-             .addOnCompleteListener { onResult(it.exception) }
-     }
-
-     override fun createAnonymousAccount(onResult: (Throwable?) -> Unit) {
-         Firebase.auth.signInAnonymously()
-             .addOnCompleteListener { onResult(it.exception) }
-     }
-
-     override fun linkAccount(email: String, password: String, onResult: (Throwable?) -> Unit) {
-         val credential = EmailAuthProvider.getCredential(email, password)
-
-         Firebase.auth.currentUser!!.linkWithCredential(credential)
-             .addOnCompleteListener { onResult(it.exception) }
-     }
-
-     override fun deleteAccount(onResult: (Throwable?) -> Unit) {
-         Firebase.auth.currentUser!!.delete()
-             .addOnCompleteListener { onResult(it.exception) }
-     }*/
 
     override fun logOut() {
         Firebase.auth.signOut()
