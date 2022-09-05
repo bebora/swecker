@@ -25,8 +25,8 @@ import java.time.format.FormatStyle
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AlarmCard(
-    alarm: Alarm,
     modifier: Modifier = Modifier,
+    alarm: Alarm,
     selected: Boolean = false,
     onEvent: (AlarmBrowserEvent) -> Unit = {}
 ) {

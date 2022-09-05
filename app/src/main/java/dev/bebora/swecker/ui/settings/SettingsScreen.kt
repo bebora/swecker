@@ -62,11 +62,8 @@ fun SettingsScreen(
                 )
             } else {
                 SettingsDummyScreen(
-                    settings = settingsState,
-                    ui = viewModel.uiState,
                     onEvent = viewModel::onEvent,
                     onGoBack = onGoBack,
-                    onNavigate = onNavigate
                 )
             }
         } else {
@@ -77,11 +74,8 @@ fun SettingsScreen(
             ) {
                 SettingsDummyScreen(
                     modifier = Modifier.weight(1f),
-                    settings = settingsState,
-                    ui = viewModel.uiState,
                     onEvent = viewModel::onEvent,
                     onGoBack = onGoBack,
-                    onNavigate = onNavigate
                 )
                 Box(modifier = Modifier.weight(1f)) {
                     if (viewModel.uiState.openAccountSettings) {

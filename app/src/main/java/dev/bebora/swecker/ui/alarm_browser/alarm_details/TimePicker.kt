@@ -48,7 +48,7 @@ fun TimePicker(
                     .padding(16.dp)
             ) {
                 Text(
-                    text =  stringResource(dev.bebora.swecker.R.string.select_time),
+                    text = stringResource(dev.bebora.swecker.R.string.select_time),
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onPrimary
                 )

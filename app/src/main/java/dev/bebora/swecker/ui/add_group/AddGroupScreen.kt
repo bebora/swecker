@@ -171,10 +171,12 @@ fun AddGroupInputField(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddGroupInputChip(
+    modifier: Modifier = Modifier,
     user: User,
     onClick: (User) -> Unit
 ) {
     InputChip(
+        modifier = modifier,
         selected = true,
         onClick = {
             onClick(user)

@@ -24,11 +24,8 @@ import dev.bebora.swecker.ui.theme.SweckerTheme
 @Composable
 fun SettingsDummyScreen(
     modifier: Modifier = Modifier,
-    settings: Settings,
-    ui: SettingsUiState,
     onEvent: (SettingsEvent) -> Unit,
     onGoBack: () -> Unit = {},
-    onNavigate: (String) -> Unit
 ) {
     val sections = listOf(
         SettingsSection(
@@ -96,8 +93,6 @@ fun SettingsDummyScreen(
 fun SettingsDummyScreenPreview() {
     SweckerTheme {
         SettingsDummyScreen(
-            settings = Settings(),
-            ui = SettingsUiState(),
             onEvent = {}
         ) {}
     }

@@ -16,36 +16,27 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import dev.bebora.swecker.R
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EmailField(value: String, onNewValue: (String) -> Unit, modifier: Modifier = Modifier) {
-    OutlinedTextField(
-        singleLine = true,
+fun PasswordField(
+    modifier: Modifier = Modifier,
+    value: String,
+    onNewValue: (String) -> Unit,
+) {
+    PasswordField(
         modifier = modifier,
         value = value,
-        onValueChange = { onNewValue(it) },
-        placeholder = { Text("Email") },
-        leadingIcon = { Icon(imageVector = Icons.Default.Email, contentDescription = "Email") }
+        placeholder = R.string.password_placeholder,
+        onNewValue = onNewValue
     )
 }
-
-@Composable
-fun PasswordField(value: String, onNewValue: (String) -> Unit, modifier: Modifier = Modifier) {
-    PasswordField(value, R.string.password_placeholder, onNewValue, modifier)
-}
-
-/*@Composable
-fun RepeatPasswordField(value: String, onNewValue: (String) -> Unit, modifier: Modifier = Modifier) {
-    PasswordField(value, R.string.repeat_password_placeholder, onNewValue, modifier)
-}*/
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun PasswordField(
+    modifier: Modifier = Modifier,
     value: String,
     @StringRes placeholder: Int,
     onNewValue: (String) -> Unit,
-    modifier: Modifier = Modifier
 ) {
     var isVisible by remember { mutableStateOf(false) }
 
@@ -60,7 +51,12 @@ private fun PasswordField(
         value = value,
         onValueChange = { onNewValue(it) },
         placeholder = { Text(text = stringResource(placeholder)) },
-        leadingIcon = { Icon(imageVector = Icons.Default.Lock, contentDescription = stringResource(R.string.password_lock)) },
+        leadingIcon = {
+            Icon(
+                imageVector = Icons.Default.Lock,
+                contentDescription = stringResource(R.string.password_lock)
+            )
+        },
         trailingIcon = {
             IconButton(onClick = { isVisible = !isVisible }) {
                 Icon(imageVector = icon, contentDescription = stringResource(R.string.visibility))

@@ -14,8 +14,8 @@ import dev.bebora.swecker.ui.theme.SweckerTheme
 
 @Composable
 fun AlarmList(
-    alarms: List<Alarm>,
     modifier: Modifier = Modifier,
+    alarms: List<Alarm>,
     selectedAlarm: Alarm? = null,
     onEvent: (AlarmBrowserEvent) -> Unit,
 ) {
